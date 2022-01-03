@@ -1,0 +1,4 @@
+Coucou!! Supprime ce fichier lorsque tu as fait un clone du repository sur ton ordi. J'ai fait cette entourloupette pour me permettre de créer le répertoire "Fiber_Drawing_Tower" directement sur Github pour qu'il puisse se cloner directement sur ton ordi. Il ne te restera plus qu'à te créer une nouvelle branche sur Github Desktop et ensuite mettre ton code dans le répertoire "Fiber_Drawing_Tower" sur ton ordi, puis faire un "commit" (sans oublier d'écrire un petit "summary" dans la case) puis un "push" avec Github Desktop. La routine "pull, commit, push" devra être ton nouveau mantra pour 2022 ;)
+Hésite pas à me signe si tu veux un coup de pouce en partageant ton écran pour cloner, créer la nouvelle branche, etc. avec Github sur le web et/ou desktop.
+@+
+C.
