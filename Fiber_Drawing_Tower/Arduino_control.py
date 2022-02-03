@@ -1,7 +1,7 @@
 # This code is use to controle the ARDUINO wich is commanding all the systemes of the
 # tower. For exemple the motors, the KEYENCE tool and the temperature controler.
 import time # Using module time
-# import keyboard #Using module keyboard 
+import keyboard #Using module keyboard 
 
 # Instale pyfirmata library if it isn't already
 try:
