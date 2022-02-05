@@ -13,13 +13,10 @@ except:
 
 
 # Start the iterator of the Arduino
-board = Arduino('/dev/cu.usbmodem1101') # Work for a MAC conection change to 'COM3' for windows
+board = Arduino('/dev/cu.usbmodem1101') # Work for a MAC conection change to 'COM3' for windows  cu.usbmodem1101
 it = util.Iterator(board)
 it.start()
 
-#Read the 3 output
-analog_0 = board.get_pin('a:0:i')
-
-while True:
-    time.sleep(0.2)
-    print(analog_0.read())
+#Read the A0 input
+A0 = board.get_pin('a:0:i')
+print(A0.read())
