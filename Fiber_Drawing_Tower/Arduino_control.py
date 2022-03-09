@@ -1,6 +1,7 @@
 # This code is use to controle the ARDUINO wich is commanding all the systemes of the
 # tower. For exemple the motors, the KEYENCE tool and the temperature controler.
-import time # Using module time
+import time
+from tkinter import N # Using module time
 import pandas as pd
 import shutil
 from csv import writer
@@ -12,14 +13,23 @@ except:
     import pip
     pip.main(['install','pyfirmata'])
     from pyfirmata import Arduino, util
-# Instale keyboard library if it isn't already
-# try:
-#     import keyboard
-# except:
-#     import pip
-#     pip.main(['install','keyboard'])
-#     import keyboard
 
+
+class Control:
+    def __init__(self, COM: str):
+        self.COM = COM
+        self.board = Arduino(COM)
+        self.it = util.Iterator(self.board)
+        self.it.start()
+    def readPinAnalog(self, num: int):
+        self.pin = self.board.analog[num]
+        self.pin.enable_reporting()
+        return self.pin.read()
+    def readPinDigital(self, num: int):
+        self.pin = self.board.digital[num]
+        self.pin.enable_reporting()
+        return self.pin.read()
+        
 
 # Begin the iterator of the Arduino
 board = Arduino('/dev/cu.usbmodem1101') # Work for a MAC conection change to 'COM3' for windows  cu.usbmodem1101
@@ -54,7 +64,6 @@ while go:
     if len(values) == 1000:
         go = False
 
-
 # Create a CSV file (y/n)
 print('Do you want to put your value in a file?   (y/n)')
 in_file = input()
@@ -72,3 +81,6 @@ if in_file == "y":
 # Modifier l'endroit le ficher et envoyer selon l'ordinateur
     shutil.move(file_name + '_' + today + '.csv', '/Users/josephgaulin/Documents/GitHub/nanocomposite-fab/Fiber_Drawing_Tower/Values')
     print('Aquisition done')
+if in_file == "n":    
+    print("Hear's the values:")
+    print(values)
