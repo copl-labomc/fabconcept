@@ -2,29 +2,16 @@ from ast import Lambda
 from tkinter import *
 import time as t
 from functools import partial
-import tkinter
 
 
-class GUI():
-    def __init__(self, wight: int, lenght: int):
-        self.wight = wight
-        self.lenght = lenght
-        self.grid
-
-
+class GUI_TourAFibre():
+    def __init__(self):
+        self.root = Tk()
+        self.root.title("Tour à fibre optique")
+        self.root.mainloop()
         
 
-
-    def fibre(self):
-        pass
-
-    def graph(self):
-        pass
-
-    def csv(self):
-        pass
-
-
+GUI_TourAFibre()
 index = 0
 
 
