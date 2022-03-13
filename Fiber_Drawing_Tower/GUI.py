@@ -4,14 +4,48 @@ import time as t
 from functools import partial
 
 
-class GUI_TourAFibre():
+class GUI_TourAFibre:
     def __init__(self):
         self.root = Tk()
-        self.root.title("Tour à fibre optique")
+        self.root.title("Optical fiber drawing tower")
+        # Entry
+        self.entryDiametre = Entry(self.root)
+        self.entryDiametre.pack()
+        # Labels
+        self.labelDiametre = Label(self.root, text = 'Asked diameter')
+        self.labelDiametre.pack()
+        self.labelSpeed = Label(self.root, text='Speed of the motors')
+        self.labelSpeed.pack()
+        self.labelLenght = Label(self.root, text='Lenght')
+        self.labelLenght.pack()
+        # Buttons
+        self.boutonDiametre = Button(self.root, text='Diameter', command=GUI_TourAFibre.applyChosenDiametre)
+        self.boutonDiametre.pack()
+        self.boutonOuvrireDonnee = Button(self.root, text='Start', command=GUI_TourAFibre.startToCalculat)
+        self.boutonOuvrireDonnee.pack()
+        # Canvas
+        self.canvasFiber = Canvas(self.root,)
+        self.canvasFiber.pack()
+        # Graph
+        # TO DO
+
+
         self.root.mainloop()
+
+    def applyChosenDiametre():
+        pass
+
+    def startToCalculat():
+        pass
+
+
+
+
         
 
 GUI_TourAFibre()
+
+
 index = 0
 
 

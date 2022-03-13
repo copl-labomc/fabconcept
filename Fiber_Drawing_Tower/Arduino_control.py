@@ -1,11 +1,15 @@
 # This code is use to controle the ARDUINO wich is commanding all the systemes of the
 # tower. For exemple the motors, the KEYENCE tool and the temperature controler.
+from optparse import Values
 import time
 from unicodedata import name
+from matplotlib.pyplot import uninstall_repl_displayhook
 import pandas as pd
 import shutil
 import csv
 from datetime import date
+
+from sklearn.preprocessing import Binarizer
 # Instale pyfirmata library if it isn't already
 class Control:
     def __init__(self, COM: str):
@@ -20,9 +24,28 @@ class Control:
         self.it = util.Iterator(self.board)
         self.it.start()
 
-    def readAnalogPin(self, num: int):
+    def readAnalogPin(self, num: int, frequency: int, until=True):
         self.pin = self.board.get_pin('a:' + str(num) + ':i')
-        return self.pin.read()
+        if until:
+            while until:
+                value = self.pin.read()
+                time.sleep(1/frequency)
+                try:
+                    print(value)
+                except TypeError:
+                    continue
+                return self.pin.read()
+        else:
+            iteration = -1
+            while iteration <= until:
+                iteration += 1
+                value = self.pin.read()
+                time.sleep(1/frequency)
+                try:
+                    print(value)
+                except TypeError:
+                    continue
+                return self.pin.read()
 
     def readDigitalPin(self, num: int):
         self.pin = self.board.get_pin('d:' + str(num) + ':i')
@@ -35,6 +58,7 @@ class Control:
     def outputDigitalPin(self, num: int):
         self.pin = self.board.get_pin('d:' + str(num) + ':o')
         return self.pin.wright(1)
+
     
 class CreateCSV:
     def __init__(self, name: str, path: str):
@@ -49,17 +73,23 @@ class CreateCSV:
         self.today = str(date.today())
         self.time = time.time()
         open(name + '_' + self.today +'.csv','a')
+        self.values = []
 
-    def inputValues(self, values):
-        self.values = values
-        with open(self.name + '_' + self.today + '.csv', 'a') as file:
-            csv.writer(file).writerow(values)
+    def inputValues(self, value):
+        self.value = value
+        self.values.append(value)
+        if len(self.values) == 10:
+            with open(self.name + '_' + self.today + '.csv', 'a') as file:
+                csv.writer(file).writerow(self.values)
+            self.values = []
+
 
 
 
 
 val = CreateCSV('test','/Users/josephgaulin/Documents/GitHub/nanocomposite-fab/Fiber_Drawing_Tower/Values')
-val.inputValues([1,2,3,3,4,45])
+a = Control('/dev/cu.usbmodem2101')
+val.inputValues(a.readAnalogPin(0,10,100))
 
 # # Create a CSV file (y/n)
 # print('Do you want to put your value in a file?   (y/n)')
