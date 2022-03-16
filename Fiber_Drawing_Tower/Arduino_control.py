@@ -47,9 +47,29 @@ class Control:
                     continue
                 return self.pin.read()
 
-    def readDigitalPin(self, num: int):
+    def readDigitalPin(self, num: int, frequency: int, until=True):
         self.pin = self.board.get_pin('d:' + str(num) + ':i')
         return self.pin.read()
+        if until:
+            while until:
+                value = self.pin.read()
+                time.sleep(1/frequency)
+                try:
+                    print(value)
+                except TypeError:
+                    continue
+                return self.pin.read()
+        else:
+            iteration = -1
+            while iteration <= until:
+                iteration += 1
+                value = self.pin.read()
+                time.sleep(1/frequency)
+                try:
+                    print(value)
+                except TypeError:
+                    continue
+                return self.pin.read()
 
     def outputAnalogPin(self, num: int, val: float):
         self.pin = self.board.get_pin('d:' + str(num) + ':p')
@@ -75,12 +95,11 @@ class CreateCSV:
         open(name + '_' + self.today +'.csv','a')
         self.values = []
 
-    def inputValues(self, value):
-        self.value = value
+    def inputValues(self, value: tuple):
         self.values.append(value)
-        if len(self.values) == 10:
+        if len(self.values) >= 100:
             with open(self.name + '_' + self.today + '.csv', 'a') as file:
-                csv.writer(file).writerow(self.values)
+                csv.writer(file).writerows(self.values)
             self.values = []
 
 
@@ -88,8 +107,9 @@ class CreateCSV:
 
 
 val = CreateCSV('test','/Users/josephgaulin/Documents/GitHub/nanocomposite-fab/Fiber_Drawing_Tower/Values')
-a = Control('/dev/cu.usbmodem2101')
-val.inputValues(a.readAnalogPin(0,10,100))
+# a = Control('/dev/cu.usbmodem2101')
+for i in range(10000):
+    val.inputValues((i, i+1)) 
 
 # # Create a CSV file (y/n)
 # print('Do you want to put your value in a file?   (y/n)')

@@ -2,6 +2,7 @@ from ast import Lambda
 from tkinter import *
 import time as t
 from functools import partial
+from turtle import color
 
 
 class GUI_TourAFibre:
@@ -9,33 +10,62 @@ class GUI_TourAFibre:
         self.root = Tk()
         self.root.title("Optical fiber drawing tower")
         # Entry
-        self.entryDiametre = Entry(self.root)
-        self.entryDiametre.pack()
+        self.entryChosenDiametre = Entry(self.root)
+        self.entryChosenDiametre.grid(column=3, row=3)
+        self.entryNameOfFile = Entry(self.root, text='Name of the file')
+        self.entryNameOfFile.grid(column=5, row=1)
         # Labels
-        self.labelDiametre = Label(self.root, text = 'Asked diameter')
-        self.labelDiametre.pack()
-        self.labelSpeed = Label(self.root, text='Speed of the motors')
-        self.labelSpeed.pack()
-        self.labelLenght = Label(self.root, text='Lenght')
-        self.labelLenght.pack()
+        self.labelDiametre = Label(self.root, text='Diameter:')
+        self.labelDiametre.grid(column=4, row=3)
+        self.labelDiametrePrint = Label(self.root, text='None')
+        self.labelDiametrePrint.grid(column=5, row=3)
+        self.labelDiametreUnit = Label(self.root, text='mm')
+        self.labelDiametreUnit.grid(column=6, row=3)
+        self.labelSpeed = Label(self.root, text='Motor speed:')
+        self.labelSpeed.grid(column=4,row=2)
+        self.labelSpeedPrint = Label(self.root, text='None')
+        self.labelSpeedPrint.grid(column=5, row=2)
+        self.labelSpeedUnit = Label(self.root, text='m/s')
+        self.labelSpeedUnit.grid(column=6,row=2)
+        self.labelLenght = Label(self.root, text='Lenght:')
+        self.labelLenght.grid(column=4,row=4)
+        self.labelLenghtPrint = Label(self.root, text='None')
+        self.labelLenghtPrint.grid(column=5, row=4, )
+        self.labelLenghtUnit = Label(self.root, text='m')
+        self.labelLenghtUnit.grid(column=6,row=4)
+        self.labelNameOfFile = Label(self.root, text='File name:')
+        self.labelNameOfFile.grid(column=4, row=1)
+        self.labelNameOfFileType = Label(self.root, text='.csv')
+        self.labelNameOfFileType.grid(column=6, row=1)
         # Buttons
-        self.boutonDiametre = Button(self.root, text='Diameter', command=GUI_TourAFibre.applyChosenDiametre)
-        self.boutonDiametre.pack()
-        self.boutonOuvrireDonnee = Button(self.root, text='Start', command=GUI_TourAFibre.startToCalculat)
-        self.boutonOuvrireDonnee.pack()
+        self.boutonDiametre = Button(self.root, text='Apply', command=self.applyChosenDiametre)
+        self.boutonDiametre.grid(column=2, row=3)
+        self.boutonStart = Button(self.root, text='Start', command=self.startToCalculat)
+        self.boutonStart.grid(column=4, row=6)
         # Canvas
-        self.canvasFiber = Canvas(self.root,)
-        self.canvasFiber.pack()
+        self.canvasHeight = 100
+        self.canvasWidth = 400
+        self.canvasFiber = Canvas(self.root, bg='green', height=self.canvasHeight, width=self.canvasWidth)
+        self.canvasFiber.grid(column=0, row=6)
+        # Slider
+        self.sliderScale = Scrollbar(self.root)
         # Graph
         # TO DO
 
-
         self.root.mainloop()
 
-    def applyChosenDiametre():
+    def applyChosenDiametre(self):
+        self.labelDiametrePrint.config(text=self.entryChosenDiametre.get())
+
+    def startToCalculat(self):
+        self.start = True
+        self.labelLenghtPrint.config(text=self.getLenght())
+        self.labelSpeedPrint.config(text=self.getMotorSpeed())
+
+    def getLenght(self):
         pass
 
-    def startToCalculat():
+    def getMotorSpeed(self):
         pass
 
 

@@ -1,0 +1,24 @@
+Liste à faire:
+    |------- CODE -------|
+    ---- GUI ----
+    - Dessin de la fibre en temps réel sur le canvas
+    - Affichage de la vitesse du moteur durant l'étirage de la fibre 
+    - Affichage d'un graphique du controleur PID en temps réelle 
+    - Affichage de la longueur de la fibre en temps réelle
+
+    ---- PID ----
+    - Conception d'un PID fonctionnelle ajustable selon le diamètre demander
+    - Relier le PID à une sortie PWM du Arduino
+    
+    ---- Moteur de tension ----
+    - Coder le moteur à la base de la tour pour qu'il ajuste ça vitesse selon une tension 
+      qui provient du Arduino (PWM)
+
+    |------ CAD ------|
+    - CAD pour le soutient du moteur de tension (à imprimé)
+
+    |------ Montage ------|
+    - S'assurer que la structure soit peinturé
+    - Montage de la toure à fibre
+    - Trouver une manière de fixer tout les instrument sur la toure
+    
