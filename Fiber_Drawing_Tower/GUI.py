@@ -1,8 +1,6 @@
-from ast import Lambda
 from tkinter import *
-import time as t
 from functools import partial
-from turtle import color
+from Arduino_control import *
 
 
 class GUI_TourAFibre:
@@ -38,10 +36,10 @@ class GUI_TourAFibre:
         self.labelNameOfFileType = Label(self.root, text='.csv')
         self.labelNameOfFileType.grid(column=6, row=1)
         # Buttons
-        self.boutonDiametre = Button(self.root, text='Apply', command=self.applyChosenDiametre)
-        self.boutonDiametre.grid(column=2, row=3)
-        self.boutonStart = Button(self.root, text='Start', command=self.startToCalculat)
-        self.boutonStart.grid(column=4, row=6)
+        self.buttonDiametre = Button(self.root, text='Apply', command=self.applyChosenDiametre)
+        self.buttonDiametre.grid(column=2, row=3)
+        self.buttonStart = Button(self.root, text='Start', command=self.startToCalculat)
+        self.buttonStart.grid(column=4, row=6)
         # Canvas
         self.canvasHeight = 100
         self.canvasWidth = 400
@@ -49,24 +47,49 @@ class GUI_TourAFibre:
         self.canvasFiber.grid(column=0, row=6)
         # Slider
         self.sliderScale = Scrollbar(self.root)
+        # CheckButton
+        self.check = IntVar()
+        self.checkButtonCSV = Checkbutton(self.root, text='Creat .csv', variable=self.check)
+        self.checkButtonCSV.grid(column=3, row=1)
         # Graph
         # TO DO
-
         self.root.mainloop()
+
+        self.widths = []
 
     def applyChosenDiametre(self):
         self.labelDiametrePrint.config(text=self.entryChosenDiametre.get())
 
     def startToCalculat(self):
         self.start = True
+        self.traceFiber()
         self.labelLenghtPrint.config(text=self.getLenght())
         self.labelSpeedPrint.config(text=self.getMotorSpeed())
+        self.createCSV()
 
     def getLenght(self):
         pass
 
+    def getWidth(self):
+        a = Control('/dev/cu.usbmodem2101')
+        coefAnalgToDiam = 1.1
+        return a.readAnalogPin(0,100,1000) * coefAnalgToDiam
+
     def getMotorSpeed(self):
         pass
+
+    def traceFiber(self):
+        for ind, val in enumerate(range(self.widths)):
+            self.canvasFiber.create_line(ind,(self.canvasHeight-val)/2,ind,(self.canvasHeight+val)/2)
+        if range(self.widths) >= self.canvasWidth-1:
+            self.width.pop(0)
+            
+
+    def createCSV(self):
+        if self.check.get() == 1:
+            print('bonjour')
+        else:
+            pass
 
 
 
@@ -76,68 +99,68 @@ class GUI_TourAFibre:
 GUI_TourAFibre()
 
 
-index = 0
+# index = 0
 
 
-def update():
-    global index
-    index += 1
-    lettres = ["a","b","c","d","e"]
-    lettre = lettres[index%5]
-    label.config(text=lettre)
-    label2.config(text=index)
-    # t.sleep(0.01)
-    window.after(10, update)
+# def update():
+#     global index
+#     index += 1
+#     lettres = ["a","b","c","d","e"]
+#     lettre = lettres[index%5]
+#     label.config(text=lettre)
+#     label2.config(text=index)
+#     # t.sleep(0.01)
+#     window.after(10, update)
 
 
 
-window = Tk()
-window.geometry()
-#Test of the update fonction
-label = Label(window, text='Start')
-label2 = Label(window, text='Start')
-label.pack()
-label.config(text="Hello wordl!")
-label2.pack()
-my_button = Button(window, text='Start showing lettre', command=update)
-my_button.pack()
+# window = Tk()
+# window.geometry()
+# #Test of the update fonction
+# label = Label(window, text='Start')
+# label2 = Label(window, text='Start')
+# label.pack()
+# label.config(text="Hello wordl!")
+# label2.pack()
+# my_button = Button(window, text='Start showing lettre', command=update)
+# my_button.pack()
 
-# Apply some new text in the window
-def apply():
-    print(entry.get)
-    label3.config(text=entry.get())
+# # Apply some new text in the window
+# def apply():
+#     print(entry.get)
+#     label3.config(text=entry.get())
 
-label3 = Label(window,text="Try to input texte")
-label3.pack()
-entry = Entry(window)
-entry.pack()
-# button2 = Button(window,text="show the entry", command=show(entry))
-button2 = Button(window,text="Show the entry", command=apply)
-button2.pack()
+# label3 = Label(window,text="Try to input texte")
+# label3.pack()
+# entry = Entry(window)
+# entry.pack()
+# # button2 = Button(window,text="show the entry", command=show(entry))
+# button2 = Button(window,text="Show the entry", command=apply)
+# button2.pack()
 
-# Create continus frame to draw the fiber
-lenght = 0
-wight = [1,2,1,2,1,2,1,2,1,2,1,2]
-def is_new_value():
-    return False
+# # Create continus frame to draw the fiber
+# lenght = 0
+# wight = [1,2,1,2,1,2,1,2,1,2,1,2]
+# def is_new_value():
+#     return False
 
-def new_value():
-    return 0
+# def new_value():
+#     return 0
 
-def draw_the_fiber(height = 0, wight = []):
-    if is_new_value():
-        wight.append(new_value())
-    canvas.create_line(height+100,0,height+100, wight[height])
-    if height < len(wight):
-        height += 1
-        draw_the_fiber(height, wight)
+# def draw_the_fiber(height = 0, wight = []):
+#     if is_new_value():
+#         wight.append(new_value())
+#     canvas.create_line(height+100,0,height+100, wight[height])
+#     if height < len(wight):
+#         height += 1
+#         draw_the_fiber(height, wight)
 
 
     
-canvas = Canvas(window)
-button4 = Button(window,text="Print the fiber", command=partial(draw_the_fiber, 0, wight))
-button4.pack()
-canvas.pack()
+# canvas = Canvas(window)
+# button4 = Button(window,text="Print the fiber", command=partial(draw_the_fiber, 0, wight))
+# button4.pack()
+# canvas.pack()
 
 
-window.mainloop()
+# window.mainloop()
