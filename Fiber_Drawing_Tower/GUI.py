@@ -1,10 +1,15 @@
 from tkinter import *
-from functools import partial
 from Arduino_control import *
+import random
 
 
 class GUI_TourAFibre:
-    def __init__(self):
+    def __init__(self,):
+        self.widths = []
+        self.values = []
+        self.lenght = 0
+        self.refrechTime = 100
+        # self.arduino = Control('/dev/cu.usbmodem2101')
         self.root = Tk()
         self.root.title("Optical fiber drawing tower")
         # Entry
@@ -13,7 +18,7 @@ class GUI_TourAFibre:
         self.entryNameOfFile = Entry(self.root, text='Name of the file')
         self.entryNameOfFile.grid(column=5, row=1)
         # Labels
-        self.labelDiametre = Label(self.root, text='Diameter:')
+        self.labelDiametre = Label(self.root, text='Set Diameter:')
         self.labelDiametre.grid(column=4, row=3)
         self.labelDiametrePrint = Label(self.root, text='None')
         self.labelDiametrePrint.grid(column=5, row=3)
@@ -31,6 +36,12 @@ class GUI_TourAFibre:
         self.labelLenghtPrint.grid(column=5, row=4, )
         self.labelLenghtUnit = Label(self.root, text='m')
         self.labelLenghtUnit.grid(column=6,row=4)
+        self.labelWidth = Label(self.root, text='Width:')
+        self.labelWidth.grid(column=4,row=5)
+        self.labelWidthPrint = Label(self.root, text='None')
+        self.labelWidthPrint.grid(column=5, row=5, )
+        self.labelWidthUnit = Label(self.root, text='mm')
+        self.labelWidthUnit.grid(column=6,row=5)
         self.labelNameOfFile = Label(self.root, text='File name:')
         self.labelNameOfFile.grid(column=4, row=1)
         self.labelNameOfFileType = Label(self.root, text='.csv')
@@ -38,12 +49,12 @@ class GUI_TourAFibre:
         # Buttons
         self.buttonDiametre = Button(self.root, text='Apply', command=self.applyChosenDiametre)
         self.buttonDiametre.grid(column=2, row=3)
-        self.buttonStart = Button(self.root, text='Start', command=self.startToCalculat)
-        self.buttonStart.grid(column=4, row=6)
+        self.buttonStartStop = Button(self.root, text='Start', command=self.start_stop)
+        self.buttonStartStop.grid(column=4, row=6)
         # Canvas
         self.canvasHeight = 100
         self.canvasWidth = 400
-        self.canvasFiber = Canvas(self.root, bg='green', height=self.canvasHeight, width=self.canvasWidth)
+        self.canvasFiber = Canvas(self.root, bg='grey', height=self.canvasHeight, width=self.canvasWidth)
         self.canvasFiber.grid(column=0, row=6)
         # Slider
         self.sliderScale = Scrollbar(self.root)
@@ -55,42 +66,96 @@ class GUI_TourAFibre:
         # TO DO
         self.root.mainloop()
 
-        self.widths = []
-
     def applyChosenDiametre(self):
         self.labelDiametrePrint.config(text=self.entryChosenDiametre.get())
 
-    def startToCalculat(self):
-        self.start = True
-        self.traceFiber()
-        self.labelLenghtPrint.config(text=self.getLenght())
-        self.labelSpeedPrint.config(text=self.getMotorSpeed())
-        self.createCSV()
-
+    def start_stop(self):
+        if self.buttonStartStop['text'] == 'Start':
+            self.buttonStartStop.config(text="Stop")
+            self.startPrograme = True
+            self.createCSV()
+            self.traceFiber()
+            self.showLenght()
+            self.showWidth()
+            self.showMotorSpeed()
+            if self.check.get() == 1:
+                self.inputCSV()
+            print('start')
+        elif self.buttonStartStop['text'] == 'Stop':
+            self.buttonStartStop.config(text="Start")
+            self.startPrograme = False
+            
     def getLenght(self):
-        pass
+        self.lenght += 1
+        return self.lenght
+
+    def showLenght(self):
+        if self.startPrograme:
+            self.labelLenghtPrint.config(text=self.getLenght())
+            self.labelLenghtPrint.after(self.refrechTime, self.showLenght)
 
     def getWidth(self):
-        a = Control('/dev/cu.usbmodem2101')
-        coefAnalgToDiam = 1.1
-        return a.readAnalogPin(0,100,1000) * coefAnalgToDiam
+        # coefAnalgToDiam = 1.1
+        # return self.arduino.readAnalogPin(0,100,1000) * coefAnalgToDia
+        self.width = random.uniform(1,10)
+        self.widths.append(self.width)
+        return self.width
+
+    def showWidth(self):
+        if self.startPrograme:
+            self.labelWidthPrint.config(text=self.getWidth())
+            self.labelWidthPrint.after(self.refrechTime, self.showWidth)
 
     def getMotorSpeed(self):
         pass
 
+    def showMotorSpeed(self):
+        if self.startPrograme:
+            self.labelSpeedPrint.config(text=self.getMotorSpeed)
+            self.labelSpeedPrint.after(self.refrechTime, self.showMotorSpeed)
+
     def traceFiber(self):
-        for ind, val in enumerate(range(self.widths)):
-            self.canvasFiber.create_line(ind,(self.canvasHeight-val)/2,ind,(self.canvasHeight+val)/2)
-        if range(self.widths) >= self.canvasWidth-1:
-            self.width.pop(0)
-            
+        self.widthCanvasValue = 4
+        if self.startPrograme:
+            if len(self.widths) > 0: 
+                maxWidth = max(self.widths)
+                if len(self.widths) <= self.canvasWidth/self.widthCanvasValue-1:
+                    self.canvasFiber.delete("all")
+                    for ind, val in enumerate(self.widths):
+                        self.canvasFiber.create_rectangle(ind*4,(self.canvasHeight-(0.8*self.canvasHeight)/maxWidth*val)/2,ind*4+4,(self.canvasHeight+(0.8*self.canvasHeight)/maxWidth*val)/2,fill='black')
+                    self.canvasFiber.after(self.refrechTime, self.traceFiber)
+                if len(self.widths) > self.canvasWidth/self.widthCanvasValue-1:
+                    self.widths.pop(0)
+                    self.canvasFiber.delete("all")
+                    for ind, val in enumerate(self.widths):
+                        self.canvasFiber.create_rectangle(ind*4,(self.canvasHeight-(0.8*self.canvasHeight)/maxWidth*val)/2,ind*4+4,(self.canvasHeight+(0.8*self.canvasHeight)/maxWidth*val)/2,fill='black')
+                    self.canvasFiber.after(self.refrechTime, self.traceFiber)
+            else:
+                if len(self.widths) <= self.canvasWidth/self.widthCanvasValue-1:
+                    self.canvasFiber.delete("all")
+                    for ind, val in enumerate(self.widths):
+                        self.canvasFiber.create_rectangle(ind*4,(self.canvasHeight-(0.8*self.canvasHeight)*val)/2,ind*4+4,(self.canvasHeight+(0.8*self.canvasHeight)/maxWidth*val)/2,fill='black')
+                    self.canvasFiber.after(self.refrechTime, self.traceFiber)
+                if len(self.widths) > self.canvasWidth/self.widthCanvasValue-1:
+                    self.widths.pop(0)
+                    self.canvasFiber.delete("all")
+                    for ind, val in enumerate(self.widths):
+                        self.canvasFiber.create_rectangle(ind*4,(self.canvasHeight-(0.8*self.canvasHeight)*val)/2,ind*4+4,(self.canvasHeight+(0.8*self.canvasHeight)/maxWidth*val)/2,fill='black')
+                    self.canvasFiber.after(self.refrechTime, self.traceFiber)
 
     def createCSV(self):
         if self.check.get() == 1:
-            print('bonjour')
+            self.csv = CreateCSV(self.entryNameOfFile.get(),'/Users/josephgaulin/Documents/GitHub/nanocomposite-fab/Fiber_Drawing_Tower/Values')
         else:
             pass
 
+    def inputCSV(self):
+        self.csv.inputValues((self.getWidth(), self.getLenght()))
+        self.checkButtonCSV.after(self.refrechTime, self.inputCSV)
+        
+
+    def update(self):
+        pass
 
 
 

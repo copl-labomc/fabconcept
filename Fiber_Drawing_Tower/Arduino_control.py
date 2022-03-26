@@ -5,7 +5,6 @@ import time
 from unicodedata import name
 from matplotlib.pyplot import uninstall_repl_displayhook
 import pandas as pd
-import shutil
 import csv
 from datetime import date
 
@@ -92,7 +91,7 @@ class CreateCSV:
         self.path = path
         self.today = str(date.today())
         self.time = time.time()
-        open(name + '_' + self.today +'.csv','a')
+        open(name + '_' + self.today +'.csv','a').close()
         self.values = []
 
     def inputValues(self, value: tuple):
@@ -106,10 +105,10 @@ class CreateCSV:
 
 
 
-val = CreateCSV('test','/Users/josephgaulin/Documents/GitHub/nanocomposite-fab/Fiber_Drawing_Tower/Values')
-# a = Control('/dev/cu.usbmodem2101')
-for i in range(10000):
-    val.inputValues((i, i+1)) 
+# val = CreateCSV('S','/Users/josephgaulin/Documents/GitHub/nanocomposite-fab/Fiber_Drawing_Tower/Values')
+# # a = Control('/dev/cu.usbmodem2101')
+# for i in range(10000):
+#     val.inputValues((i, i+1)) 
 
 # # Create a CSV file (y/n)
 # print('Do you want to put your value in a file?   (y/n)')
