@@ -23,10 +23,10 @@ class Control:
         self.it = util.Iterator(self.board)
         self.it.start()
 
-    def readAnalogPin(self, num: int, frequency: int, until=True):
+    def readAnalogPin(self, num: int, frequency: int, until=(True,1)):
         self.pin = self.board.get_pin('a:' + str(num) + ':i')
-        if until:
-            while until:
+        if until[0]:
+            while until[0]:
                 value = self.pin.read()
                 time.sleep(1/frequency)
                 try:
@@ -36,7 +36,7 @@ class Control:
                 return self.pin.read()
         else:
             iteration = -1
-            while iteration <= until:
+            while iteration <= until[1]:
                 iteration += 1
                 value = self.pin.read()
                 time.sleep(1/frequency)
@@ -102,6 +102,8 @@ class CreateCSV:
             self.values = []
 
 
+# Arduino = Control('/dev/cu.usbmodem1101')
+# print(Arduino.readAnalogPin(0,1,(False,10)))
 
 
 

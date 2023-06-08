@@ -1,10 +1,28 @@
 from tkinter import *
-from Arduino_control import *
 import random
+import numpy as np
+import time
+from simple_pid import PID
+import pyfirmata
 
 
 class GUI_TourAFibre:
-    def __init__(self,):
+    def __init__(self, com_port):
+        '''
+        Cette class produit une interface utilisateur pour comander la tour à fibre
+        - com_port : port de communication de l'Arduino
+        '''
+        # Initialisation de la carte Arduino
+        self.board = pyfirmata.Arduino(com_port)
+        self.it = pyfirmata.util.Iterator(self.board)
+        self.it.start()
+        self.speedTension = self.board.get_pin('d:9:p')
+        self.diametre = self.board.get_pin('a:0:r')
+        #Simulation du diamètre de la fibre
+        self.sim = DrawingSimulation(100,20,0.01)
+        self.fiber_speed = 10
+        self.dt = 0.1
+
         self.widths = []
         self.values = []
         self.lenght = 0
@@ -28,7 +46,7 @@ class GUI_TourAFibre:
         self.labelSpeed.grid(column=4,row=2)
         self.labelSpeedPrint = Label(self.root, text='None')
         self.labelSpeedPrint.grid(column=5, row=2)
-        self.labelSpeedUnit = Label(self.root, text='m/s')
+        self.labelSpeedUnit = Label(self.root, text='mm/s')
         self.labelSpeedUnit.grid(column=6,row=2)
         self.labelLenght = Label(self.root, text='Lenght:')
         self.labelLenght.grid(column=4,row=4)
@@ -42,6 +60,12 @@ class GUI_TourAFibre:
         self.labelWidthPrint.grid(column=5, row=5, )
         self.labelWidthUnit = Label(self.root, text='mm')
         self.labelWidthUnit.grid(column=6,row=5)
+        self.labelTension = Label(self.root, text='Tension:')
+        self.labelTension.grid(column=4,row=6)
+        self.labelTensionPrint = Label(self.root, text='None')
+        self.labelTensionPrint.grid(column=5, row=6, )
+        self.labelTensionUnit = Label(self.root, text='V')
+        self.labelTensionUnit.grid(column=6,row=6)
         self.labelNameOfFile = Label(self.root, text='File name:')
         self.labelNameOfFile.grid(column=4, row=1)
         self.labelNameOfFileType = Label(self.root, text='.csv')
@@ -50,12 +74,12 @@ class GUI_TourAFibre:
         self.buttonDiametre = Button(self.root, text='Apply', command=self.applyChosenDiametre)
         self.buttonDiametre.grid(column=2, row=3)
         self.buttonStartStop = Button(self.root, text='Start', command=self.start_stop)
-        self.buttonStartStop.grid(column=4, row=6)
+        self.buttonStartStop.grid(column=4, row=7)
         # Canvas
         self.canvasHeight = 100
         self.canvasWidth = 400
         self.canvasFiber = Canvas(self.root, bg='grey', height=self.canvasHeight, width=self.canvasWidth)
-        self.canvasFiber.grid(column=0, row=6)
+        self.canvasFiber.grid(column=0, row=7)
         # Slider
         self.sliderScale = Scrollbar(self.root)
         # CheckButton
@@ -66,15 +90,18 @@ class GUI_TourAFibre:
         # TO DO
         self.root.mainloop()
 
+
     def applyChosenDiametre(self):
         self.labelDiametrePrint.config(text=self.entryChosenDiametre.get())
 
     def start_stop(self):
         if self.buttonStartStop['text'] == 'Start':
+            # GUI
             self.buttonStartStop.config(text="Stop")
             self.startPrograme = True
             self.createCSV()
             self.traceFiber()
+            self.showTension()
             self.showLenght()
             self.showWidth()
             self.showMotorSpeed()
@@ -82,12 +109,29 @@ class GUI_TourAFibre:
                 self.inputCSV()
             print('start')
         elif self.buttonStartStop['text'] == 'Stop':
+            # Arduino
+            self.speedTension.write(0)
             self.buttonStartStop.config(text="Start")
             self.startPrograme = False
             
+    def getTension(self):
+        speed = self.getMotorSpeed()
+        print(speed)
+        return speed/11.5
+    
+    def showTension(self):
+        if self.startPrograme:
+            self.speedTension.write(self.getTension())
+            self.labelTensionPrint.config(text=self.getTension())
+            self.labelTensionPrint.after(self.refrechTime, self.showTension)
+        else:
+            self.speedTension.write(0)
+            self.labelTensionPrint.config(text=0)
+            self.labelTensionPrint.after(self.refrechTime, self.showTension)
+    
     def getLenght(self):
-        self.lenght += 1
-        return self.lenght
+        self.lenght += (self.fiber_speed*self.dt)/1000
+        return round(self.lenght,3)
 
     def showLenght(self):
         if self.startPrograme:
@@ -97,7 +141,8 @@ class GUI_TourAFibre:
     def getWidth(self):
         # coefAnalgToDiam = 1.1
         # return self.arduino.readAnalogPin(0,100,1000) * coefAnalgToDia
-        self.width = random.uniform(1,10)
+        self.fiber_speed, f_d, f_pid = self.sim.one_iteration(self.dt,float(self.labelDiametrePrint['text']),self.fiber_speed,0.5,0,0)
+        self.width = f_d
         self.widths.append(self.width)
         return self.width
 
@@ -107,11 +152,14 @@ class GUI_TourAFibre:
             self.labelWidthPrint.after(self.refrechTime, self.showWidth)
 
     def getMotorSpeed(self):
-        pass
+        speed = round(self.fiber_speed,3)
+        if speed >= 11.5:
+            speed = 11.5
+        return speed
 
     def showMotorSpeed(self):
         if self.startPrograme:
-            self.labelSpeedPrint.config(text=self.getMotorSpeed)
+            self.labelSpeedPrint.config(text=self.getMotorSpeed())
             self.labelSpeedPrint.after(self.refrechTime, self.showMotorSpeed)
 
     def traceFiber(self):
@@ -159,73 +207,68 @@ class GUI_TourAFibre:
 
 
 
+class DrawingSimulation:
+    def __init__(self, perform_length:int, preform_diameter:int, feed_speed:int):
+        '''
+        Les unités de chacune des variable son les suivante:
+        - prefome_length [mm]
+        - preform_diameter [mm]
+        - feed_speed [mm/s]
+        '''
+        self.premform_length = perform_length
+        self.preform_diameter = preform_diameter
+        self.feed_speed = feed_speed
         
 
-GUI_TourAFibre()
+    def drawing_diameter(self, speed:int):
+        '''
+        Les unités de chacune des variable sont les suivante:
+        - speed [mm/s]
+        '''
+        volume_in = self.feed_speed*np.pi*(self.preform_diameter/2)**2
+        fiber_diameter =  np.sqrt(volume_in/(speed*np.pi/4)) #retourne le diamètre de la fibre
+        return fiber_diameter
+
+    def one_iteration(self, dt:float, fix_diametre:float, fiber_speed:float, Kp:float, Ki:float, Kd:float):
+        '''
+        Les unités de chacune des variable sont les suivante
+        - dt [s]
+        - fix_diametre [mm]
+        - fiber_speed [mm/s]
+        '''
+        pid = PID(Kp, Ki, Kd, fix_diametre)
+        time.sleep(0.011)
+        fiber_speed = fiber_speed -(pid(self.drawing_diameter(fiber_speed))/dt)
+        self.premform_length -= dt*self.feed_speed
+        return (fiber_speed, self.drawing_diameter(fiber_speed),pid(self.drawing_diameter(fiber_speed)))
 
 
-# index = 0
+    def simulat(self, dt:float, fix_diametre:float, fiber_speed:float, Kp:float, Ki:float, Kd:float, iteration:int):
+        '''
+        Les unités de chacune des variable sont les suivante
+        - dt [s]
+        - fix_diametre [mm]
+        - fiber_speed [mm/s]
+        '''
+        ts = []
+        t = 0
+        fiber_diameter = []
+        self.fix_diametre = fix_diametre
+        pid = PID(Kp, Ki, Kd, fix_diametre)
+        pids = []
+        n = 0
+        while (self.premform_length > 0 and n < iteration):
+            time.sleep(0.011)
+            fiber_diameter.append(self.drawing_diameter(fiber_speed))
+            pids.append(pid(self.drawing_diameter(fiber_speed)))
+            ts.append(t)
+            fiber_speed = fiber_speed-(pid(self.drawing_diameter(fiber_speed))/dt)
+            self.premform_length -= dt*self.feed_speed
+            n += 1
+            t += dt
+        return [fiber_diameter, pids, ts]
+ 
+
+GUI_TourAFibre('/dev/cu.usbmodem1101')
 
 
-# def update():
-#     global index
-#     index += 1
-#     lettres = ["a","b","c","d","e"]
-#     lettre = lettres[index%5]
-#     label.config(text=lettre)
-#     label2.config(text=index)
-#     # t.sleep(0.01)
-#     window.after(10, update)
-
-
-
-# window = Tk()
-# window.geometry()
-# #Test of the update fonction
-# label = Label(window, text='Start')
-# label2 = Label(window, text='Start')
-# label.pack()
-# label.config(text="Hello wordl!")
-# label2.pack()
-# my_button = Button(window, text='Start showing lettre', command=update)
-# my_button.pack()
-
-# # Apply some new text in the window
-# def apply():
-#     print(entry.get)
-#     label3.config(text=entry.get())
-
-# label3 = Label(window,text="Try to input texte")
-# label3.pack()
-# entry = Entry(window)
-# entry.pack()
-# # button2 = Button(window,text="show the entry", command=show(entry))
-# button2 = Button(window,text="Show the entry", command=apply)
-# button2.pack()
-
-# # Create continus frame to draw the fiber
-# lenght = 0
-# wight = [1,2,1,2,1,2,1,2,1,2,1,2]
-# def is_new_value():
-#     return False
-
-# def new_value():
-#     return 0
-
-# def draw_the_fiber(height = 0, wight = []):
-#     if is_new_value():
-#         wight.append(new_value())
-#     canvas.create_line(height+100,0,height+100, wight[height])
-#     if height < len(wight):
-#         height += 1
-#         draw_the_fiber(height, wight)
-
-
-    
-# canvas = Canvas(window)
-# button4 = Button(window,text="Print the fiber", command=partial(draw_the_fiber, 0, wight))
-# button4.pack()
-# canvas.pack()
-
-
-# window.mainloop()

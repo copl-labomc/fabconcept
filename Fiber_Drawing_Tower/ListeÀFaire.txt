@@ -1,7 +1,7 @@
 Liste à faire:
     |------- CODE -------|
     ---- GUI ----
-    - Dessin de la fibre en temps réel sur le canvas
+    F- Dessin de la fibre en temps réel sur le canvas 
     - Affichage de la vitesse du moteur durant l'étirage de la fibre 
     - Affichage d'un graphique du controleur PID en temps réelle 
     - Affichage de la longueur de la fibre en temps réelle
@@ -16,9 +16,11 @@ Liste à faire:
 
     |------ CAD ------|
     - CAD pour le soutient du moteur de tension (à imprimé)
+    - Support pour le Arduino
 
     |------ Montage ------|
-    - S'assurer que la structure soit peinturé
-    - Montage de la toure à fibre
+    F- S'assurer que la structure soit peinturé
+    F- Montage de la toure à fibre
     - Trouver une manière de fixer tout les instrument sur la toure
+    - Mesurer le lien entre la sortie Analog et le Diamètre mesuré
     
