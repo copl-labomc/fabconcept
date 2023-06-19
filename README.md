@@ -1,2 +1,2 @@
 # nanocomposite-fab
-Simulating materials doped with nanosemiconductors
+Making, modeling and simulating materials doped with nanosemiconductors
