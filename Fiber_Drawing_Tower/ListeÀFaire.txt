@@ -1,26 +1,29 @@
 Liste à faire:
     |------- CODE -------|
-    ---- GUI ----
-    F- Dessin de la fibre en temps réel sur le canvas 
-    - Affichage de la vitesse du moteur durant l'étirage de la fibre 
-    - Affichage d'un graphique du controleur PID en temps réelle 
-    - Affichage de la longueur de la fibre en temps réelle
-
-    ---- PID ----
-    - Conception d'un PID fonctionnelle ajustable selon le diamètre demander
+    ---- PID (Système d'asservissement) ----
+    - Voir avec Joseph si c'est à jour
+    - Conception d'un PID fonctionnelle ajustable selon le diamètre demander 
     - Relier le PID à une sortie PWM du Arduino
     
     ---- Moteur de tension ----
+    - Trouver un moteur pour la spool
+    - Installer le spool de manière fonctionnelle
     - Coder le moteur à la base de la tour pour qu'il ajuste ça vitesse selon une tension 
       qui provient du Arduino (PWM)
 
     |------ CAD ------|
-    - CAD pour le soutient du moteur de tension (à imprimé)
+    - CAD pour le soutient du moteur de tension (à imprimer)
     - Support pour le Arduino
+    - Faire imprimer un PCB pour remplacer le breadboard (possiblement intégré directement sur la tour, Magasiner sur Digikey??)
 
     |------ Montage ------|
-    F- S'assurer que la structure soit peinturé
-    F- Montage de la toure à fibre
-    - Trouver une manière de fixer tout les instrument sur la toure
-    - Mesurer le lien entre la sortie Analog et le Diamètre mesuré
+    F- S'assurer que la structure soit peinturée
+    F- Montage de la tour à fibre
+    - Mesurer le lien entre la sortie Analog et le Diamètre mesuré (Demander à Joseph le 14 Juillet)
     
+    ---- GUI (Graphical User Interface) ----
+    F- Dessin de la fibre en temps réel sur le canvas 
+    - Affichage de la vitesse du moteur durant l'étirage de la fibre 
+    - Affichage d'un graphique du controleur PID en temps réelle 
+    - Affichage de la longueur de la fibre en temps réelle
+    - Comparer les packages de Joseph et recommendation de Louis-Philippe
