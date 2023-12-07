@@ -1,5 +1,17 @@
 # Short naming system of nanocomposites to find # <!--- TODO : find a name and turn my todo comments in issues haha --->
-_English version below_
+_La version française suit._
+
+## For ~10 cm preforms of monomer matrix ##
+_This protocol has been tested so far with styrene._
+
+### Chemicals & Furnitures ###
+- Filtering flask
+
+CARLY
+xTo prepare 10 cm preforms, commercial styrene was first filtered through a column containing Al2O3 particles to remove the polymerization inhibitor. 
+x A fixed volume of the cQD solution (Table 1) was further purified by precipitation and centrifugation with isopropyl alcohol then redispersed progressively in styrene and transferred to a glass test tube.
+ To initiate the radical polymerization, 60 mg of initiator Luperox A98 per 10 mL of purified styrene was added to the test tube. Oxygen was purged from the sample with nitrogen, and then the tube was sealed and kept under vacuum in an ultrasonic bath for a few minutes to remove residual oxygen. To prevent aggregation of the cQDs, a preliminary polymerization stage was carried out by placing the samples in a heated ultrasonic bath (∼60 °C) for 7 h until the nanocomposite mixture had a syrup-like consistency. After further removal of residual oxygen within the glass tubes still in the bath, the samples were placed in an oven at 90 °C for 48 h until fully polymerized.
+
 
 ### Purification du styrène ###
 - Pour  préparer les colonnes de purification, compacter une ouate de quartz dans une pipette pasteur. _NOTE : Chaque colonne peut purifier 10-12 ml de styrène._
@@ -27,10 +39,7 @@ _English version below_
 - A chaque 30 min, sortir les éprouvettes et les agiter au bain sonique pendant 1-2 min
 - Répéter l'étape 21 jusqu'à ce que le contenu des préformes soit visqueux
 
-CARLY
-xTo prepare 10 cm preforms, commercial styrene was first filtered through a column containing Al2O3 particles to remove the polymerization inhibitor. 
-x A fixed volume of the cQD solution (Table 1) was further purified by precipitation and centrifugation with isopropyl alcohol then redispersed progressively in styrene and transferred to a glass test tube.
- To initiate the radical polymerization, 60 mg of initiator Luperox A98 per 10 mL of purified styrene was added to the test tube. Oxygen was purged from the sample with nitrogen, and then the tube was sealed and kept under vacuum in an ultrasonic bath for a few minutes to remove residual oxygen. To prevent aggregation of the cQDs, a preliminary polymerization stage was carried out by placing the samples in a heated ultrasonic bath (∼60 °C) for 7 h until the nanocomposite mixture had a syrup-like consistency. After further removal of residual oxygen within the glass tubes still in the bath, the samples were placed in an oven at 90 °C for 48 h until fully polymerized.
+
 
 
 <!---
@@ -50,10 +59,10 @@ For polymerization : A fixed volume of the cQD solution (Table 1) was further pu
 **Resources on Precipitation and Centrifugation**
 
 
-## Monomer Purification by Milliscale Column Chromatography ##
+## Monomer Purification - Milliscale Column Chromatography ##
 
-The monomers bought usually contains inhibitors ("spiked with...") preventing unintentional polymerization and should be kept refrigerated (unless it says otherwise on the bottle). A purification step is thus required to get rid of the inhibitors and enable polymerization.
-
+Monomers are usually stabilized (stab.) with inhibitors preventing unintentional polymerization and should be kept refrigerated (unless it says otherwise on the bottle). A purification step is thus required to get rid of the inhibitors and enable polymerization.
+ 
 ## For ~10 cm preforms of monomer matrix ##
 _This protocol has been tested so far with styrene._
 
@@ -61,12 +70,13 @@ _This protocol has been tested so far with styrene._
 - Liquid monomer
 - Pasteur pipette and its bulb
 - Funnel fitting the Pasteur pipette
-- quartz (glass?) wool
-- Al<sub>2</sub>O<sub>3</sub> (alumina) particles sieved by a mesh of (58 A...?)
+- Glass wool
+- Basic alumina powder : Al<sub>2</sub>O<sub>3</sub> particles sieved by a 60 mesh, Brockmann & Schodder activity grade I 
 - Small beakers
 
+
 ### Column Packing ###
-- Push a small amount of quartz (glass?) wool in a Pasteur pipette to prevent the particles from leaking out at the next step. (?with the end chopped off, probably not necessary when pushing with a Pipette bulb)
+- Push a small amount of glass wool in a Pasteur pipette to prevent the particles from leaking out at the next step. (?with the end chopped off, probably not necessary when pushing with a Pipette bulb)
 - Clamp the pipette to a stand.
 - Using a funnel, fill the pipette up to its indent with the Al<sub>2</sub>O<sub>3</sub> particles.
 - To tamp down the particles by applying air pressure, put the bulb on top of the column and squeeze it, then remove it while still squeezed.
@@ -87,11 +97,11 @@ _N.B. Each column can purify up to ~12 mL of styrene._
 - Empty the waste container into the white plastic jug for nonhalogenated solvents.
 - With the container back under the pipette, turn the latter upside down in the clamp.
 - Let this dry overnight in a fumehood until the column is emptied of particles, gently tapping it at the end if necessary.
-- To speed up drying, air or nitrogen gas can be flowed through the column.
-- Dispose of the particles in the white trash can dedicated to silica and alumina. <!--- Check with Mathieu Lamarre for the latter and write it on the can if ok --->
-- The Pasteur pipette can be reused for the same monomer or put in the glassware waste bin(?check on it) after removing the quartz (glass?) wool.
+- To speed up drying, air or nitrogen gas(too costly? check with Stéphane) can be flowed through the column.
+- Dispose of the particles in the white trash can dedicated to silica and alumina.
+- The Pasteur pipette can be reused for the same monomer or put in the glassware waste bin after removing the glass wool.
  
-<!--- Try the slurry method for bigger volumes with the 3it crew ---> 
+<!--- **Try the slurry method for bigger volumes with the 3it crew** ---> 
 
 **Resources on Column Chromatography**
 <!---
@@ -100,10 +110,11 @@ TODO : format properly as references
 - <a href="https://www.orgchemboulder.com/Technique/Procedures/Columnchrom/Procedure.shtml">https://www.orgchemboulder.com/Technique/Procedures/Columnchrom/Procedure.shtml</a> [English]
 - <a href="https://www.orgchemboulder.com/Labs/Experiments/8%20-%20Column%20Chromatography.pdf">https://www.orgchemboulder.com/Labs/Experiments/8%20-%20Column%20Chromatography.pdf</a> [English]
 - <a href="https://www.orgchemboulder.com/Technique/Procedures/Columnchrom/Columnchrom.shtml">https://www.orgchemboulder.com/Technique/Procedures/Columnchrom/Columnchrom.shtml</a> [English]
-- <a href="https://doi.org/10.1002/chemv.201200074">https://doi.org/10.1002/chemv.201200074</a>
-- <a href="https://chem.libretexts.org/Bookshelves/Organic_Chemistry/Organic_Chemistry_Lab_Techniques_(Nichols)/02%3A_Chromatography/2.04%3A_Column_Chromatography/2.4B%3A_Microscale_(Pipette)_Columns">https://chem.libretexts.org/Bookshelves/Organic_Chemistry/Organic_Chemistry_Lab_Techniques_(Nichols)/02%3A_Chromatography/2.04%3A_Column_Chromatography/2.4B%3A_Microscale_(Pipette)_Columns</a>
+- <a href="https://doi.org/10.1002/chemv.201200074">https://doi.org/10.1002/chemv.201200074</a> [English]
+- <a href="https://chem.libretexts.org/Bookshelves/Organic_Chemistry/Organic_Chemistry_Lab_Techniques_(Nichols)/02%3A_Chromatography/2.04%3A_Column_Chromatography/2.4B%3A_Microscale_(Pipette)_Columns">https://chem.libretexts.org/Bookshelves/Organic_Chemistry/Organic_Chemistry_Lab_Techniques_(Nichols)/02%3A_Chromatography/2.04%3A_Column_Chromatography/2.4B%3A_Microscale_(Pipette)_Columns</a> [English]
 - <a href="https://www.chemistryviews.org/details/education/2040151/Tips_and_Tricks_for_the_Lab_Column_Packing/">https://www.chemistryviews.org/details/education/2040151/Tips_and_Tricks_for_the_Lab_Column_Packing/</a> [English]
 - section 2.2 Chromatographie préparative de <a href="https://doi.org/10.51257/a-v2-p1445">https://doi.org/10.51257/a-v2-p1445</a> [French]
+- <a href="https://www.silicycle.com/ca/media/pdf/applications/appn-sf002-0-brockmann-schodder-activity-test.pdf">https://www.silicycle.com/ca/media/pdf/applications/appn-sf002-0-brockmann-schodder-activity-test.pdf</a> [English]
 <!--- TODO : find a good video from the channels on Quick Notes--->
 
 
@@ -132,4 +143,7 @@ TODO : add a short text including what is acceptably skipped from the video in o
 - <a href="https://edu.rsc.org/interactive-lab-primer-lab-techniques/115379.subject">https://edu.rsc.org/interactive-lab-primer-lab-techniques/115379.subject</a>
 
 ## Using a centrifuge ##
+...
+
+## Venturi effect ##
 ...
