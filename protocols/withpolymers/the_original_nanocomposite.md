@@ -1,82 +1,85 @@
-# Short naming system of nanocomposites to find # <!--- TODO : find a name and turn my todo comments in issues haha --->
+# Short naming system of nanocomposites to brainstorm with the team in the new year! Something like comp3D-PS, nano3D-PS, poly3D-PS, PolyOrigin, NanoOrigin, CompOrigin, etc. # <!--- TODO : find a name and turn my todo comments in issues haha --->
 
-<!--- Cite main paper here instead of somewhere through the manips? --->
+<!--- Published in:... Cite main paper here instead of somewhere through the manips? --->
 
-## For ~10 cm plastic preforms, diameter of (CW sizes :I should be able to get from picture if I can't find in text, AP: 12.7 mm for 1/2" ID of PMMA tubes.) ##
+_**For ~10 cm long polystyrene preforms x 13 mm diameter**_ (AP: 12.7 mm for 1/2" ID of PMMA tubes.)
 
-<!--- TODO :
-_This protocol has been tested so far with styrene._
- Add Cie provider names + grades,  hm moins bon dans un concept de protocole générique. P-e faire un tableau listing of matchig chemicals referred with a, b, c,... in the following list? mwouais non, faire juste styrene direct pour la polymérisation, garder générique juste dans les préliminaires. --->
-
-### Specific Safety Measure ###
-When modifiying the core of the protocol, never leave the polymerization completely unattended until the substance is significantly viscous in case of <a href="https://sciencing.com/runaway-polymerization-7556.html">runaway polymerization</a> requiring to immediately turn off heating.
+### Specific Safety Measures ###
+- When modifiying the core of the protocol, never leave the polymerization completely unattended until the substance is significantly viscous in case of <a href="https://sciencing.com/runaway-polymerization-7556.html">runaway polymerization</a> requiring to immediately turn off heating.
+- Check for slow bubbles in the bubbler when opening the inert gas valve. Excessive pressure could build up in the manifold in their absence.
+- Do not forget to open the valve on the gas evacuation pipe before turning on the oven, then and close it at the end of the manipulations.
+- Never open the oven at high temperature to avoid a thermal shock that could break glass.
 
 <!--- UNDER CONSTRUCTION, work with Stéphane & David là-dessus, a link to a COPL.ULaval sharepoint intranet would be most appropriate!
-All general safety guidelines(?check proper word) from <a href="...">SIMDUT<a/>, <a href="...">SSP</a>, <a href="...">COPL</a> and <a href="link the appropriate wikiOMC section">labOMC</a> continue to apply of course.
-TODO : check and implement ULaval's rules for unattended experiments
+All general safety guidelines(?check proper word) from <a href="...">SIMDUT</a>, <a href="...">SSP</a>, <a href="...">COPL</a> and <a href="link the appropriate wikiOMC section">labOMC</a> continue to apply of course.
+TODO : check and implement ULaval's rules for unattended experiments, develop section Lab safety for Jupyter Notebook, including this <a href="http://www.ilpi.com/safety/index.html">http://www.ilpi.com/safety/index.html</a> as a resource
 --->
 
+<!--- TODO : Add Cie provider names + grades of chemicals--->
 ### Chemicals & Furnitures ###
-- 10 mL of purified monomer (AP: 8 mL) 
+- 10 mL of purified monomers (AP: 8 mL, especially since 10 mL doesn't fit into the size of test tube specified below!) 
 - Precipitated nanosemiconductors (NSCs) in the desired amount<sup>*</sup>
 - 60 mg of benzoyl peroxide as polymerization initiator (Luperox A98) (AP: 120 mg per 15 mL styrene, OMT: initiator-free variant)
+- Fume hood
 - Oven
 - Ultrasonic bath with heating
 - Venturi pump : filtering flask connected to a vacuum ejector on the water tap
-- Light inert gas flow
+- Light inert gas flow, but it can be hard to adjust directly on the nitrogen line in a fume hood, so a valved bubbler can be employed (!? Hm, risks of forgetting it too closed and ensuing overpressure on the manifold can explode it! Check for a version with a safety valve or something)
 - Syringe needles
-- Glass test tube (?size) with a fitting septum
-- Mineral (?check) oil bath with heat-resistant means to hold the tube
+- 13 mm x 100 mm glass test tube with a fitting airtight septum
+- Mineral oil bath with heat-resistant means to hold the tube
 - Micropipettes and suitable tips
 - Solvents
 
-_N.B. The residual liquid with the NSC precipitate is volatile and in the end may cause some bubbles in the plastic. If this becomes a problem, the liquid can be left to evaporate as long as the cQDs are not dryed out and thus overly exposed to oxygen. A NSC powder could be obtained by evaporation under inert atmosphere, but at this point, we haven't tested how detrimental this is to the photoluminescence (PL)._ 
+_N.B. The residual liquid with the NSC precipitate is volatile and may cause some bubbles in the plastic in the end. If this becomes a problem, the liquid can be left to evaporate as long as the NSCs are not dryed out completely and thus overly exposed to oxygen. A NSC powder could be obtained by evaporation under inert atmosphere in principle, but at this point, we haven't tested how detrimental this is to the photoluminescence (PL)._ 
 
-<sup>*</sup> <!--- TODO : reference the figure in our paper for optical density (?check OD def) guidelines... or include and annotate the figure directly here. --->
+<sup>*</sup> <!--- TODO : annotate include here the figure in our paper for optical density (?check OD def) + cQD concentration of increasingly orange samples <img src="/assets/original_nanocomposite.gif" alt="Optical density of nanocomposites with varying nanosemiconductor concentration"> N.B. if I put the assets folder high up, the asset link might need some dots --->
 
 ### Dispersion of Nanosemiconductors in the Monomer ### 
-- Add a known volume of monomers to the tube of precipitated NSCs.
+- Add a known volume of purified liquid monomer to the tube of precipitated NSCs.
 - Hold the tube in an ultrasonic bath briefly to improve NSC dispersion.
-- Pour the mixture into a (?size) glass test tube.
+- Pour the mixture into the glass test tube.
 - Repeat the previous 3 steps until the NSCs are rinsed out of the centrifuge tube.
-- Complete the purified monomer volume in the test tube to 10 mL.
-- Add 60 mg of initiator Luperox A98 to the tube.
-- Close the with a septum so it can be pierced by syringe needles.
+- Complete the purified monomer volume in the test tube to 10 mL. (!or 8 mL if we adjust the protocol)
+- Add 60 mg of initiator Luperox A98 to the tube. (!or adjusted proportional number)
+- Close the test tube with an airtight septum that can be pierced by syringe needles.
 
 ### Degassing & Purging ###
-- Put the glass tube under light vacuum with the Venturi pump for a few minutes, with the needle above the liquid level.
-- Turn on the heat on the ultrasonic bath and place the tube inside to enhance degassing. <!--- TODO : Rephrase to combine with the last step I think, as it's probably best to do while pumping "kept under vacuum in an ultrasonic bath" --->
-- Bubble inert gas through the mixture for a few minutes, with the metal needle below the mixture level. 
-- Repeat at least twice to minimize oxygen in the mixture.
+- Put the glass tube under light vacuum with the Venturi pump, with the needle above the liquid level.
+- Turn on the heat on the ultrasonic bath and place the tube in it to enhance degassing for a few minutes. Note that the polymerization will already accelerate while heating.
+- Bubble inert gas through the mixture for a few minutes, with the metal needle below the mixture level and adding a second one above the liquid as exhaust. 
+- Repeat at least twice to minimize oxygen in the mixture. <!--- TODO : find out if it's better to finish under vacuum or under nitrogen considering light diffusion, potential glass tube breaking and dissolved gases that could lead to bubbles during fiber drawing, then adjust the last step here if needed. --->
 - Clean the bubbling needle with hexane, and the vacuum one as well if it touched the mixture.
 
-_N.B. This section aims to protect air-sensitive NSCs by displacing oxygen. It can be shortened for preliminary tests when the PL stability of the nanocomposite at the end is not an issue._
- 
+_N.B. This section aims to protect air-sensitive NSCs by displacing oxygen. It can be shortened for preliminary tests when light diffusion (? to check if it's really correlated to oxygen or just any gas like nitogen, then and put explanation at the beginning of sentence) and PL stability of the resulting nanocomposite are not an issue._
+
 ### Polymerization Reaction ###
-- Keep the test tube in the hot ultrasonic bath (∼60 °C) for ~7 h until the mixture has a syrup-like consistency. <!--- TODO : get a temperature data logger for the ultrasonic bath so we can state an average temperature. --->
-- Degas one last time for at least 10 min with the tube still in the hot bath using the Venturi pump. <!--- TODO : Test how long it's actually worth degassing, with a pressure jauge and/or ideaaly with something like a sensor of oxygen and/or air directly in the mixture, as it will likely tends asymptotically towards a pressure equilibrium and thus not worth pumping forever. --->
-- Secure the tube in a mineral (check?) oil bath with wire or a metal holder.
-- Heat this in the oven at 90°C for ~48 h until fully polymerized. (AP: 90°C for ~48 h, OMT: 140°C for days)
-- To avoid a thermal shock, progressively cool the oven back down to room temperature before pulling out the nanocomposite and glassware.
+- Keep the test tube under vacuum in the hot ultrasonic bath (∼60 °C) for ~7 h until the mixture has a syrup-like consistency. <!--- TODO merge with next TODO too(!): watch out for potential glass breaking & get a temperature data logger for the ultrasonic bath so we can state an average temperature. (If glass breaking prevents vacuuming all the time and/or we are concious about wasting water, add this step "- Degas one last time for at least 10 min with the tube still in the hot bath using the Venturi pump." and possibly a nitrogen purge if we find out if it's better to finish on this. TODO : If possible, test how long it's actually worth degassing, with a pressure jauge and/or idealy with something like a sensor of oxygen and/or air directly in the mixture, as it will likely tends asymptotically towards a pressure equilibrium and thus not worth pumping forever. That might also help pinpoint the conditions in which the small test tubes tend to break during polymerization :( --->
+- Secure the tube in a mineral oil bath with wire or a heat-resistant holder.
+- Open the valve on top of the pipe behind the oven to ensure proper evacuation.
+- Place the glass tube assembly in the oven.
+- Heat at 90°C for ~48 h until fully polymerized. (AP: 90°C for ~48 h, OMT: 140°C for days)
+- Progressively cool the oven back down to room temperature before pulling out the nanocomposite and glassware. Note that the oven's timer can stop heating automatically :smiley:.
+- Close the exhaust pipe valve.
 
-_N.B. The first step with polymerization starting in the bath is required only for experiments on single NSCs, isolated without aggregates in the nanocomposite. Do not skip the following step however, degassing helps to prevent bubbles in the plastic and overpressure from a potential runaway polymerization._
-
+_N.B. The first step with polymerization starting in the bath is required only for experiments on single NSCs, isolated without aggregates in the nanocomposite._ <!--- Adapt this according to our findings relative to overpressure vs underpressure in the glass tube : Do not skip the following step however, degassing helps to prevent bubbles in the plastic and overpressure from a potential runaway polymerization.--->
 
 <!--- TO DISCUSS WITH AP, OMT, etc. & ADAPT PROTOCOL AS NEEDED : 
-pkoi y'avait du liquide qui sortait du four avec Arthur, cheminée-exhaust avec aiguille touchait la mixture? pkoi la polymérisation d'Olivier-Michel s'emballait et débordait du tube? P-e la dernière étape en surpression d'azote vs sous vide et/ou il n'y avait pas de cheminée? Est-ce que le stockage des préformes est mieux dans le four sous vide ou sous azote? L'azote est probablement mieux pour ralentir la diffusion d'oxygène, mais p-e plus à risque de laisser des bulles lors du processing des préformes? Ehsan & Frej font du moulage sous vide...
+Investigate glass beaking cause: implosion(vacuum underpressure) or explosion (nitrogen over pressure in relation with pkoi y'avait du liquide qui sortait du four avec Arthur, cheminée-exhaust avec aiguille touchait la mixture? pkoi la polymérisation d'Olivier-Michel s'emballait et débordait du tube? P-e la dernière étape en surpression d'azote vs sous vide et/ou il n'y avait pas de cheminée? Est-ce que le stockage des préformes est mieux dans le four sous vide ou sous azote? L'azote est probablement mieux pour ralentir la diffusion d'oxygène, mais p-e plus à risque de laisser des bulles lors du processing des préformes? Ehsan & Frej font du moulage sous vide...
 --->
-
 
 <!--- UNDER CONSTRUCTION :
 ### Nanocomposite Stripping & Annealing ### 
 ARTHUR :  Un recuit durant au moins 24 h à 70˚C est ensuite nécessaire afin de libérer les tensions résiduelles du polymère, de même que pour évacuer l’humidité dans le nanocomposite, susceptible de créer des bullesaux interfaces lors de l’étirage.
 - Check with Ehsan for a better word than stripping
 - consulter pour réduire les chances de se couper sur des tessons de verre
-- four sous vide pour bulles, mais pas trop préparer d'avance pour préserver les cQDs
+- four sous vide pour bulles, mais pas trop préparer d'avance pour préserver les NSCs
 - Storing preforms: azote mais bulles vs done ones in drawer
 
 ### Main Observations ###
-List pros and cons of the nanocomposite properties that were characterized, referring & linking to the corresponding research notebook entry.
+- The nanocomposite volume shrinks by ~...% relative to the initial monomer, thus NSC doping concentrations must be re-calculated accordingly. (TODO: evaluate by water dispoacement and check if it tracks with calculations from absorption curves of cQD cores b4 vs after.)
+-...
+Also list pros and cons of the nanocomposite properties that were characterized, referring & linking to the example sample and research notebook Airtable records.
 
 **References**
 - our paper, unless it's at the top, but check it for other refs that should be here
@@ -122,8 +125,6 @@ x  To prevent aggregation of the cQDs, a preliminary polymerization stage was ca
 x the samples were placed in an oven at 90 °C for 48 h until fully polymerized.
 --->
 
-
-
 <!---
 TODO : The following needs to be moved in its own file for the 2 main heading H1 or otherwise separated and better organized:
 --->
@@ -131,8 +132,10 @@ TODO : The following needs to be moved in its own file for the 2 main heading H1
 
 <!--- UNDER CONSTRUCTION
 ## Nanosemiconductor Purification ##
+- Fume Hood
 - Centrifuge tubes (Eppendorf)
-- Micropipettes
+- Micropipettes and suitable tips
+- Solvents
 TODO : Everything here, the concept and a full detailed protocol needs to be written. The following from Carly can inspire, but it's meant first for synthesis and polymerization: 
 
 CARLY
@@ -147,49 +150,51 @@ En parallèle, un certain volume de cQDs dans une solution d’hexane est transv
 **Resources on Precipitation and Centrifugation**
 --->
 
+
 ## Monomer Purification - Milliscale Column Chromatography ##
 
 Monomers are usually stabilized (stab.) with inhibitors preventing unintentional polymerization and should be kept refrigerated (unless it says otherwise on the bottle). A purification step is thus required to get rid of the inhibitors and enable polymerization.
  
 ## For ~10 cm plastic preforms, diameter of? ##
-_This protocol has been tested so far with styrene._
+_This protocol has been tested so far with styrene from ...._
 
-<!--- Add Cie provider names + grades,  hm moins bon dans un concept de protocole générique. P-e faire un tableau listing of matchig chemicals referred with a, b, c,... in the following list? --->
+<!--- TODO: Add Cie providing monomer + grades above, hm moins bon dans un concept de protocole générique. P-e tourner en tableau listing of matching chemicals referred with a, b, c,... si ça s'allonge et qu'il faut modifier les particules ou autre pour que ça marche? Also confirm how much monomer a single column can purify and modify the N.B. as needed. --->
 ### Chemicals & Furnitures ###
-- More than 10 mL of liquid monomer
+- Slightly more than the amount of liquid monomer required for the polymerization
 - Pasteur pipette and its bulb
 - Small amount of glass wool and a stick to push it in the pipette
 - Funnel fitting the Pasteur pipette 
 - Basic alumina powder : Al<sub>2</sub>O<sub>3</sub> particles sieved by a 60 mesh (Alfa Aesar, Brockmann & Schodder activity grade I) 
+- Micropipettes and suitable tips
 - Small beakers
 
 ### Column Packing ###
-- Plug the bottom of the Pasteur pipette with glass wool to prevent the particles from leaking out at the next step. (?with the end chopped off, probably not necessary when pushing with a Pipette bulb)
+- Plug the bottom of the Pasteur pipette with glass wool to prevent the particles from leaking out at the next step.
 - Clamp the pipette to a stand.
 - Using a funnel, fill the pipette up to its indent with the Al<sub>2</sub>O<sub>3</sub> particles.
 - To tamp down the particles by applying air pressure, put the bulb on top of the column and squeeze it, then remove it while still squeezed.
 
+_N.B. Each column can purify up to ~12 mL of styrene._  
+
 ### Monomer Loading ### 
  - Place an empty beaker under the Pasteur pipette to collect the purified monomer.
- - Put more than 10 mL of monomer in another beaker.
- - Pour monomer into the column, nearly filling it.
- - To accelerate the flow, but making sure sure the monomer level does not go below the top of the particles, place the bulb on the pipette and squeeze it, then remove it while still squeezed.
+ - Put the desired amount of monomer in another beaker.
+ - With a micropipette, pour some monomer liquid into the column, nearly filling it.
+ - To accelerate the flow while making sure sure the monomer level does not go below the top of the particles, place the bulb on the pipette and squeeze it, then remove it while still squeezed.
  - Alternatively, let gravity do the work while you do something alse, but keeping an eye on the particles to avoid drying them out.
- - Add monomer to the column until it is all purified.
-
-_N.B. Each column can purify up to ~12 mL of styrene._  
+ - Add monomer to the column until it is all purified. 
  
 ## Column Disposal ## 
 - Place a container below the Pasteur pipette to transfer waste afterwards in the proper disposal bin.
-- Load the column with hexane then acetone to flush out the remaining monomer, again squeezing a bulb on top to accelerate the solvant flow. 
+- Load the column with hexane then acetone to flush out remaining monomers, again squeezing a bulb on top to accelerate the solvent flow. 
 - Empty the waste container into the white plastic jug for nonhalogenated solvents.
 - With the container back under the pipette, turn the latter upside down in the clamp.
 - Let this dry overnight in a fumehood until the column is emptied of particles, gently tapping it at the end if necessary.
 - To speed up drying, air or nitrogen gas(too costly? check with Stéphane) can be flowed through the column.
-- Dispose of the particles in the white trash can dedicated to silica and alumina.
+- Dispose of the alumina particles in the white trash can dedicated to them.
 - The Pasteur pipette can be reused for the same monomer or put in the glassware waste bin after removing the glass wool.
  
-<!--- **Try the slurry method for bigger volumes with the 3it crew** ---> 
+<!--- TODO: Eventually try the slurry method for bigger volumes ---> 
 
 **Resources on Column Chromatography**
 <!---
@@ -207,19 +212,23 @@ TODO : format properly as references, checking my google docs CCV & revtex to se
 
 
 ## Resources on Other Separation Techniques ##
-<!---
-TODO : format properly as references & add the wikipedia purification page
---->
 - <a href="https://fac.umc.edu.dz/inataa/assets/files/Cours-en-Ligne/L2SA/Chimie_analytique_techniques_de_separation.pdf"> https://fac.umc.edu.dz/inataa/assets/files/Cours-en-Ligne/L2SA/Chimie_analytique_techniques_de_separation.pdf</a> [French] <!--- TODO : find a better one --->
 - Distillation : <a href="https://www.techniques-ingenieur.fr/base-documentaire/procedes-chimie-bio-agro-th2/operations-unitaires-separation-gaz-liquide-42324210/distillation-absorption-j2610/">https://www.techniques-ingenieur.fr/base-documentaire/procedes-chimie-bio-agro-th2/operations-unitaires-separation-gaz-liquide-42324210/distillation-absorption-j2610/</a> [French]
 
 
 
-
+<!---
+TODO : format properly as references & add the wikipedia purification page
+--->
 # basic-techniques # (maybe split between basic and intermediate?)
 
 Proper safety and disposal methods must be learned first, study attentively the wikiOMC page <!--- TODO : ...name & link.. + develop a page on cristal growth like the series starting from http://dx.doi.org/10.1002/chemv.201200103 with lamer models as well and more theory :) + a page on polarity vs polarisability 
 --->
+
+## Vacuum & cryogenics ##
+...safety
+TODO: Voir avec Mario pour nous trouver une bonne formation de l'AVS ou autre
+
 
 ## Using a Balance ##
 <!---
@@ -230,14 +239,14 @@ TODO : add a short text including what is acceptably skipped from the video in o
 ## Using a Vortex Mixer ##
 ...
 
-## Using an Ultrasonic Bath ##
+## Ultrasonication ##
 ...
 
 ## Using an Oil Bath ##
 ...Safety.
 <a href="https://chem.libretexts.org/Bookshelves/Organic_Chemistry/Organic_Chemistry_Lab_Techniques_(Nichols)/01%3A_General_Techniques/1.04%3A_Heating_and_Cooling_Methods/1.4H%3A_Water_Sand_and_Oil_Baths">https://chem.libretexts.org/Bookshelves/Organic_Chemistry/Organic_Chemistry_Lab_Techniques_(Nichols)/01%3A_General_Techniques/1.04%3A_Heating_and_Cooling_Methods/1.4H%3A_Water_Sand_and_Oil_Baths</a>
 
-## Using a Centrifuge ##
+## Centrifugation ##
 ...safety.
 
 - <a href="https://handling-solutions.eppendorf.com/sample-handling/centrifugation/safe-use-of-centrifuges/centrifuge-safety/">https://handling-solutions.eppendorf.com/sample-handling/centrifugation/safe-use-of-centrifuges/centrifuge-safety/</a>
@@ -249,11 +258,24 @@ TODO : add a short text including what is acceptably skipped from the video in o
 <a href="https://web.uvic.ca/~berryde/techniques/degas.pdf">https://web.uvic.ca/~berryde/techniques/degas.pdf</a>
 <!--- TODO : Since pumping and cryogenic techniques seem hard to find (unless I don't have the right keywords?), possibly make a whole wiki section for general degassing and vacuuming, from liguids to vacuum chambers --->
 
-## Using a Schlenk Line ##
-... safety. 
-<a href="https://schlenklinesurvivalguide.com/">https://schlenklinesurvivalguide.com/</a>
+## Cleaning Glassware ##
+- NSC synthesis flasks...Bain de bases : KOH + EtOH + 1 ou i-P??OH, I can't read the last one on the pails :(
 
-**General Resources**
+## Using a Glovebox ##
+... safety
+<a href="http://www.ilpi.com/inorganic/glassware/glovebox.html">http://www.ilpi.com/inorganic/glassware/glovebox.html</a>
+
+
+## Using a Schlenk Line ##
+... safety. <a href="http://www.ilpi.com/inorganic/glassware/vacline.html">http://www.ilpi.com/inorganic/glassware/vacline.html</a>
+
+Copy pasted from resources, to adapt : To maintain a positive pressure on a reaction that is simply stirring, the bubbler should bubble once every few seconds. A greater flow wastes nitrogen and can bubble away volatile solvents. A lesser flow increases the chances of air diffusing into your apparatus.
+To prevent oil or mercury from splashing out of your bubbler, connect a piece of Tygon tubing to the outlet.
+
+- <a href="https://schlenklinesurvivalguide.com/">https://schlenklinesurvivalguide.com/</a>
+- <a href="http://www.ilpi.com/inorganic/glassware/index.html">http://www.ilpi.com/inorganic/glassware/index.html</a>
+
+## General Resources ##
 - <a href="https://chem.libretexts.org/Ancillary_Materials/Demos_Techniques_and_Experiments/General_Lab_Techniques">https://chem.libretexts.org/Ancillary_Materials/Demos_Techniques_and_Experiments/General_Lab_Techniques</a>
 - <a href="https://www.chemistryviews.org/?s=tips+and+tricks&orderby=relevance">https://www.chemistryviews.org/?s=tips+and+tricks&orderby=relevance</a>
 - <a href="https://edu.rsc.org/interactive-lab-primer-lab-techniques/115379.subject">https://edu.rsc.org/interactive-lab-primer-lab-techniques/115379.subject</a>
