@@ -65,7 +65,8 @@ _N.B. This section aims to protect air-sensitive NSCs by displacing oxygen. It c
 _N.B. The first step with polymerization starting in the bath is required only for experiments on single NSCs, isolated without aggregates in the nanocomposite._ <!--- Adapt this according to our findings relative to overpressure vs underpressure in the glass tube : Do not skip the following step however, degassing helps to prevent bubbles in the plastic and overpressure from a potential runaway polymerization.--->
 
 <!--- TO DISCUSS WITH AP, OMT, etc. & ADAPT PROTOCOL AS NEEDED : 
-Investigate glass beaking cause: implosion(vacuum underpressure) or explosion (nitrogen over pressure in relation with pkoi y'avait du liquide qui sortait du four avec Arthur, cheminée-exhaust avec aiguille touchait la mixture? pkoi la polymérisation d'Olivier-Michel s'emballait et débordait du tube? P-e la dernière étape en surpression d'azote vs sous vide et/ou il n'y avait pas de cheminée? Est-ce que le stockage des préformes est mieux dans le four sous vide ou sous azote? L'azote est probablement mieux pour ralentir la diffusion d'oxygène, mais p-e plus à risque de laisser des bulles lors du processing des préformes? Ehsan & Frej font du moulage sous vide...
+- Investigate glass beaking cause: implosion(vacuum underpressure) or explosion (nitrogen over pressure in relation with pkoi y'avait du liquide qui sortait du four avec Arthur, cheminée-exhaust avec aiguille touchait la mixture? pkoi la polymérisation d'Olivier-Michel s'emballait et débordait du tube? P-e la dernière étape en surpression d'azote vs sous vide et/ou il n'y avait pas de cheminée? 
+- Investigate the cause of bubble formation at both the nanocomposite and fiber step (if that's really bubbles and not dirt we see in the pictures =p) : Quelle est la contribution de l'humidité adsorbée vs celle des gaz dissous? Est-ce que le recuit des préformes est mieux dans le four sous vide ou sous azote? L'azote est probablement mieux pour ralentir la diffusion d'oxygène, mais p-e plus à risque de laisser des bulles lors du processing des préformes? Ehsan & Frej font du moulage sous vide...
 --->
 
 <!--- UNDER CONSTRUCTION :
@@ -78,6 +79,7 @@ ARTHUR :  Un recuit durant au moins 24 h à 70˚C est ensuite nécessaire afin d
 
 ### Main Observations ###
 - The nanocomposite volume shrinks by ~...% relative to the initial monomer, thus NSC doping concentrations must be re-calculated accordingly. (TODO: evaluate by water dispoacement and check if it tracks with calculations from absorption curves of cQD cores b4 vs after.)
+- The quantum yield of CdSe/CdS colloidal quantum dots drops by roughly 35%.
 -...
 Also list pros and cons of the nanocomposite properties that were characterized, referring & linking to the example sample and research notebook Airtable records.
 
@@ -85,48 +87,13 @@ Also list pros and cons of the nanocomposite properties that were characterized,
 - our paper, unless it's at the top, but check it for other refs that should be here
 - Francesco Meinardi, Annalisa Colombo, Kirill A. Velizhanin, Roberto Simonutti, MonicaLorenzon, Luca Beverina, Ranjani Viswanatha, Victor I. Klimov, and Sergio Brovelli. _Large-area luminescent solar concentrators based on Stokes-shift-engineered nanocrys-tals in a mass-polymerized PMMA matrix._ Nature Photonics 8(5), p. 392–399 (2014). <a href="https://doi.org/10.1038/nphoton.2014.54">https://doi.org/10.1038/nphoton.2014.54</a>
 
-**Resources on nanocomposites** 
+**Selected resources on nanocomposites** 
 - <a href="https://www.mdpi.com/2073-4360/4/1/275">https://www.mdpi.com/2073-4360/4/1/275</a>
 --->
 
-<!--- Remove the following versions once the above one is road tested
-### Purification du styrène ###
-- Pour  préparer les colonnes de purification, compacter une ouate de quartz dans une pipette pasteur. _NOTE : Chaque colonne peut purifier 10-12 ml de styrène._
-- Ajouter l'alumine 58 angstoms à l'aide d'un entonnoir.
-- Purifier le styrène et mettre de côté.
-- Nettoyer les colonnes à l'hexane puis à l'acétone.
-- Jeter l'hexane et l'acétone.
-- Laisser sécher sous la hotte. Lorsque sèche, vider l'alumine dans la poubelle blanche pour silice (habituellement à côté de la hotte #3) et mettre la pipette pasteur avec la ouate dans la poubelle de verre.
-### Purification des cQDs ###
-- Verser 32 µl. de cQDs (fiole CW#2 2018/12/19) dans un contenant pour centrifugation
-- Remplir à l'éthanol anhydre (habituellement du côté Boudreau)
-- Mettre 5 min à 10 000 RPM dans la centrifugeuse. NOTE : Ne pas oublier d'ajouter le Blank si nombre impair de contenant.
-- Vider l'éthanol anhydre.
-### Préparation des éprouvettes ###
-- Ajouter a 0.5 ml de styrène au contenant de centrifugation et disperser les QDs avec le bain ultrasonique. Verser dans l'éprouvette et répéter (1mI total)
-- Ajouter le styrène à l'aide d'un septum étanche.
-- Seller l'éprouvette à l'aide d'un septum étanche
-- Ajouter une aiguille dans le septum (cheminée/exhaust).
-- Bubbler à l'azote 3-5 min
-- Nettoyer les aiguilles à l'hexane puis à l'acétone. Jeter l'aiguille à usage unique (dans son étuis) dans la poubelle à coté de celle du verre
-- Faire le vide par effet Venturi. _NOTE : Attention de ne pas absorber de solution._
-- Agiter les éprouvettes  dans le bain sonique 1-2 min pour en retirer les gazes.
-- Répéter les étapes 17 et 18 trois fois.
-- Enfourner la solution et cuire à 140 °C (4.5 sur le vieux four).
-- A chaque 30 min, sortir les éprouvettes et les agiter au bain sonique pendant 1-2 min
-- Répéter l'étape 21 jusqu'à ce que le contenu des préformes soit visqueux
-### CARLY ###
-xTo prepare 10 cm preforms, commercial styrene was first filtered through a column containing Al2O3 particles to remove the polymerization inhibitor. 
-x A fixed volume of the cQD solution (Table 1) was further purified by precipitation and centrifugation with isopropyl alcohol then redispersed progressively in styrene and transferred to a glass test tube.
-x To initiate the radical polymerization, 60 mg of initiator Luperox A98 per 10 mL of purified styrene was added to the test tube. 
-x Oxygen was purged from the sample with nitrogen, and then the tube was sealed and kept under vacuum in an ultrasonic bath for a few minutes to remove residual oxygen.
-x  To prevent aggregation of the cQDs, a preliminary polymerization stage was carried out by placing the samples in a heated ultrasonic bath (∼60 °C) for 7 h until the nanocomposite mixture had a syrup-like consistency. 
- x After further removal of residual oxygen within the glass tubes still in the bath, 
-x the samples were placed in an oven at 90 °C for 48 h until fully polymerized.
---->
 
 <!---
-TODO : The following needs to be moved in its own file for the 2 main heading H1 or otherwise separated and better organized:
+TODO : The following needs to be moved in WikiOMC turned into Jupyter Notebook, separated and better organized:
 --->
 # preliminary-methods # 
 
@@ -144,7 +111,7 @@ cQD Synthesis and Dispersion. The cQDs prepared for this study consist of a CdSe
 For polymerization : A fixed volume of the cQD solution (Table 1) was further purified by precipitation and centrifugation with isopropyl alcohol then redispersed progressively in styrene and transferred to a glass test tube.
 
 ARTHUR
-En parallèle, un certain volume de cQDs dans une solution d’hexane est transvidé dans un tube de centrifugation. Ce dernier est rempli avec de l’éthanol anhydre, un mauvais solvant permettant de faire agréger les cQDs. Après centrifugation à 10 000rpm pendant 5 minutes,les cQD sont précipités au fond du tube de centrifugation. En remplissant le tube de centrifu-gation de styrène purifié, les cQD peuvent alors être récupérés et transvidés dans l’éprouvette contenant le reste du styrène. Cette purification des cQD permet à la fois de limiter la quan-tité de ligands en sursaturation dans la solution, mais surtout d’éviter d’avoir de l’hexane ensolution lors de la polymérisation. En effet, il a été observé que la présence d’hexane est àl’origine de bulle lors de l’étirage subséquent.
+En parallèle, un certain volume de cQDs dans une solution d’hexane est transvidé dans un tube de centrifugation. Ce dernier est rempli avec de l’éthanol anhydre, un mauvais solvant permettant de faire agréger les cQDs. Après centrifugation à 10 000rpm pendant 5 minutes,les cQD sont précipités au fond du tube de centrifugation. En remplissant le tube de centrifu-gation de styrène purifié, les cQD peuvent alors être récupérés et transvidés dans l’éprouvette contenant le reste du styrène. Cette purification des cQD permet à la fois de limiter la quantité de ligands en sursaturation dans la solution, mais surtout d’éviter d’avoir de l’hexane ensolution lors de la polymérisation. En effet, il a été observé que la présence d’hexane est àl’origine de bulle lors de l’étirage subséquent.
 
 
 **Resources on Precipitation and Centrifugation**
@@ -152,13 +119,11 @@ En parallèle, un certain volume de cQDs dans une solution d’hexane est transv
 
 
 ## Monomer Purification - Milliscale Column Chromatography ##
-
-Monomers are usually stabilized (stab.) with inhibitors preventing unintentional polymerization and should be kept refrigerated (unless it says otherwise on the bottle). A purification step is thus required to get rid of the inhibitors and enable polymerization.
- 
-## For ~10 cm plastic preforms, diameter of? ##
 _This protocol has been tested so far with styrene from ...._
 
-<!--- TODO: Add Cie providing monomer + grades above, hm moins bon dans un concept de protocole générique. P-e tourner en tableau listing of matching chemicals referred with a, b, c,... si ça s'allonge et qu'il faut modifier les particules ou autre pour que ça marche? Also confirm how much monomer a single column can purify and modify the N.B. as needed. --->
+Monomers are usually stabilized (stab.) with inhibitors preventing unintentional polymerization and should be kept refrigerated (unless it says otherwise on the bottle). A purification step is thus required to get rid of the inhibitors and enable polymerization.
+
+<!--- TODO: Add Cie providing monomer + grade above, hm moins bon dans un concept de protocole générique. P-e tourner en tableau listing of matching chemicals referred with a, b, c,... si ça s'allonge et qu'il faut modifier les particules ou autre pour que ça marche? Also confirm how much monomer a single column can purify and modify the N.B. as needed. --->
 ### Chemicals & Furnitures ###
 - Slightly more than the amount of liquid monomer required for the polymerization
 - Pasteur pipette and its bulb
