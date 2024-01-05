@@ -1,10 +1,10 @@
-# Short naming system of nanocomposites to brainstorm with the team in the new year! Something like comp3D-PS, nano3D-PS, poly3D-PS, PolyOrigin, NanoOrigin, CompOrigin, etc. # <!--- TODO : find a name and turn my todo comments in issues haha --->
+Short naming system of nanocomposites to brainstorm! Something like comp3D-PS, nano3D-PS, poly3D-PS, PolyOrigin, NanoOrigin, CompOrigin, etc.
 
-<!--- Published in:... Cite main paper here instead of somewhere through the manips? --->
+<!--- Published in:... Cite main paper here instead of at the end? --->
 
 _**For ~10 cm long polystyrene preforms x 13 mm diameter**_ (AP: 12.7 mm for 1/2" ID of PMMA tubes.)
 
-### Specific Safety Measures ###
+## Specific Safety Measures ##
 - When modifiying the core of the protocol, never leave the polymerization completely unattended until the substance is significantly viscous in case of <a href="https://sciencing.com/runaway-polymerization-7556.html">runaway polymerization</a> requiring to immediately turn off heating.
 - Check for slow bubbles in the bubbler when opening the inert gas valve. Excessive pressure could build up in the manifold in their absence.
 - Do not forget to open the valve on the gas evacuation pipe before turning on the oven, then and close it at the end of the manipulations.
@@ -16,8 +16,8 @@ TODO : check and implement ULaval's rules for unattended experiments, develop se
 --->
 
 <!--- TODO : Add Cie provider names + grades of chemicals--->
-### Chemicals & Furnitures ###
-- 10 mL of purified monomers (AP: 8 mL, especially since 10 mL doesn't fit into the size of test tube specified below!) 
+## Chemicals & Furnitures ##
+- 10 mL of purified styrene (AP: 8 mL, especially since 10 mL doesn't fit into the size of test tube specified below!) 
 - Precipitated nanosemiconductors (NSCs) in the desired amount<sup>*</sup>
 - 60 mg of benzoyl peroxide as polymerization initiator (Luperox A98) (AP: 120 mg per 15 mL styrene, OMT: initiator-free variant)
 - Fume hood
@@ -35,7 +35,7 @@ _N.B. The residual liquid with the NSC precipitate is volatile and may cause som
 
 <sup>*</sup> <!--- TODO : annotate include here the figure in our paper for optical density (?check OD def) + cQD concentration of increasingly orange samples <img src="/assets/original_nanocomposite.gif" alt="Optical density of nanocomposites with varying nanosemiconductor concentration"> N.B. if I put the assets folder high up, the asset link might need some dots --->
 
-### Dispersion of Nanosemiconductors in the Monomer ### 
+## Dispersion of Nanosemiconductors in the Monomer ## 
 - Add a known volume of purified liquid monomer to the tube of precipitated NSCs.
 - Hold the tube in an ultrasonic bath briefly to improve NSC dispersion.
 - Pour the mixture into the glass test tube.
@@ -44,7 +44,7 @@ _N.B. The residual liquid with the NSC precipitate is volatile and may cause som
 - Add 60 mg of initiator Luperox A98 to the tube. (!or adjusted proportional number)
 - Close the test tube with an airtight septum that can be pierced by syringe needles.
 
-### Degassing & Purging ###
+## Degassing & Purging ##
 - Put the glass tube under light vacuum with the Venturi pump, with the needle above the liquid level.
 - Turn on the heat on the ultrasonic bath and place the tube in it to enhance degassing for a few minutes. Note that the polymerization will already accelerate while heating.
 - Bubble inert gas through the mixture for a few minutes, with the metal needle below the mixture level and adding a second one above the liquid as exhaust. 
@@ -53,7 +53,7 @@ _N.B. The residual liquid with the NSC precipitate is volatile and may cause som
 
 _N.B. This section aims to protect air-sensitive NSCs by displacing oxygen. It can be shortened for preliminary tests when light diffusion (? to check if it's really correlated to oxygen or just any gas like nitogen, then and put explanation at the beginning of sentence) and PL stability of the resulting nanocomposite are not an issue._
 
-### Polymerization Reaction ###
+## Polymerization Reaction ##
 - Keep the test tube under vacuum in the hot ultrasonic bath (∼60 °C) for ~7 h until the mixture has a syrup-like consistency. <!--- TODO merge with next TODO too(!): watch out for potential glass breaking & get a temperature data logger for the ultrasonic bath so we can state an average temperature. (If glass breaking prevents vacuuming all the time and/or we are concious about wasting water, add this step "- Degas one last time for at least 10 min with the tube still in the hot bath using the Venturi pump." and possibly a nitrogen purge if we find out if it's better to finish on this. TODO : If possible, test how long it's actually worth degassing, with a pressure jauge and/or idealy with something like a sensor of oxygen and/or air directly in the mixture, as it will likely tends asymptotically towards a pressure equilibrium and thus not worth pumping forever. That might also help pinpoint the conditions in which the small test tubes tend to break during polymerization :( --->
 - Secure the tube in a mineral oil bath with wire or a heat-resistant holder.
 - Open the valve on top of the pipe behind the oven to ensure proper evacuation.
@@ -70,8 +70,9 @@ _N.B. The first step with polymerization starting in the bath is required only f
 --->
 
 <!--- UNDER CONSTRUCTION :
-### Nanocomposite Stripping & Annealing ### 
+## Nanocomposite Stripping & Annealing ## 
 ARTHUR :  Un recuit durant au moins 24 h à 70˚C est ensuite nécessaire afin de libérer les tensions résiduelles du polymère, de même que pour évacuer l’humidité dans le nanocomposite, susceptible de créer des bullesaux interfaces lors de l’étirage.
+OMT : 
 - Check with Ehsan for a better word than stripping
 - consulter pour réduire les chances de se couper sur des tessons de verre
 - four sous vide pour bulles, mais pas trop préparer d'avance pour préserver les NSCs
@@ -92,98 +93,15 @@ Also list pros and cons of the nanocomposite properties that were characterized,
 --->
 
 
-<!---
+
+
+
+<!---------------------------------------------------------------------------------------
 TODO : The following needs to be moved in WikiOMC turned into Jupyter Notebook, separated and better organized:
---->
-# preliminary-methods # 
-
-<!--- UNDER CONSTRUCTION
-## Nanosemiconductor Purification ##
-- Fume Hood
-- Centrifuge tubes (Eppendorf)
-- Micropipettes and suitable tips
-- Solvents
-TODO : Everything here, the concept and a full detailed protocol needs to be written. The following from Carly can inspire, but it's meant first for synthesis and polymerization: 
-
-CARLY
-cQD Synthesis and Dispersion. The cQDs prepared for this study consist of a CdSe core (diameter ∼3.2 nm) surrounded by a CdS shell, which were synthesized following the methods by Nasilowski et al.63 Afterward, the cQDs were purified using several centrifugation cycles with isopropyl alcohol and hexanes as the cQD nonsolvent and solvent, respectively, then redispersed in 10 mL of hexane to obtain a 6 μM concentration.
-
-For polymerization : A fixed volume of the cQD solution (Table 1) was further purified by precipitation and centrifugation with isopropyl alcohol then redispersed progressively in styrene and transferred to a glass test tube.
-
-ARTHUR
-En parallèle, un certain volume de cQDs dans une solution d’hexane est transvidé dans un tube de centrifugation. Ce dernier est rempli avec de l’éthanol anhydre, un mauvais solvant permettant de faire agréger les cQDs. Après centrifugation à 10 000rpm pendant 5 minutes,les cQD sont précipités au fond du tube de centrifugation. En remplissant le tube de centrifu-gation de styrène purifié, les cQD peuvent alors être récupérés et transvidés dans l’éprouvette contenant le reste du styrène. Cette purification des cQD permet à la fois de limiter la quantité de ligands en sursaturation dans la solution, mais surtout d’éviter d’avoir de l’hexane ensolution lors de la polymérisation. En effet, il a été observé que la présence d’hexane est àl’origine de bulle lors de l’étirage subséquent.
-
-
-**Resources on Precipitation and Centrifugation**
---->
-
-
-## Monomer Purification - Milliscale Column Chromatography ##
-_This protocol has been tested so far with styrene from ...._
-
-Monomers are usually stabilized (stab.) with inhibitors preventing unintentional polymerization and should be kept refrigerated (unless it says otherwise on the bottle). A purification step is thus required to get rid of the inhibitors and enable polymerization.
-
-<!--- TODO: Add Cie providing monomer + grade above, hm moins bon dans un concept de protocole générique. P-e tourner en tableau listing of matching chemicals referred with a, b, c,... si ça s'allonge et qu'il faut modifier les particules ou autre pour que ça marche? Also confirm how much monomer a single column can purify and modify the N.B. as needed. --->
-### Chemicals & Furnitures ###
-- Slightly more than the amount of liquid monomer required for the polymerization
-- Pasteur pipette and its bulb
-- Small amount of glass wool and a stick to push it in the pipette
-- Funnel fitting the Pasteur pipette 
-- Basic alumina powder : Al<sub>2</sub>O<sub>3</sub> particles sieved by a 60 mesh (Alfa Aesar, Brockmann & Schodder activity grade I) 
-- Micropipettes and suitable tips
-- Small beakers
-
-### Column Packing ###
-- Plug the bottom of the Pasteur pipette with glass wool to prevent the particles from leaking out at the next step.
-- Clamp the pipette to a stand.
-- Using a funnel, fill the pipette up to its indent with the Al<sub>2</sub>O<sub>3</sub> particles.
-- To tamp down the particles by applying air pressure, put the bulb on top of the column and squeeze it, then remove it while still squeezed.
-
-_N.B. Each column can purify up to ~12 mL of styrene._  
-
-### Monomer Loading ### 
- - Place an empty beaker under the Pasteur pipette to collect the purified monomer.
- - Put the desired amount of monomer in another beaker.
- - With a micropipette, pour some monomer liquid into the column, nearly filling it.
- - To accelerate the flow while making sure sure the monomer level does not go below the top of the particles, place the bulb on the pipette and squeeze it, then remove it while still squeezed.
- - Alternatively, let gravity do the work while you do something alse, but keeping an eye on the particles to avoid drying them out.
- - Add monomer to the column until it is all purified. 
- 
-## Column Disposal ## 
-- Place a container below the Pasteur pipette to transfer waste afterwards in the proper disposal bin.
-- Load the column with hexane then acetone to flush out remaining monomers, again squeezing a bulb on top to accelerate the solvent flow. 
-- Empty the waste container into the white plastic jug for nonhalogenated solvents.
-- With the container back under the pipette, turn the latter upside down in the clamp.
-- Let this dry overnight in a fumehood until the column is emptied of particles, gently tapping it at the end if necessary.
-- To speed up drying, air or nitrogen gas(too costly? check with Stéphane) can be flowed through the column.
-- Dispose of the alumina particles in the white trash can dedicated to them.
-- The Pasteur pipette can be reused for the same monomer or put in the glassware waste bin after removing the glass wool.
- 
-<!--- TODO: Eventually try the slurry method for bigger volumes ---> 
-
-**Resources on Column Chromatography**
-<!---
-TODO : format properly as references, checking my google docs CCV & revtex to settle on a style
---->
-- <a href="https://www.orgchemboulder.com/Technique/Procedures/Columnchrom/Procedure.shtml">https://www.orgchemboulder.com/Technique/Procedures/Columnchrom/Procedure.shtml</a> [English]
-- <a href="https://www.orgchemboulder.com/Labs/Experiments/8%20-%20Column%20Chromatography.pdf">https://www.orgchemboulder.com/Labs/Experiments/8%20-%20Column%20Chromatography.pdf</a> [English]
-- <a href="https://www.orgchemboulder.com/Technique/Procedures/Columnchrom/Columnchrom.shtml">https://www.orgchemboulder.com/Technique/Procedures/Columnchrom/Columnchrom.shtml</a> [English]
-- <a href="https://doi.org/10.1002/chemv.201200074">https://doi.org/10.1002/chemv.201200074</a> [English]
-- <a href="https://chem.libretexts.org/Bookshelves/Organic_Chemistry/Organic_Chemistry_Lab_Techniques_(Nichols)/02%3A_Chromatography/2.04%3A_Column_Chromatography/2.4B%3A_Microscale_(Pipette)_Columns">https://chem.libretexts.org/Bookshelves/Organic_Chemistry/Organic_Chemistry_Lab_Techniques_(Nichols)/02%3A_Chromatography/2.04%3A_Column_Chromatography/2.4B%3A_Microscale_(Pipette)_Columns</a> [English]
-- <a href="https://www.chemistryviews.org/details/education/2040151/Tips_and_Tricks_for_the_Lab_Column_Packing/">https://www.chemistryviews.org/details/education/2040151/Tips_and_Tricks_for_the_Lab_Column_Packing/</a> [English]
-- section 2.2 Chromatographie préparative de <a href="https://doi.org/10.51257/a-v2-p1445">https://doi.org/10.51257/a-v2-p1445</a> [French]
-- <a href="https://www.silicycle.com/ca/media/pdf/applications/appn-sf002-0-brockmann-schodder-activity-test.pdf">https://www.silicycle.com/ca/media/pdf/applications/appn-sf002-0-brockmann-schodder-activity-test.pdf</a> [English]
-<!--- TODO : find a good video from the channels on Quick Notes--->
-
-
-## Resources on Other Separation Techniques ##
-- <a href="https://fac.umc.edu.dz/inataa/assets/files/Cours-en-Ligne/L2SA/Chimie_analytique_techniques_de_separation.pdf"> https://fac.umc.edu.dz/inataa/assets/files/Cours-en-Ligne/L2SA/Chimie_analytique_techniques_de_separation.pdf</a> [French] <!--- TODO : find a better one --->
-- Distillation : <a href="https://www.techniques-ingenieur.fr/base-documentaire/procedes-chimie-bio-agro-th2/operations-unitaires-separation-gaz-liquide-42324210/distillation-absorption-j2610/">https://www.techniques-ingenieur.fr/base-documentaire/procedes-chimie-bio-agro-th2/operations-unitaires-separation-gaz-liquide-42324210/distillation-absorption-j2610/</a> [French]
-
-
+------------------------------------------------------------------------------------------->
 
 <!---
-TODO : format properly as references & add the wikipedia purification page
+TODO : format references properly
 --->
 # basic-techniques # (maybe split between basic and intermediate?)
 
