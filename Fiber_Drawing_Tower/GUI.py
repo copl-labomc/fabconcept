@@ -4,6 +4,7 @@ import numpy as np
 import time
 from simple_pid import PID
 import pyfirmata
+import re
 
 
 class GUI_TourAFibre:
