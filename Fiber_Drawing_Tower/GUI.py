@@ -193,7 +193,7 @@ class GUI_TourAFibre:
 
     def createCSV(self):
         if self.check.get() == 1:
-            self.csv = CreateCSV(self.entryNameOfFile.get(),'/Users/josephgaulin/Documents/GitHub/nanocomposite-fab/Fiber_Drawing_Tower/Values')
+            self.csv = CreateCSV(self.entryNameOfFile.get(),'./Fiber_Drawing_Tower/Values')
         else:
             pass
 
