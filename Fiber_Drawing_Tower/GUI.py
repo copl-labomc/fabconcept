@@ -6,7 +6,6 @@ from simple_pid import PID
 import pyfirmata
 import re
 
-
 class GUI_TourAFibre:
     def __init__(self, com_port):
         '''
