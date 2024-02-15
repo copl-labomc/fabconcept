@@ -4,7 +4,7 @@ import numpy as np
 import time
 from simple_pid import PID
 import pyfirmata
-import re
+
 
 class GUI_TourAFibre:
     def __init__(self, com_port):
@@ -269,6 +269,6 @@ class DrawingSimulation:
         return [fiber_diameter, pids, ts]
  
 
-GUI_TourAFibre('/dev/cu.usbmodem1101')
+GUI_TourAFibre('COM4')
 
 
