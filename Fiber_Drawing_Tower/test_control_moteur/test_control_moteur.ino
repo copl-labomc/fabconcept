@@ -59,6 +59,7 @@ void loop() {
     }
     else if (command == 'k') {
       preform_motor_running = false;
+      new_speed_preform = 0;
     }
   }
 
