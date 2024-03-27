@@ -4,8 +4,8 @@ from tkinter import ttk
 
 ### CONNECTION SECTION 
 
-# commPort = 'COM4'
-# ser = serial.Serial(commPort, baudrate = 9600, timeout = 1)
+commPort = 'COM4'
+ser = serial.Serial(commPort, baudrate = 9600, timeout = 1)
 
 ### GUI
  
@@ -88,8 +88,7 @@ def checkSerialPort():
                 pass
     except UnicodeDecodeError:
         pass
-# root.after(100, checkSerialPort)  # Appel récursif après 100 ms
-# root.mainloop()
+    
 while True:
     root.update()
-    # checkSerialPort()
+    checkSerialPort()
