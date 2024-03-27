@@ -10,7 +10,7 @@ const int preform_dirPin = 3;
 int new_speed_cabestan;
 int new_speed_preform; 
 const int cabestan_max_speed = 1000;
-const int preform_max_speed = 5000;
+const int preform_max_speed = 1000;
 
 char motor_preform_dir;
 // Creates an instance

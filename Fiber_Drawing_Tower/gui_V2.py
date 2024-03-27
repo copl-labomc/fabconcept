@@ -13,7 +13,7 @@ root = tk.Tk()
 root.title("Fiber Tower")
 
 # Simply set the theme
-root.tk.call("source", r"C:\Users\alexa\Desktop\nanocomposite-fab\Fiber_Drawing_Tower\Azure-ttk-theme-main\azure.tcl")
+root.tk.call("source", r"Fiber_Drawing_Tower\Azure-ttk-theme-main\azure.tcl")
 root.tk.call("set_theme", "dark")
 
 
@@ -88,7 +88,7 @@ def checkSerialPort():
                 pass
     except UnicodeDecodeError:
         pass
-    
+
 while True:
     root.update()
     checkSerialPort()
