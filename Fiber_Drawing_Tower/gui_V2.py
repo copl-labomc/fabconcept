@@ -12,10 +12,9 @@ ser = serial.Serial(commPort, baudrate = 9600, timeout = 1)
 root = tk.Tk()
 root.title("Fiber Tower")
 
-# Simply set the theme
-root.tk.call("source", r"Fiber_Drawing_Tower\Azure-ttk-theme-main\azure.tcl")
-root.tk.call("set_theme", "dark")
-
+# # Simply set the theme
+# root.tk.call("source", r"Azure-ttk-theme-main\azure.tcl")
+# root.tk.call("set_theme", "dark")
 
 ## PREFORM STEPPER SECTION 
 
