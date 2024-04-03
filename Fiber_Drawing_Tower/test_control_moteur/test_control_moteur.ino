@@ -7,11 +7,12 @@ const int cabestan_stepPin = 4;
 const int cabestan_dirPin = 5;
 const int preform_stepPin = 2;
 const int preform_dirPin = 3;
+float offset = 0.07;
 int new_speed_cabestan;
 int new_speed_preform; 
 float diameter_tension;
 float conversion_factor_diameter_tension = 0.5;
-float diameter;
+float diameter = 0;
 const int cabestan_max_speed = 999;
 const int preform_max_speed = 999;
 
@@ -24,6 +25,11 @@ void controlCabestan(int cabestan_max_speed) {
   cabestan_stepper.setSpeed(new_speed_cabestan);
   cabestan_stepper.runSpeed();
 }
+float mapf(float value, float fromLow, float fromHigh, float toLow, float toHigh) {
+  float result;
+  result = (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow;
+  return result;
+} 
 
 void controlPreformMotor(char dir, int preform_speed) {
   if (dir == 't'){
@@ -77,10 +83,12 @@ void loop() {
     int sensor2Value = analogRead(A1);
     new_speed_preform = map(sensor2Value, 0, 1023, 0, preform_max_speed);
     controlPreformMotor(motor_preform_dir, new_speed_preform);
+    float diameter_sensor = analogRead(A2);
+    diameter_tension = mapf(diameter_sensor, 0, 1023, 0.0, 5.0);
+    Serial.print(diameter_sensor);
+    diameter = diameter_tension / conversion_factor_diameter_tension + offset;
   }
-  float diameter_sensor = analogRead(A2);
-  diameter_tension = map(diameter_sensor, 0, 1023, 0, 5);
-  diameter = diameter_tension / conversion_factor_diameter_tension;
+
   Serial.print(new_speed_cabestan);
   Serial.print(",");
   Serial.print(new_speed_preform);
