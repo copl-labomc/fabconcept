@@ -9,9 +9,9 @@ const int preform_stepPin = 2;
 const int preform_dirPin = 3;
 int new_speed_cabestan;
 int new_speed_preform; 
-int diameter_tension;
+float diameter_tension;
 float conversion_factor_diameter_tension = 0.5;
-int diameter;
+float diameter;
 const int cabestan_max_speed = 999;
 const int preform_max_speed = 999;
 
@@ -78,7 +78,7 @@ void loop() {
     new_speed_preform = map(sensor2Value, 0, 1023, 0, preform_max_speed);
     controlPreformMotor(motor_preform_dir, new_speed_preform);
   }
-  int diameter_sensor = analogRead(A2);
+  float diameter_sensor = analogRead(A2);
   diameter_tension = map(diameter_sensor, 0, 1023, 0, 5);
   diameter = diameter_tension / conversion_factor_diameter_tension;
   Serial.print(new_speed_cabestan);
