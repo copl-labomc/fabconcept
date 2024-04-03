@@ -86,7 +86,6 @@ void loop() {
   }
   float diameter_sensor = analogRead(A2);
   diameter_tension = mapf(diameter_sensor, 0, 1023, 0.0, 5.0);
-  Serial.print(diameter_sensor);
   diameter = diameter_tension / conversion_factor_diameter_tension + offset;
   Serial.print(new_speed_cabestan);
   Serial.print(",");
