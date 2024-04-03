@@ -88,7 +88,7 @@ speed_cabestan.grid(row=1, column=0, padx=5)
 parameter_frame = tk.LabelFrame(root, text="Parameters", height=100,width=150)
 parameter_frame.grid(row=0, column=4, rowspan=3, columnspan=3, padx=5, pady=5)
 diameter = tk.Label(parameter_frame, text="Diameter :")
-diameter.grid(row=0, column=0, padx=5)
+diameter.grid(row=0, column=0,columnspan=2, padx=5)
 
 
 
