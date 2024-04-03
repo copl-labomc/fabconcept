@@ -83,12 +83,11 @@ void loop() {
     int sensor2Value = analogRead(A1);
     new_speed_preform = map(sensor2Value, 0, 1023, 0, preform_max_speed);
     controlPreformMotor(motor_preform_dir, new_speed_preform);
-    float diameter_sensor = analogRead(A2);
-    diameter_tension = mapf(diameter_sensor, 0, 1023, 0.0, 5.0);
-    Serial.print(diameter_sensor);
-    diameter = diameter_tension / conversion_factor_diameter_tension + offset;
   }
-
+  float diameter_sensor = analogRead(A2);
+  diameter_tension = mapf(diameter_sensor, 0, 1023, 0.0, 5.0);
+  Serial.print(diameter_sensor);
+  diameter = diameter_tension / conversion_factor_diameter_tension + offset;
   Serial.print(new_speed_cabestan);
   Serial.print(",");
   Serial.print(new_speed_preform);
