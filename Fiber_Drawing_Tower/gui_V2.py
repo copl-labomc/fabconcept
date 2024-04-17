@@ -101,7 +101,7 @@ parameter_frame.grid(row=0, column=4, rowspan=3, columnspan=3, padx=5, pady=5)
 diameter = tk.Label(parameter_frame, text="Diameter Measurement:")
 diameter.grid(row=0, column=0,columnspan=4, padx=5)
 # input for the diameter desired
-diameter_desired = tk.Label(parameter_frame, text='Diameter desired')
+diameter_desired = tk.Label(parameter_frame, text='Diameter desired :')
 diameter_desired.grid(row=1, column=0)
 diameter_entry = tk.Entry(parameter_frame)
 diameter_entry.grid(row=1, column=1)
@@ -119,7 +119,6 @@ def checkSerialPort():
             # Read the output line of the arduino and make a list of each element
             recentPacket = ser.readline()
             recentPacketString = recentPacket.decode('utf').split(",")
-            print(recentPacketString)
             # Update the value for each printed values if its a float (can be an altered value)
             
             try : 
