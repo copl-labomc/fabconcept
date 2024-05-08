@@ -134,7 +134,7 @@ def checkSerialPort():
     # Try to avoid bad bytes
     except UnicodeDecodeError:
         pass
-running = True;
+running = True
 while True:
     root.update()
     if not running: 

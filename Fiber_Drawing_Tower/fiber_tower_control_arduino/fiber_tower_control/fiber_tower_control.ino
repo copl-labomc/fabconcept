@@ -41,8 +41,8 @@ float mapf(float value, float fromLow, float fromHigh, float toLow, float toHigh
 } 
 
 // Function adjusting the cabestan motor speed with the value measured trought the potentiometer
-void controlCabestan(int cabestan_max_speed) {
-  cabestan_stepper.setSpeed(new_speed_cabestan);
+void controlCabestan(int cabestan_speed) {
+  cabestan_stepper.setSpeed(cabestan_speed);
   cabestan_stepper.runSpeed();
 }
 
@@ -103,7 +103,7 @@ void loop() {
   if (cabestan_running) {
     int sensorValue = analogRead(A0);
     new_speed_cabestan = map(sensorValue, 0, 1023, 0, cabestan_max_speed);
-    controlCabestan(cabestan_max_speed);
+    controlCabestan(new_speed_cabestan);
     
   }
   // if flag for the preform is true read the tension of potentiometer to adapt the speed
