@@ -4,35 +4,31 @@ from tkinter import ttk
 import time
 import serial
 
-
-
-
-
-
 timer = time.time()
-### CONNECTION SECTION 
+## CONNECTION SECTION 
 # create a COM4 communication "ideally" this should be a droplist menu 
 
 def serial_ports():
     """ Finds all the port in use and returns it as a list
     """
     
+    #Try every possible port 
     ports = ['COM%s' % (i + 1) for i in range(256)]
 
     result = []
     for port in ports:
         try:
             s = serial.Serial(port)
-            s.close()
+            
             result.append(port)
+            s.close()
         except (OSError, serial.SerialException):
             pass
     return result
 
-print(serial_ports())
+Available_ports = serial_ports()
 
-
-commPort = serial_ports()[0]
+commPort = Available_ports[0]
 
 global ser
 ser = serial.Serial(commPort, baudrate = 9600, timeout = 1)
@@ -46,7 +42,7 @@ def close_window():
 ### GUI
 
 # Create a tk application 
- 
+
 root = tk.Tk()
 root.title("Fiber Tower")
 root.geometry("500x300")
@@ -114,6 +110,7 @@ def send_diameter():
 
         ser.write(b'e')
 
+
 # Création du bouton Start en vert
 button_start = tk.Button(cabestan_frame, text="Start", command=start_cabestan, font=("Segoe Ui", 12), bg="green", fg="white")
 button_start.grid(row=0, column=0, padx=5)
@@ -127,10 +124,27 @@ button_stop.grid(row=0, column=1, padx=5)
 speed_cabestan = tk.Label(cabestan_frame, text="Speed:")
 speed_cabestan.grid(row=1, column=0, padx=5)
 
+##Connection frame section
+connection_frame = tk.LabelFrame(root, text="Connection (WIP)", height=50,width=150)
+connection_frame.grid(row=0, column=4, rowspan=2, columnspan=2, padx=5, pady=5)
+
+
+clicked = tk.StringVar() 
+  
+# initial menu text 
+clicked.set( "Default: COM4" ) 
+connection_drop_menu = tk.OptionMenu(connection_frame, clicked, *Available_ports)
+connection_drop_menu.grid(row=0, column=0,columnspan=1, padx=5)
+
+connect_button = tk.Button(connection_frame, text = "Connect")
+connect_button.grid(row=0, column=1 , padx=5)
+
+status_label = tk.Label(connection_frame, text = "Status: Disconnected")
+status_label.grid(row=1, column=0 , padx=5)
 
 ## Parameter frame section 
 parameter_frame = tk.LabelFrame(root, text="Parameters", height=100,width=150)
-parameter_frame.grid(row=0, column=4, rowspan=3, columnspan=3, padx=5, pady=5)
+parameter_frame.grid(row=2, column=4, rowspan=3, columnspan=3, padx=5, pady=5)
 
 # printing diameter measured by laser sensor
 diameter = tk.Label(parameter_frame, text="Diameter Measurement:")
@@ -146,7 +160,7 @@ diameter_entry_button.grid(row=1, column = 2)
 
 #Debug screen with time delay and received serial packets
 debug_frame = tk.LabelFrame(root, text="Debug", height=100,width=150)
-debug_frame.grid(row=3, column=4, rowspan=3, columnspan=3, padx=5, pady=5)
+debug_frame.grid(row=5, column=4, rowspan=3, columnspan=3, padx=5, pady=5)
 serial_print = tk.Label(debug_frame, text="Serial")
 serial_print.grid(row=1, column=3, padx=5)
 time_print = tk.Label(debug_frame, text="Time")
@@ -190,6 +204,8 @@ def checkSerialPort():
     except UnicodeDecodeError:
         pass
 running = True
+
+
 while True:
     root.update()
     if not running: 
