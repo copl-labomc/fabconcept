@@ -67,7 +67,37 @@ def send_diameter():
         ser.write(b'e')
 
 
+#Loop functions
 
+def program_loop():
+    """Executes the main program loop when called"""
+    try:
+        while True:
+            root.update()
+            if not running: 
+                break
+            checkSerialPort()
+    except:
+        ser.close()
+        reconnection_loop()
+
+def reconnection_loop():
+    """Executes a secondary loop while the program waits to be reconnected"""
+    while True:
+        root.update()
+        if not running: 
+            break
+
+def reconnect():
+    global Available_ports
+    Available_ports = serial_ports()
+    print(Available_ports)
+    initialise(Available_ports[0])
+    program_loop()
+    try:
+        pass
+    except:
+        pass
 
 ### GUI
 
@@ -136,7 +166,7 @@ clicked.set(Available_ports[0])
 connection_drop_menu = tk.OptionMenu(connection_frame, clicked, *Available_ports)
 connection_drop_menu.grid(row=0, column=0,columnspan=1, padx=5)
 
-connect_button = tk.Button(connection_frame, text = "Reconnect")
+connect_button = tk.Button(connection_frame, text = "Reconnect", command=reconnect)
 connect_button.grid(row=0, column=1 , padx=5)
 
 status_label = tk.Label(connection_frame, text = "Status: Disconnected")
@@ -206,29 +236,25 @@ def checkSerialPort():
     except UnicodeDecodeError:
         pass
 running = True
+connected = False
 
 ### Main program loop
 
 
-#Intialise Serial communication
+
+def initialise(commPort):
+    global ser
+    ser = serial.Serial(commPort, baudrate = 9600, timeout = 1)
 
 print(Available_ports)
 
-commPort = Available_ports[0]
 
-global ser
-ser = serial.Serial(commPort, baudrate = 9600, timeout = 1)
-
-def program_loop():
-    """Executes the main program loop when called"""
-    while True:
-        root.update()
-        if not running: 
-            break
-        checkSerialPort()
-
+#Intialise Serial communication
+initialise(Available_ports[0])
 #Run the main program loop
 program_loop()
+    
+
 
 # Close serial communication 
 ser.close()
