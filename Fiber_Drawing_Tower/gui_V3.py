@@ -2,12 +2,38 @@ import tkinter as tk
 import serial
 from tkinter import ttk
 import time
+import serial
+
+
+
+
+
 
 timer = time.time()
 ### CONNECTION SECTION 
 # create a COM4 communication "ideally" this should be a droplist menu 
 
-commPort = 'COM4'
+def serial_ports():
+    """ Finds all the port in use and returns it as a list
+    """
+    
+    ports = ['COM%s' % (i + 1) for i in range(256)]
+
+    result = []
+    for port in ports:
+        try:
+            s = serial.Serial(port)
+            s.close()
+            result.append(port)
+        except (OSError, serial.SerialException):
+            pass
+    return result
+
+print(serial_ports())
+
+
+commPort = serial_ports()[0]
+
 global ser
 ser = serial.Serial(commPort, baudrate = 9600, timeout = 1)
 
@@ -85,7 +111,7 @@ def send_diameter():
     entry = diameter_entry.get()
     if entry != '':
         ser.write(entry.encode())
-        print(entry.encode())
+
         ser.write(b'e')
 
 # Création du bouton Start en vert
