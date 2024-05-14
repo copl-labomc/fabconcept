@@ -68,6 +68,39 @@ def send_diameter():
         #send end character
         ser.write(b'e')
 
+def reconnect():
+    """Tries to reconnect to the arduino when the Reconnect button is pressed"""
+    global current_port
+    global connected
+
+    if not connected:
+        try:
+            initialise(current_port.get())
+            program_loop()
+        except IndexError:
+            status_label.config(text = "No Available Port")
+ 
+def check_ports():
+    """Updates the connection drop menu with available ports"""
+    global current_port
+    global connection_drop_menu
+
+    #Deletes the old instance 
+    connection_drop_menu.grid_forget()
+
+    #Creates a new instance with the updated ports
+
+    ports = serial_ports()
+    if connected:
+        if ports[0] == "None":
+            ports = [current_port.get()]
+        else:
+            ports.insert(0,current_port.get())
+
+    current_port.set(ports[0])
+    connection_drop_menu = tk.OptionMenu(connection_frame, current_port, *ports)
+    connection_drop_menu.grid(row=0, column=0,columnspan=1, padx=5)
+
 
 #Loop functions
 
@@ -84,7 +117,7 @@ def program_loop():
         ser.close()
         connected = False
         status_label.config(text="Disconnected")
-        connection_drop_menu = tk.OptionMenu(connection_frame, clicked, *Available_ports)
+        check_ports()
         reconnection_loop()
 
 def reconnection_loop(): 
@@ -94,19 +127,7 @@ def reconnection_loop():
         if not running: 
             break
 
-def reconnect():
-    """Tries to reconnect to the arduino when the Reconnect button is pressed"""
-    global Available_ports
-    global connected
-    print(connected)
-    if not connected:
-        try:
-            Available_ports = serial_ports()
-            initialise(Available_ports[0])
-            program_loop()
-        except IndexError:
-            status_label.config(text = "No Available Port")
-        
+       
 
 ### GUI
 
@@ -199,13 +220,16 @@ connection_frame.grid(row=0, column=4, rowspan=2, columnspan=2, padx=5, pady=5)
 connect_button = tk.Button(connection_frame, text = "Reconnect", command=reconnect)
 connect_button.grid(row=0, column=1 , padx=5)
 
+connect_button = tk.Button(connection_frame, text = "Check Ports", command=check_ports)
+connect_button.grid(row=1, column=1 , padx=5)
+
 status_label = tk.Label(connection_frame, text = "Status: Disconnected")
 status_label.grid(row=1, column=0 , padx=5)
 
-clicked = tk.StringVar()
-Available_ports = serial_ports()
-clicked.set(Available_ports[0]) 
-connection_drop_menu = tk.OptionMenu(connection_frame, clicked, *Available_ports)
+current_port = tk.StringVar()
+
+current_port.set(serial_ports()[0]) 
+connection_drop_menu = tk.OptionMenu(connection_frame, current_port, *serial_ports())
 connection_drop_menu.grid(row=0, column=0,columnspan=1, padx=5)
 
 
@@ -264,7 +288,7 @@ def initialise(commPort):
 
 
 #Intialise Serial communication
-initialise(Available_ports[0])
+initialise(current_port.get())
 #Run the main program loop
 program_loop()
 
