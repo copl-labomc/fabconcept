@@ -71,6 +71,7 @@ def send_diameter():
 
 def program_loop():
     """Executes the main program loop when called"""
+    global connected
     try:
         while True:
             root.update()
@@ -79,9 +80,11 @@ def program_loop():
             checkSerialPort()
     except:
         ser.close()
+        connected = False
         reconnection_loop()
 
 def reconnection_loop():
+    
     """Executes a secondary loop while the program waits to be reconnected"""
     while True:
         root.update()
@@ -90,14 +93,13 @@ def reconnection_loop():
 
 def reconnect():
     global Available_ports
-    Available_ports = serial_ports()
-    print(Available_ports)
-    initialise(Available_ports[0])
-    program_loop()
-    try:
-        pass
-    except:
-        pass
+    global connected
+    print(connected)
+    if not connected:
+        Available_ports = serial_ports()
+        print(Available_ports)
+        initialise(Available_ports[0])
+        program_loop()
 
 ### GUI
 
@@ -244,16 +246,15 @@ connected = False
 
 def initialise(commPort):
     global ser
+    global connected
     ser = serial.Serial(commPort, baudrate = 9600, timeout = 1)
-
-print(Available_ports)
+    connected = True
 
 
 #Intialise Serial communication
 initialise(Available_ports[0])
 #Run the main program loop
 program_loop()
-    
 
 
 # Close serial communication 
