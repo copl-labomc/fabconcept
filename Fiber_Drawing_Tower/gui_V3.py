@@ -25,6 +25,8 @@ def serial_ports():
             s.close()
         except (OSError, serial.SerialException):
             pass
+    if result == []:
+        return ["None"]
     return result
 
 
@@ -81,10 +83,11 @@ def program_loop():
     except:
         ser.close()
         connected = False
+        status_label.config(text="Disconnected")
+        connection_drop_menu = tk.OptionMenu(connection_frame, clicked, *Available_ports)
         reconnection_loop()
 
-def reconnection_loop():
-    
+def reconnection_loop(): 
     """Executes a secondary loop while the program waits to be reconnected"""
     while True:
         root.update()
@@ -92,14 +95,18 @@ def reconnection_loop():
             break
 
 def reconnect():
+    """Tries to reconnect to the arduino when the Reconnect button is pressed"""
     global Available_ports
     global connected
     print(connected)
     if not connected:
-        Available_ports = serial_ports()
-        print(Available_ports)
-        initialise(Available_ports[0])
-        program_loop()
+        try:
+            Available_ports = serial_ports()
+            initialise(Available_ports[0])
+            program_loop()
+        except IndexError:
+            status_label.config(text = "No Available Port")
+        
 
 ### GUI
 
@@ -156,24 +163,6 @@ button_stop.grid(row=0, column=1, padx=5)
 speed_cabestan = tk.Label(cabestan_frame, text="Speed:")
 speed_cabestan.grid(row=1, column=0, padx=5)
 
-##Connection frame section
-connection_frame = tk.LabelFrame(root, text="Connection (WIP)", height=50,width=150)
-connection_frame.grid(row=0, column=4, rowspan=2, columnspan=2, padx=5, pady=5)
-
-
-# Port selection menu
-clicked = tk.StringVar()
-Available_ports = serial_ports()
-clicked.set(Available_ports[0]) 
-connection_drop_menu = tk.OptionMenu(connection_frame, clicked, *Available_ports)
-connection_drop_menu.grid(row=0, column=0,columnspan=1, padx=5)
-
-connect_button = tk.Button(connection_frame, text = "Reconnect", command=reconnect)
-connect_button.grid(row=0, column=1 , padx=5)
-
-status_label = tk.Label(connection_frame, text = "Status: Disconnected")
-status_label.grid(row=1, column=0 , padx=5)
-
 ## Parameter frame section 
 parameter_frame = tk.LabelFrame(root, text="Parameters", height=100,width=150)
 parameter_frame.grid(row=2, column=4, rowspan=3, columnspan=3, padx=5, pady=5)
@@ -200,6 +189,24 @@ serial_print.grid(row=1, column=3, padx=5)
 time_print = tk.Label(debug_frame, text="Time")
 time_print.grid(row=1, column=3, padx=5)
 
+
+##Connection frame section
+connection_frame = tk.LabelFrame(root, text="Connection (WIP)", height=50,width=150)
+connection_frame.grid(row=0, column=4, rowspan=2, columnspan=2, padx=5, pady=5)
+
+# Port selection menu
+
+connect_button = tk.Button(connection_frame, text = "Reconnect", command=reconnect)
+connect_button.grid(row=0, column=1 , padx=5)
+
+status_label = tk.Label(connection_frame, text = "Status: Disconnected")
+status_label.grid(row=1, column=0 , padx=5)
+
+clicked = tk.StringVar()
+Available_ports = serial_ports()
+clicked.set(Available_ports[0]) 
+connection_drop_menu = tk.OptionMenu(connection_frame, clicked, *Available_ports)
+connection_drop_menu.grid(row=0, column=0,columnspan=1, padx=5)
 
 
 def checkSerialPort():
@@ -247,8 +254,13 @@ connected = False
 def initialise(commPort):
     global ser
     global connected
-    ser = serial.Serial(commPort, baudrate = 9600, timeout = 1)
-    connected = True
+    if commPort == "None":
+        status_label.config(text="No Available Port")
+        reconnection_loop()
+    else:
+        ser = serial.Serial(commPort, baudrate = 9600, timeout = 1)
+        connected = True
+        status_label.config(text="Connected")
 
 
 #Intialise Serial communication
