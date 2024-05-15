@@ -3,6 +3,7 @@ import serial
 from tkinter import ttk
 import time
 import serial
+import serial.serialutil
 
 timer = time.time()
 
@@ -109,7 +110,7 @@ def program_loop():
             if not running: 
                 break
             checkSerialPort()
-    except:
+    except serial.serialutil.SerialException:
         ser.close()
         connected = False
         status_label.config(text="Disconnected", bg = 'red')
@@ -242,25 +243,20 @@ def checkSerialPort():
             recentPacketString = recentPacket.decode('utf').split(",")
             
             # Update the value for each printed values if its a float (can be an altered value)
+                
+            if isinstance(float(recentPacketString[0]), float):
+                speed_cabestan.config(text= "Speed : " + recentPacketString[0])
+            if isinstance(float(recentPacketString[1]), float):
+                speed_preform.config(text= "Speed : " + recentPacketString[1])
+            if isinstance(float(recentPacketString[2]), float):
+                # remove the formating of arduino serial.write end of line
+                diameter.config(text= "Diameter : " + recentPacketString[2])
             
-            try : 
+            #Outputs the delay and serial packet info on the GUI (for testing)
+            serial_print.config(text = "Serial: " + "' '".join(recentPacketString))
+            time_print.config(text = f"Delay: {(time.time()-timer)*1000:.2f} ms")
+            timer = time.time()
                 
-                if isinstance(float(recentPacketString[0]), float):
-                    speed_cabestan.config(text= "Speed : " + recentPacketString[0])
-                if isinstance(float(recentPacketString[1]), float):
-                    speed_preform.config(text= "Speed : " + recentPacketString[1])
-                if isinstance(float(recentPacketString[2]), float):
-                    # remove the formating of arduino serial.write end of line
-                    diameter.config(text= "Diameter : " + recentPacketString[2].replace("\r\n", "") +" mm")
-                
-                #Outputs the delay and serial packet info on the GUI (for testing)
-                serial_print.config(text = "Serial: " + "' '".join(recentPacketString))
-                time_print.config(text = f"Delay: {(time.time()-timer)*1000:.2f} ms")
-                timer = time.time()
-                
-                
-            except:
-                pass
     # Try to avoid bad bytes
     except UnicodeDecodeError:
         pass

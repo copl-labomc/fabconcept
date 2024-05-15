@@ -107,7 +107,6 @@ void loop() {
 
     else if (command == 'e') {
       desired_diameter = received_diameter_string.toFloat();
-      Serial.println(desired_diameter, 5);
       received_diameter_string = "";
     }
   }
