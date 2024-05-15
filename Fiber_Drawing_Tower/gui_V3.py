@@ -71,7 +71,7 @@ def reconnect():
             initialise(current_port.get())
             program_loop()
         except IndexError:
-            status_label.config(text = "No Available Port")
+            status_label.config(text = "No Available Port", bg = 'yellow')
  
 def check_ports():
     """Updates the connection drop menu with available ports"""
@@ -112,7 +112,7 @@ def program_loop():
     except:
         ser.close()
         connected = False
-        status_label.config(text="Disconnected")
+        status_label.config(text="Disconnected", bg = 'red')
         check_ports()
         reconnection_loop()
 
@@ -219,7 +219,7 @@ connect_button.grid(row=0, column=1 , padx=5)
 connect_button = tk.Button(connection_frame, text = "Check Ports", command=check_ports)
 connect_button.grid(row=1, column=1 , padx=5)
 
-status_label = tk.Label(connection_frame, text = "Status: Disconnected")
+status_label = tk.Label(connection_frame, text = "Status: Disconnected", bg = 'red')
 status_label.grid(row=1, column=0 , padx=5)
 
 current_port = tk.StringVar()
@@ -275,12 +275,12 @@ def initialise(commPort):
     global ser
     global connected
     if commPort == "None":
-        status_label.config(text="No Available Port")
+        status_label.config(text="No Available Port", bg = 'yellow')
         reconnection_loop()
     else:
         ser = serial.Serial(commPort, baudrate = 9600, timeout = 1)
         connected = True
-        status_label.config(text="Connected")
+        status_label.config(text="Connected", bg = 'green')
 
 
 #Intialise Serial communication
