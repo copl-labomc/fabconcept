@@ -6,15 +6,12 @@ import serial
 
 timer = time.time()
 
-## CONNECTION SECTION 
-# create a COM4 communication "ideally" this should be a droplist menu 
-
 def serial_ports():
     """ Finds all the port in use and returns it as a list
     """
     
     #Try every possible port 
-    ports = ['COM%s' % (i + 1) for i in range(256)]
+    ports = ['COM%s' % (i + 1) for i in range(10)]
 
     result = []
     for port in ports:
@@ -29,50 +26,46 @@ def serial_ports():
         return ["None"]
     return result
 
-
-
-## Button section
+## Button functions
 
 def close_window():
   """Close serial communication when the windows is closed"""
   global running
   running = False  # turn off while loop
-  ser.close()
+  if connected:
+    ser.close()
 
 
 # Preform Button functions
 def preform_up():
-    ser.write(b't')
+    port_write(b't')
 
 def preform_down():
-    ser.write(b'b')
+    port_write(b'b')
 
 def stop_preform():
-    ser.write(b'k')
+    port_write(b'k')
 
 # Cabestan Button functions
 def start_cabestan():
     """send "s" in byte to  start cabestan motor
     """
-    ser.write(b's')
+    port_write(b's')
 def stop_cabestan():
     """send "a" in byte to stop cabestan motor
     """
-    ser.write(b'a')
+    port_write(b'a')
 
 def send_diameter():
     """ send the desired diameter"""
     entry = diameter_entry.get()
     if entry != '':
-        ser.write(entry.encode())
+        port_write(entry.encode())
         #send end character
-        ser.write(b'e')
+        port_write(b'e')
 
 def reconnect():
     """Tries to reconnect to the arduino when the Reconnect button is pressed"""
-    global current_port
-    global connected
-
     if not connected:
         try:
             initialise(current_port.get())
@@ -82,7 +75,6 @@ def reconnect():
  
 def check_ports():
     """Updates the connection drop menu with available ports"""
-    global current_port
     global connection_drop_menu
 
     #Deletes the old instance 
@@ -101,6 +93,10 @@ def check_ports():
     connection_drop_menu = tk.OptionMenu(connection_frame, current_port, *ports)
     connection_drop_menu.grid(row=0, column=0,columnspan=1, padx=5)
 
+def port_write(command):
+    """Checks if the arduino is connected then sends the command trough the serial port"""
+    if connected:
+        ser.write(command)
 
 #Loop functions
 
