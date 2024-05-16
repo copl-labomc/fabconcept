@@ -63,7 +63,7 @@ void controlPreformMotor(char dir, int preform_speed) {
 
 void setup() {
   // Initilization of serial port
-  Serial.begin(9600);
+  Serial.begin(57600);
   // Setting max speed of the motors to avoid damages
   cabestan_stepper.setMaxSpeed(cabestan_max_speed);
   preform_stepper.setMaxSpeed(preform_max_speed);

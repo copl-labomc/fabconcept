@@ -160,12 +160,12 @@ button_down.grid(row=2, column=1, padx=5)
 # Printing output speed of preform motor
 
 speed_preform = tk.Label(preform_frame, text="Speed :")
-speed_preform.grid(row=3, column=0, padx=5)
+speed_preform.grid(row=3, column=0, padx=5, columnspan=2)
 
 
 ## CABESTAN STEPPER SECTION 
-cabestan_frame = tk.LabelFrame(root, text="Cabestan Motor", height=100,width=150)
-cabestan_frame.grid(row=4, column=0, rowspan=3, columnspan=3)
+cabestan_frame = tk.LabelFrame(root, text="Cabestan Motor", height=120,width=150)
+cabestan_frame.grid(row=4, column=0, rowspan=4, columnspan=3)
 
 
 # Creation of green Start button
@@ -179,7 +179,7 @@ button_stop.grid(row=0, column=1, padx=5)
 # Printing output speed of cabestan
 
 speed_cabestan = tk.Label(cabestan_frame, text="Speed:")
-speed_cabestan.grid(row=1, column=0, padx=5)
+speed_cabestan.grid(row=1, column=0, padx=5, columnspan=2)
 
 ## Parameter frame section 
 parameter_frame = tk.LabelFrame(root, text="Parameters", height=100,width=150)
@@ -274,7 +274,7 @@ def initialise(commPort):
         status_label.config(text="No Available Port", bg = 'yellow')
         reconnection_loop()
     else:
-        ser = serial.Serial(commPort, baudrate = 9600, timeout = 1)
+        ser = serial.Serial(commPort, baudrate = 57600, timeout = 1)
         connected = True
         status_label.config(text="Connected", bg = 'green')
 
