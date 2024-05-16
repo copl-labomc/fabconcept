@@ -28,8 +28,6 @@ const int preform_max_speed = 999;
 // input of the python app
 char motor_preform_dir;
 
-String received_diameter_string = "";
-float desired_diameter = 0;
 
 // Creates an instance for both motors
 AccelStepper cabestan_stepper(AccelStepper::DRIVER, cabestan_stepPin, cabestan_dirPin);
@@ -63,7 +61,7 @@ void controlPreformMotor(char dir, int preform_speed) {
 
 void setup() {
   // Initilization of serial port
-  Serial.begin(57600);
+  Serial.begin(9600);
   // Setting max speed of the motors to avoid damages
   cabestan_stepper.setMaxSpeed(cabestan_max_speed);
   preform_stepper.setMaxSpeed(preform_max_speed);
@@ -99,15 +97,6 @@ void loop() {
     else if (command == 'k') {
       preform_motor_running = false;
       new_speed_preform = 0;
-    } 
-    
-    else if (isPunct(command) || isDigit(command)) {
-      received_diameter_string += command;
-    }
-
-    else if (command == 'e') {
-      desired_diameter = received_diameter_string.toFloat();
-      received_diameter_string = "";
     }
   }
   // if flag for the cabestan is true read the tension of potentiometer to adapt the speed
@@ -127,14 +116,11 @@ void loop() {
   float diameter_sensor = analogRead(A2);
   diameter_tension = mapf(diameter_sensor, 0, 1023, 0.0, 5.0);
   real_diameter = diameter_tension / conversion_factor_diameter_tension + offset;
+  
   // Sending output values to the python application
-
   Serial.print(new_speed_cabestan);
   Serial.print(",");
   Serial.print(new_speed_preform);
   Serial.print(",");
-  Serial.print(real_diameter);
-  Serial.print(",");
-  Serial.println(desired_diameter, 2);
-  
+  Serial.println(real_diameter);
 }

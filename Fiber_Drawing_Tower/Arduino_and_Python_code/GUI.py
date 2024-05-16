@@ -243,19 +243,21 @@ def checkSerialPort():
             recentPacketString = recentPacket.decode('utf').split(",")
             
             # Update the value for each printed values if its a float (can be an altered value)
+            try:
+                if isinstance(float(recentPacketString[0]), float):
+                    speed_cabestan.config(text= "Speed : " + recentPacketString[0])
+                if isinstance(float(recentPacketString[1]), float):
+                    speed_preform.config(text= "Speed : " + recentPacketString[1])
+                if isinstance(float(recentPacketString[2]), float):
+                    # remove the formating of arduino serial.write end of line
+                    diameter.config(text= "Diameter : " + recentPacketString[2])
                 
-            if isinstance(float(recentPacketString[0]), float):
-                speed_cabestan.config(text= "Speed : " + recentPacketString[0])
-            if isinstance(float(recentPacketString[1]), float):
-                speed_preform.config(text= "Speed : " + recentPacketString[1])
-            if isinstance(float(recentPacketString[2]), float):
-                # remove the formating of arduino serial.write end of line
-                diameter.config(text= "Diameter : " + recentPacketString[2])
-            
-            #Outputs the delay and serial packet info on the GUI (for testing)
-            serial_print.config(text = "Serial: " + "' '".join(recentPacketString))
-            time_print.config(text = f"Delay: {(time.time()-timer)*1000:.2f} ms")
-            timer = time.time()
+                #Outputs the delay and serial packet info on the GUI (for testing)
+                serial_print.config(text = "Serial: " + "' '".join(recentPacketString))
+                time_print.config(text = f"Delay: {(time.time()-timer)*1000:.2f} ms")
+                timer = time.time()
+            except IndexError:
+                print(recentPacketString)
                 
     # Try to avoid bad bytes
     except UnicodeDecodeError:
@@ -274,7 +276,7 @@ def initialise(commPort):
         status_label.config(text="No Available Port", bg = 'yellow')
         reconnection_loop()
     else:
-        ser = serial.Serial(commPort, baudrate = 57600, timeout = 1)
+        ser = serial.Serial(commPort, baudrate = 115200, timeout = 1)
         connected = True
         status_label.config(text="Connected", bg = 'green')
 
