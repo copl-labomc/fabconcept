@@ -100,7 +100,7 @@ void loop() {
       new_speed_cabestan = 0;
     }
 
-     else if (command == 't'  && !preform_motor_running) {
+     else if (command == 't') {
       preform_motor_running = true;
       motor_preform_dir = command;
     }
