@@ -18,7 +18,6 @@ def serial_ports():
     for port in ports:
         try:
             s = serial.Serial(port)
-            
             result.append(port)
             s.close()
         except (OSError, serial.SerialException):
@@ -67,12 +66,14 @@ def send_diameter():
 
 def reconnect():
     """Tries to reconnect to the arduino when the Reconnect button is pressed"""
-    if not connected:
-        try:
-            initialise(current_port.get())
-            program_loop()
-        except IndexError:
-            status_label.config(text = "No Available Port", bg = 'yellow')
+    try:
+        initialise(current_port.get())
+        program_loop()
+    except IndexError:
+        status_label.config(text = "No Available Port", bg = 'yellow')
+    except serial.serialutil.SerialException:
+        #Triggers when connection is already established with the same port
+        pass
  
 def check_ports():
     """Updates the connection drop menu with available ports"""
@@ -225,7 +226,12 @@ status_label.grid(row=1, column=0 , padx=5)
 
 current_port = tk.StringVar()
 
-current_port.set(serial_ports()[0]) 
+#If COM4 is available, it picks it as default when lauching or else it picks the first one available
+if "COM4" in serial_ports():
+    current_port.set("COM4") 
+else:
+    current_port.set(serial_ports()[0]) 
+
 connection_drop_menu = tk.OptionMenu(connection_frame, current_port, *serial_ports())
 connection_drop_menu.grid(row=0, column=0,columnspan=1, padx=5)
 
