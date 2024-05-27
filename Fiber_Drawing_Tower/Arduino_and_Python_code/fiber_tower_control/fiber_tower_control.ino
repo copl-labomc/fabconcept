@@ -31,7 +31,6 @@ int count;
 // input of the python app
 char motor_preform_dir;
 
-
 String received_diameter_string = "";
 float desired_diameter = 0;
 
@@ -64,6 +63,15 @@ void controlPreformMotor(char dir, int preform_speed) {
   }
 }
 
+void stepTheMotors() {
+  if (preform_motor_running) {
+    preform_stepper.runSpeed();
+  }
+
+  if (cabestan_running) {
+    cabestan_stepper.runSpeed();
+  }
+}
 
 void setup() {
   // Initilization of serial port
@@ -133,25 +141,21 @@ void loop() {
     diameter_tension = mapf(diameter_sensor, 0, 1023, 0.0, 5.0);
     real_diameter = diameter_tension / conversion_factor_diameter_tension + offset;
     // Sending output values to the python application
-
+    // Run the runSpeed command multiple times
+    stepTheMotors();
     Serial.print(new_speed_cabestan);
+    stepTheMotors();
     Serial.print(",");
     Serial.print(new_speed_preform);
+    stepTheMotors();
     Serial.print(",");
     Serial.print(real_diameter);
     Serial.print(",");
+    stepTheMotors();
     Serial.println(desired_diameter, 2); 
+    stepTheMotors();
 
     count = 0;
   }
-
-  if (preform_motor_running) {
-    preform_stepper.runSpeed();
-  }
-
-  if (cabestan_running) {
-    cabestan_stepper.runSpeed();
-  }
-
   count += 1;
 }
