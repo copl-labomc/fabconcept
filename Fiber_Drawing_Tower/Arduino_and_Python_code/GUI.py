@@ -1,11 +1,8 @@
 import tkinter as tk
 import serial
 from tkinter import ttk
-import time
 import serial
-import serial.serialutil
 
-timer = time.time()
 
 def serial_ports():
     """ Finds all the port in use and returns it as a list
@@ -32,7 +29,7 @@ def close_window():
   """Close serial communication when the windows is closed"""
   global running
   running = False  # turn off while loop
-  if connected:
+  if status_label.cget('text') == "Connected":
     ser.close()
 
 
@@ -76,35 +73,32 @@ def reconnect():
         pass
  
 def check_ports():
-    """Updates the connection drop menu with available ports"""
-    global connection_drop_menu
+    """Updates the connection drop menu with available ports"""    
 
-    #Deletes the old instance 
-    connection_drop_menu.grid_forget()
-
-    #Creates a new instance with the updated ports
+    connection_drop_menu['menu'].delete(0, 'end')
 
     ports = serial_ports()
-    if connected:
+    if status_label.cget('text') == "Connected":
+        #If the serial port is already in use, it will not be detected and needs to be added manually to the list
         if ports[0] == "None":
             ports = [current_port.get()]
         else:
             ports.insert(0,current_port.get())
 
+    #Creates a new instance of the menu with the updated ports
     current_port.set(ports[0])
-    connection_drop_menu = tk.OptionMenu(connection_frame, current_port, *ports)
-    connection_drop_menu.grid(row=0, column=0,columnspan=1, padx=5)
+    for port in ports:
+        connection_drop_menu['menu'].add_command(label=port, command=tk._setit(current_port, port))
 
 def port_write(command):
     """Checks if the arduino is connected then sends the command trough the serial port"""
-    if connected:
+    if status_label.cget("text") == "Connected":
         ser.write(command)
 
 #Loop functions
 
 def program_loop():
     """Executes the main program loop when called"""
-    global connected
     try:
         while True:
             root.update()
@@ -113,7 +107,6 @@ def program_loop():
             checkSerialPort()
     except serial.serialutil.SerialException:
         ser.close()
-        connected = False
         status_label.config(text="Disconnected", bg = 'red')
         check_ports()
         reconnection_loop()
@@ -124,8 +117,6 @@ def reconnection_loop():
         root.update()
         if not running: 
             break
-
-       
 
 ### GUI
 
@@ -205,8 +196,6 @@ debug_frame = tk.LabelFrame(root, text="Debug", height=100,width=150)
 debug_frame.grid(row=5, column=4, rowspan=3, columnspan=3, padx=5, pady=5)
 serial_print = tk.Label(debug_frame, text="Serial")
 serial_print.grid(row=1, column=3, padx=5)
-time_print = tk.Label(debug_frame, text="Time")
-time_print.grid(row=1, column=3, padx=5)
 
 
 ##Connection frame section
@@ -240,7 +229,6 @@ def checkSerialPort():
     """Check serial input from the arduino and put the value back into the corresponding label. 
     String arriving from the arduino has the format "value1, value2, etc"
     """
-    global timer
     try: 
         # if serial communication is open and data is waiting in arduino
         if ser.isOpen() and ser.in_waiting:
@@ -260,35 +248,30 @@ def checkSerialPort():
                 
                 #Outputs the delay and serial packet info on the GUI (for testing)
                 serial_print.config(text = "Serial: " + "' '".join(recentPacketString))
-                time_print.config(text = f"Delay: {(time.time()-timer)*1000:.2f} ms")
-                timer = time.time()
             except IndexError:
-                print(recentPacketString)
+                pass
                 
     # Try to avoid bad bytes
     except UnicodeDecodeError:
         pass
 running = True
-connected = False
+
 
 ### Main program loop
 
-
-
 def initialise(commPort):
     global ser
-    global connected
     if commPort == "None":
         status_label.config(text="No Available Port", bg = 'yellow')
         reconnection_loop()
     else:
         ser = serial.Serial(commPort, baudrate = 115200, timeout = 1)
-        connected = True
         status_label.config(text="Connected", bg = 'green')
 
 
-#Intialise Serial communication
+#Initialise Serial communication
 initialise(current_port.get())
+
 #Run the main program loop
 program_loop()
 
