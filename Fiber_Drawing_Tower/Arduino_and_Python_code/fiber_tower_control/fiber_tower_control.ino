@@ -83,13 +83,18 @@ void setup() {
 
 // Main loop
 void loop() {
+  // Constantly check if a command is sent from the computer
   if (Serial.available() > 0) {
     command = Serial.read();
 
+    // If the command is a float, each digit is sent one at a time
+    // This line checks if it is a digit or a period character and
+    // adds it to a string
     if (isPunct(command) || isDigit(command)) {
       received_diameter_string += command;
     }
-
+    // Once the end character 'e' is received, the string is converted to a float
+    // and stored into memory
     else if (command == 'e') {
       desired_diameter = received_diameter_string.toFloat();
       received_diameter_string = "";
