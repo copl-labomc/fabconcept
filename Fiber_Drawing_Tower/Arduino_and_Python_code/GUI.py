@@ -144,7 +144,7 @@ class FiberTower(tk.Tk):
 
 
             ##Connection frame section
-            self.connection_frame = tk.LabelFrame(self, text="Connection (WIP)", height=50,width=150)
+            self.connection_frame = tk.LabelFrame(self, text="Connection", height=50,width=150)
             self.connection_frame.grid(row=0, column=4, rowspan=2, columnspan=2, padx=5, pady=5)
 
             # Port selection menu
