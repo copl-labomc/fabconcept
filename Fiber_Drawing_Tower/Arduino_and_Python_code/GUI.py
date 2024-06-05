@@ -43,15 +43,33 @@ def preform_down():
 def stop_preform():
     port_write(b'k')
 
-# Cabestan Button functions
-def start_cabestan():
-    """send "s" in byte to  start cabestan motor
+# Capstan Button functions
+def start_capstan():
+    """send "s" in byte to  start capstan motor
     """
     port_write(b's')
-def stop_cabestan():
-    """send "a" in byte to stop cabestan motor
+
+def stop_capstan():
+    """send "a" in byte to stop capstan motor
     """
     port_write(b'a')
+
+# Spool Button functions
+
+def start_spool():
+    """send "w" in byte to  start capstan motor
+    """
+    port_write(b'w')
+
+def stop_spool():
+    """send "q" in byte to stop spool motor
+    """
+    port_write(b'q')
+
+def reverse_spool():
+    """send "r" in byte to reverse spool motor
+    """
+    port_write(b'r')
 
 def send_diameter():
     """ send the desired diameter"""
@@ -124,7 +142,7 @@ def reconnection_loop():
 
 root = tk.Tk()
 root.title("Fiber Tower")
-root.geometry("500x300")
+root.geometry("500x400")
 root.protocol("WM_DELETE_WINDOW", close_window)
 
 
@@ -155,23 +173,45 @@ speed_preform = tk.Label(preform_frame, text="Speed :")
 speed_preform.grid(row=3, column=0, padx=5, columnspan=2)
 
 
-## CABESTAN STEPPER SECTION 
-cabestan_frame = tk.LabelFrame(root, text="Cabestan Motor", height=120,width=150)
-cabestan_frame.grid(row=4, column=0, rowspan=4, columnspan=3)
+## CAPSTAN STEPPER SECTION 
+capstan_frame = tk.LabelFrame(root, text="Capstan Motor", height=120,width=150)
+capstan_frame.grid(row=4, column=0, rowspan=4, columnspan=3)
 
 
 # Creation of green Start button
-button_start = tk.Button(cabestan_frame, text="Start", command=start_cabestan, font=("Segoe Ui", 12), bg="green", fg="white")
+button_start = tk.Button(capstan_frame, text="Start", command=start_capstan, font=("Segoe Ui", 12), bg="green", fg="white")
 button_start.grid(row=0, column=0, padx=5)
 
 # Creation of red Stop button
-button_stop = tk.Button(cabestan_frame, text="Stop", command=stop_cabestan, font=("Segoe Ui", 12), bg="red", fg="white")
+button_stop = tk.Button(capstan_frame, text="Stop", command=stop_capstan, font=("Segoe Ui", 12), bg="red", fg="white")
 button_stop.grid(row=0, column=1, padx=5)
 
-# Printing output speed of cabestan
+# Printing output speed of capstan
 
-speed_cabestan = tk.Label(cabestan_frame, text="Speed:")
-speed_cabestan.grid(row=1, column=0, padx=5, columnspan=2)
+speed_capstan = tk.Label(capstan_frame, text="Speed:")
+speed_capstan.grid(row=1, column=0, padx=5, columnspan=2)
+
+## SPOOL STEPPER SECTION 
+spool_frame = tk.LabelFrame(root, text="Spool Motor", height=120,width=150)
+spool_frame.grid(row=8, column=1, rowspan=3, columnspan=3)
+
+
+# Creation of green Start button
+spool_start = tk.Button(spool_frame, text="Start", command=start_spool, font=("Segoe Ui", 12), bg="green", fg="white")
+spool_start.grid(row=0, column=0, padx=5)
+
+# Creation of red Stop button
+spool_stop = tk.Button(spool_frame, text="Stop", command=stop_spool, font=("Segoe Ui", 12), bg="red", fg="white")
+spool_stop.grid(row=0, column=1, padx=5)
+
+# Creation of yellow Reverse button
+spool_stop = tk.Button(spool_frame, text="Reverse", command=reverse_spool, font=("Segoe Ui", 12), bg="yellow", fg="black")
+spool_stop.grid(row=0, column=2, padx=5)
+
+# Printing output speed of capstan
+
+speed_spool = tk.Label(spool_frame, text="Speed:")
+speed_spool.grid(row=1, column=0, padx=5, columnspan=2)
 
 ## Parameter frame section 
 parameter_frame = tk.LabelFrame(root, text="Parameters", height=100,width=150)
@@ -239,12 +279,14 @@ def checkSerialPort():
             # Update the value for each printed values if its a float (can be an altered value)
             try:
                 if isinstance(float(recentPacketString[0]), float):
-                    speed_cabestan.config(text= "Speed : " + recentPacketString[0])
+                    speed_capstan.config(text= "Speed : " + recentPacketString[0])
                 if isinstance(float(recentPacketString[1]), float):
                     speed_preform.config(text= "Speed : " + recentPacketString[1])
                 if isinstance(float(recentPacketString[2]), float):
-                    # remove the formating of arduino serial.write end of line
-                    diameter.config(text= "Diameter : " + recentPacketString[2])
+                    speed_spool.config(text= "Speed : " + recentPacketString[2])
+                if isinstance(float(recentPacketString[3]), float):
+
+                    diameter.config(text= "Diameter : " + recentPacketString[3])
                 
                 #Outputs the delay and serial packet info on the GUI (for testing)
                 serial_print.config(text = "Serial: " + "' '".join(recentPacketString))
