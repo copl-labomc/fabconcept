@@ -24,13 +24,27 @@ def serial_ports():
 def port_write(command):
     """Checks if the arduino is connected then sends the command trough the serial port"""
     if status_label.cget("text") == "Connected":
-        ser.write(command)
+        ser.write(command.encode('ascii'))
 
 class FiberTower(tk.Tk):
+        """
+        
+        Instruction dictionnary
+        s start capstan
+        a stop capstan
+        t preform up
+        b preform down
+        k stop preform
+        w start spool
+        q stop spool
+        r run spool in reverse
+        
+        """
         def __init__(self):
             super().__init__()
             self.title("Fiber Tower")
             self.geometry("500x400")
+            self.protocol("WM_DELETE_WINDOW", self.close_window)
 
             
             ## PREFORM STEPPER SECTION 
@@ -43,15 +57,15 @@ class FiberTower(tk.Tk):
 
             self.label_up = tk.Label(self.preform_frame, text="UP", font=("Segoe Ui", 12))
             self.label_up.grid(row=0, column=0, padx=5)
-            self.button_up = ttk.Button(self.preform_frame, text=u"\u2191", command=preform_up)
+            self.button_up = ttk.Button(self.preform_frame, text=u"\u2191", command= lambda: port_write("t"))
             self.button_up.grid(row=0, column=1, padx=5)
 
-            self.button_stop = tk.Button(self.preform_frame, text="Stop", command=stop_preform, font=(12), bg="red", fg="white")
+            self.button_stop = tk.Button(self.preform_frame, text="Stop", command= lambda: port_write("k"), font=(12), bg="red", fg="white")
             self.button_stop.grid(row=1, column=1, padx=5)
 
             self.label_down = tk.Label(self.preform_frame, text="DOWN", font=("Segoe Ui", 12))
             self.label_down.grid(row=2, column=0, padx=5)
-            self.button_down = ttk.Button(self.preform_frame, text=u"\u2193", command=preform_down)
+            self.button_down = ttk.Button(self.preform_frame, text=u"\u2193", command=lambda: port_write("b"))
             self.button_down.grid(row=2, column=1, padx=5)
 
             # Printing output speed of preform motor
@@ -66,11 +80,11 @@ class FiberTower(tk.Tk):
 
 
             # Creation of green Start button
-            self.button_start = tk.Button(self.capstan_frame, text="Start", command=start_capstan, font=("Segoe Ui", 12), bg="green", fg="white")
+            self.button_start = tk.Button(self.capstan_frame, text="Start", command=lambda: port_write("s"), font=("Segoe Ui", 12), bg="green", fg="white")
             self.button_start.grid(row=0, column=0, padx=5)
 
             # Creation of red Stop button
-            self.button_stop = tk.Button(self.capstan_frame, text="Stop", command=stop_capstan, font=("Segoe Ui", 12), bg="red", fg="white")
+            self.button_stop = tk.Button(self.capstan_frame, text="Stop", command=lambda: port_write("a"), font=("Segoe Ui", 12), bg="red", fg="white")
             self.button_stop.grid(row=0, column=1, padx=5)
 
             # Printing output speed of capstan
@@ -84,15 +98,15 @@ class FiberTower(tk.Tk):
 
 
             # Creation of green Start button
-            self.spool_start = tk.Button(self.spool_frame, text="Start", command=start_spool, font=("Segoe Ui", 12), bg="green", fg="white")
+            self.spool_start = tk.Button(self.spool_frame, text="Start", command=lambda: port_write("w"), font=("Segoe Ui", 12), bg="green", fg="white")
             self.spool_start.grid(row=0, column=0, padx=5)
 
             # Creation of red Stop button
-            self.spool_stop = tk.Button(self.spool_frame, text="Stop", command=stop_spool, font=("Segoe Ui", 12), bg="red", fg="white")
+            self.spool_stop = tk.Button(self.spool_frame, text="Stop", command=lambda: port_write("q"), font=("Segoe Ui", 12), bg="red", fg="white")
             self.spool_stop.grid(row=0, column=1, padx=5)
 
             # Creation of yellow Reverse button
-            self.spool_stop = tk.Button(self.spool_frame, text="Reverse", command=reverse_spool, font=("Segoe Ui", 12), bg="yellow", fg="black")
+            self.spool_stop = tk.Button(self.spool_frame, text="Reverse", command=lambda: port_write("r"), font=("Segoe Ui", 12), bg="yellow", fg="black")
             self.spool_stop.grid(row=0, column=2, padx=5)
 
             # Printing output speed of capstan
@@ -113,7 +127,7 @@ class FiberTower(tk.Tk):
             self.diameter_desired.grid(row=1, column=0)
             self.diameter_entry = tk.Entry(self.parameter_frame)
             self.diameter_entry.grid(row=1, column=1)
-            self.diameter_entry_button = tk.Button(self.parameter_frame, text = 'Send', command=send_diameter)
+            self.diameter_entry_button = tk.Button(self.parameter_frame, text = 'Send', command=self.send_diameter)
             self.diameter_entry_button.grid(row=1, column = 2)
 
 
@@ -150,118 +164,78 @@ class FiberTower(tk.Tk):
 
             self.connection_drop_menu = tk.OptionMenu(self.connection_frame, self.current_port, *serial_ports())
             self.connection_drop_menu.grid(row=0, column=0,columnspan=1, padx=5)
+        
+        ## Button functions
+
+        def close_window():
+            """Close serial communication when the windows is closed"""
+            global running
+            running = False  # turn off while loop
+            if status_label.cget('text') == "Connected":
+                ser.close()
+
+
+        def send_diameter():
+            """ send the desired diameter"""
+            entry = diameter_entry.get()
+            if entry != '':
+                port_write(entry.encode())
+                #send end character
+                port_write(b'e')
+
+        def reconnect():
+            """Tries to reconnect to the arduino when the Reconnect button is pressed"""
+            try:
+                initialise(current_port.get())
+                program_loop()
+            except IndexError:
+                status_label.config(text = "No Available Port", bg = 'yellow')
+            except serial.serialutil.SerialException:
+                #Triggers when connection is already established with the same port
+                pass
+        
+        def check_ports():
+            """Updates the connection drop menu with available ports"""    
+
+            connection_drop_menu['menu'].delete(0, 'end')
+
+            ports = serial_ports()
+            if status_label.cget('text') == "Connected":
+                #If the serial port is already in use, it will not be detected and needs to be added manually to the list
+                if ports[0] == "None":
+                    ports = [current_port.get()]
+                else:
+                    ports.insert(0,current_port.get())
+
+            #Creates a new instance of the menu with the updated ports
+            current_port.set(ports[0])
+            for port in ports:
+                connection_drop_menu['menu'].add_command(label=port, command=tk._setit(current_port, port))
 
 
 
-## Button functions
+        #Loop functions
 
-def close_window():
-  """Close serial communication when the windows is closed"""
-  global running
-  running = False  # turn off while loop
-  if status_label.cget('text') == "Connected":
-    ser.close()
+        def program_loop():
+            """Executes the main program loop when called"""
+            try:
+                while True:
+                    root.update()
+                    if not running: 
+                        break
+                    checkSerialPort()
+            except serial.serialutil.SerialException:
+                ser.close()
+                status_label.config(text="Disconnected", bg = 'red')
+                check_ports()
+                reconnection_loop()
 
-
-# Preform Button functions
-def preform_up():
-    port_write(b't')
-
-def preform_down():
-    port_write(b'b')
-
-def stop_preform():
-    port_write(b'k')
-
-# Capstan Button functions
-def start_capstan():
-    """send "s" in byte to  start capstan motor
-    """
-    port_write(b's')
-
-def stop_capstan():
-    """send "a" in byte to stop capstan motor
-    """
-    port_write(b'a')
-
-# Spool Button functions
-
-def start_spool():
-    """send "w" in byte to  start capstan motor
-    """
-    port_write(b'w')
-
-def stop_spool():
-    """send "q" in byte to stop spool motor
-    """
-    port_write(b'q')
-
-def reverse_spool():
-    """send "r" in byte to reverse spool motor
-    """
-    port_write(b'r')
-
-def send_diameter():
-    """ send the desired diameter"""
-    entry = diameter_entry.get()
-    if entry != '':
-        port_write(entry.encode())
-        #send end character
-        port_write(b'e')
-
-def reconnect():
-    """Tries to reconnect to the arduino when the Reconnect button is pressed"""
-    try:
-        initialise(current_port.get())
-        program_loop()
-    except IndexError:
-        status_label.config(text = "No Available Port", bg = 'yellow')
-    except serial.serialutil.SerialException:
-        #Triggers when connection is already established with the same port
-        pass
- 
-def check_ports():
-    """Updates the connection drop menu with available ports"""    
-
-    connection_drop_menu['menu'].delete(0, 'end')
-
-    ports = serial_ports()
-    if status_label.cget('text') == "Connected":
-        #If the serial port is already in use, it will not be detected and needs to be added manually to the list
-        if ports[0] == "None":
-            ports = [current_port.get()]
-        else:
-            ports.insert(0,current_port.get())
-
-    #Creates a new instance of the menu with the updated ports
-    current_port.set(ports[0])
-    for port in ports:
-        connection_drop_menu['menu'].add_command(label=port, command=tk._setit(current_port, port))
-
-
-
-#Loop functions
-
-def program_loop():
-    """Executes the main program loop when called"""
-    try:
-        while True:
-            root.update()
-            if not running: 
-                break
-            checkSerialPort()
-    except serial.serialutil.SerialException:
-        ser.close()
-        status_label.config(text="Disconnected", bg = 'red')
-        check_ports()
-        reconnection_loop()
-
-def reconnection_loop(): 
-    """Executes a secondary loop while the program waits to be reconnected"""
-    while True:
-        root.update()
-        if not running: 
-            break
+        def reconnection_loop(): 
+            """Executes a secondary loop while the program waits to be reconnected"""
+            while True:
+                root.update()
+                if not running: 
+                    break
 
 ### GUI
 
