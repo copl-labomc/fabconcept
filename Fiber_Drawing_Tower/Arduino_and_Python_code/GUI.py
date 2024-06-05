@@ -40,8 +40,8 @@ class FiberTower(tk.Tk):
         def __init__(self):
             super().__init__()
             self.createGui()
-            self.initialization(self.current_port.get())
             self.running = True
+            self.initialization(self.current_port.get())
             self.program_loop()
 
         def createGui(self):
