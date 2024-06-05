@@ -3,17 +3,17 @@
 // setting all variables
 
 // flag to see if motor is already on
-bool cabestan_running = false;
+bool capstan_running = false;
 bool preform_motor_running = false;
 
 // Arduino pins for the drivers
-const int cabestan_stepPin = 4;
-const int cabestan_dirPin = 5;
+const int capstan_stepPin = 4;
+const int capstan_dirPin = 5;
 const int preform_stepPin = 2;
 const int preform_dirPin = 3;
 
 // Speed of motors
-int new_speed_cabestan;
+int new_speed_capstan;
 int new_speed_preform; 
 
 // Diameter variables
@@ -22,7 +22,7 @@ float diameter_tension;
 float conversion_factor_diameter_tension = 0.5;
 float real_diameter = 0;
 
-const int cabestan_max_speed = 999;
+const int capstan_max_speed = 999;
 const int preform_max_speed = 999;
 
 char command;
@@ -35,7 +35,7 @@ String received_diameter_string = "";
 float desired_diameter = 0;
 
 // Creates an instance for both motors
-AccelStepper cabestan_stepper(AccelStepper::DRIVER, cabestan_stepPin, cabestan_dirPin);
+AccelStepper capstan_stepper(AccelStepper::DRIVER, capstan_stepPin, capstan_dirPin);
 AccelStepper preform_stepper(AccelStepper::DRIVER, preform_stepPin, preform_dirPin);
 
 // map function working with float 
@@ -45,10 +45,10 @@ float mapf(float value, float fromLow, float fromHigh, float toLow, float toHigh
   return result;
 } 
 
-// Function adjusting the cabestan motor speed with the value measured trought the potentiometer
-void controlCabestan(int cabestan_speed) {
-  cabestan_stepper.setSpeed(cabestan_speed);
-  cabestan_stepper.runSpeed();
+// Function adjusting the capstan motor speed with the value measured trought the potentiometer
+void controlCapstan(int capstan_speed) {
+  capstan_stepper.setSpeed(capstan_speed);
+  capstan_stepper.runSpeed();
 }
 
 // Function adjusting the preform motor speed and its direction depending the button pressed
@@ -68,8 +68,8 @@ void stepTheMotors() {
     preform_stepper.runSpeed();
   }
 
-  if (cabestan_running) {
-    cabestan_stepper.runSpeed();
+  if (capstan_running) {
+    capstan_stepper.runSpeed();
   }
 }
 
@@ -77,7 +77,7 @@ void setup() {
   // Initilization of serial port
   Serial.begin(115200);
   // Setting max speed of the motors to avoid damages
-  cabestan_stepper.setMaxSpeed(cabestan_max_speed);
+  capstan_stepper.setMaxSpeed(capstan_max_speed);
   preform_stepper.setMaxSpeed(preform_max_speed);
 }
 
@@ -104,13 +104,13 @@ void loop() {
     // or off and change the flags status
   if (count > 1000){
 
-    if (command == 's' && !cabestan_running) {
-      cabestan_running = true;
+    if (command == 's' && !capstan_running) {
+      capstan_running = true;
     }
 
      else if (command == 'a') {
-      cabestan_running = false;
-      new_speed_cabestan = 0;
+      capstan_running = false;
+      new_speed_capstan = 0;
     }
 
      else if (command == 't') {
@@ -128,11 +128,11 @@ void loop() {
       new_speed_preform = 0;
     } 
     
-    // if flag for the cabestan is true read the tension of potentiometer to adapt the speed
-    if (cabestan_running) {
+    // if flag for the capstan is true read the tension of potentiometer to adapt the speed
+    if (capstan_running) {
       int sensorValue = analogRead(A0);
-      new_speed_cabestan = map(sensorValue, 0, 1023, 0, cabestan_max_speed);
-      controlCabestan(new_speed_cabestan);
+      new_speed_capstan = map(sensorValue, 0, 1023, 0, capstan_max_speed);
+      controlCapstan(new_speed_capstan);
       
     }
     // if flag for the preform is true read the tension of potentiometer to adapt the speed
@@ -148,7 +148,7 @@ void loop() {
     // Sending output values to the python application
     // Run the runSpeed command multiple times
     stepTheMotors();
-    Serial.print(new_speed_cabestan);
+    Serial.print(new_speed_capstan);
     stepTheMotors();
     Serial.print(",");
     Serial.print(new_speed_preform);
