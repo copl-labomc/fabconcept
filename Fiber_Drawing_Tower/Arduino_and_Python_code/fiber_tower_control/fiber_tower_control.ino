@@ -147,6 +147,10 @@ void loop() {
       preform_motor_running = true;
       motor_preform_dir = command;
     }
+    else if (command == 'k') {
+      preform_motor_running = false;
+      new_speed_preform = 0;
+    }
     
     else if (command == 'q') {
       spool_running = false;
@@ -159,7 +163,7 @@ void loop() {
     } 
 
     else if (command == 'r') {
-      preform_motor_running = false;
+      spool_running = true;
       motor_spool_dir = command;
     } 
     
