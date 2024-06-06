@@ -23,7 +23,7 @@ def serial_ports():
 
 
 
-class FiberTower(tk.Tk):
+class FiberTower():
         """
         
         Instruction dictionnary
@@ -38,23 +38,23 @@ class FiberTower(tk.Tk):
         
         """
         def __init__(self):
-            super().__init__()
             self.createGui()
             self.running = True
             self.initialization(self.current_port.get())
             self.program_loop()
 
         def createGui(self):
-            self.title("Fiber Tower")
-            self.geometry("500x400")
-            self.protocol("WM_DELETE_WINDOW", self.close_window)
+            self.root = tk.Tk()
+            self.root.title("Fiber Tower")
+            self.root.geometry("500x400")
+            self.root.protocol("WM_DELETE_WINDOW", self.close_window)
             
             # Create a tk application 
 
             ## PREFORM STEPPER SECTION 
 
             # Frame
-            self.preform_frame = tk.LabelFrame(self, text="Preform Motor", height=100,width=150)
+            self.preform_frame = tk.LabelFrame(self.root, text="Preform Motor", height=100,width=150)
             self.preform_frame.grid(row=0, column=0, rowspan=3, columnspan=3, padx=5, pady=5)
 
             # Buttons of preform section
@@ -79,7 +79,7 @@ class FiberTower(tk.Tk):
 
 
             ## CAPSTAN STEPPER SECTION 
-            self.capstan_frame = tk.LabelFrame(self, text="Capstan Motor", height=120,width=150)
+            self.capstan_frame = tk.LabelFrame(self.root, text="Capstan Motor", height=120,width=150)
             self.capstan_frame.grid(row=3, column=0, rowspan=4, columnspan=3)
 
 
@@ -97,7 +97,7 @@ class FiberTower(tk.Tk):
             self.speed_capstan.grid(row=1, column=0, padx=5, columnspan=2)
 
             ## SPOOL STEPPER SECTION 
-            self.spool_frame = tk.LabelFrame(self, text="Spool Motor", height=120,width=150)
+            self.spool_frame = tk.LabelFrame(self.root, text="Spool Motor", height=120,width=150)
             self.spool_frame.grid(row=7, column=1, rowspan=3, columnspan=3)
 
 
@@ -119,7 +119,7 @@ class FiberTower(tk.Tk):
             self.speed_spool.grid(row=1, column=0, padx=5, columnspan=2)
 
             ## Parameter frame section 
-            self.parameter_frame = tk.LabelFrame(self, text="Parameters", height=100,width=150)
+            self.parameter_frame = tk.LabelFrame(self.root, text="Parameters", height=100,width=150)
             self.parameter_frame.grid(row=2, column=4, rowspan=3, columnspan=3, padx=5, pady=5)
 
             # printing diameter measured by laser sensor
@@ -137,14 +137,14 @@ class FiberTower(tk.Tk):
 
             ## Debug section
             #Debug screen with time delay and received serial packets
-            self.debug_frame = tk.LabelFrame(self, text="Debug", height=100,width=150)
+            self.debug_frame = tk.LabelFrame(self.root, text="Debug", height=100,width=150)
             self.debug_frame.grid(row=5, column=4, rowspan=2, columnspan=3, padx=5, pady=5)
             self.serial_print = tk.Label(self.debug_frame, text="Serial")
             self.serial_print.grid(row=1, column=3, padx=5, columnspan= 3)
 
 
             ##Connection frame section
-            self.connection_frame = tk.LabelFrame(self, text="Connection", height=50,width=150)
+            self.connection_frame = tk.LabelFrame(self.root, text="Connection", height=50,width=150)
             self.connection_frame.grid(row=0, column=4, rowspan=2, columnspan=2, padx=5, pady=5)
 
             # Port selection menu
@@ -233,7 +233,7 @@ class FiberTower(tk.Tk):
             """Executes the main program loop when called"""
             try:
                 while True:
-                    self.update()
+                    self.root.update()
                     if not self.running: 
                         break
                     self.checkSerialPort()
@@ -283,4 +283,5 @@ class FiberTower(tk.Tk):
             except UnicodeDecodeError:
                 pass
 
-tower = FiberTower()
+if __name__ == "__main__":
+    tower = FiberTower()
