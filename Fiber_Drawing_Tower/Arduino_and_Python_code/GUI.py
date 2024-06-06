@@ -75,12 +75,12 @@ class FiberTower(tk.Tk):
             # Printing output speed of preform motor
 
             self.speed_preform = tk.Label(self.preform_frame, text="Speed :")
-            self.speed_preform.grid(row=3, column=0, padx=5, columnspan=2)
+            self.speed_preform.grid(row=3, column=0, padx=5, columnspan=1)
 
 
             ## CAPSTAN STEPPER SECTION 
             self.capstan_frame = tk.LabelFrame(self, text="Capstan Motor", height=120,width=150)
-            self.capstan_frame.grid(row=4, column=0, rowspan=4, columnspan=3)
+            self.capstan_frame.grid(row=3, column=0, rowspan=4, columnspan=3)
 
 
             # Creation of green Start button
@@ -98,7 +98,7 @@ class FiberTower(tk.Tk):
 
             ## SPOOL STEPPER SECTION 
             self.spool_frame = tk.LabelFrame(self, text="Spool Motor", height=120,width=150)
-            self.spool_frame.grid(row=8, column=1, rowspan=3, columnspan=3)
+            self.spool_frame.grid(row=7, column=1, rowspan=3, columnspan=3)
 
 
             # Creation of green Start button
@@ -138,9 +138,9 @@ class FiberTower(tk.Tk):
             ## Debug section
             #Debug screen with time delay and received serial packets
             self.debug_frame = tk.LabelFrame(self, text="Debug", height=100,width=150)
-            self.debug_frame.grid(row=5, column=4, rowspan=3, columnspan=3, padx=5, pady=5)
+            self.debug_frame.grid(row=5, column=4, rowspan=2, columnspan=3, padx=5, pady=5)
             self.serial_print = tk.Label(self.debug_frame, text="Serial")
-            self.serial_print.grid(row=1, column=3, padx=5)
+            self.serial_print.grid(row=1, column=3, padx=5, columnspan= 3)
 
 
             ##Connection frame section
@@ -259,7 +259,8 @@ class FiberTower(tk.Tk):
                 if self.ser.isOpen() and self.ser.in_waiting:
                     # Read the output line of the arduino and make a list of each element
                     recentPacket = self.ser.readline()
-                    recentPacketString = recentPacket.decode('utf').split(",")
+                    #Decodes the packet, then removes the ending \r\n characters and finally separates the different values
+                    recentPacketString = recentPacket.decode('utf').replace("\r\n", "").split(",")
                     
                     # Update the value for each printed values if its a float (can be an altered value)
                     try:
@@ -270,10 +271,10 @@ class FiberTower(tk.Tk):
                         if isinstance(float(recentPacketString[2]), float):
                             self.speed_spool.config(text= "Speed : " + recentPacketString[2])
                         if isinstance(float(recentPacketString[3]), float):
-
                             self.diameter.config(text= "Diameter : " + recentPacketString[3])
                         
                         #Outputs the delay and serial packet info on the GUI (for testing)
+                        #Removes the \r\n characters at the end
                         self.serial_print.config(text = "Serial: " + "' '".join(recentPacketString))
                     except IndexError:
                         pass
