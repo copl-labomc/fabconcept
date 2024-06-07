@@ -3,7 +3,10 @@ import serial
 from tkinter import ttk
 
 def serial_ports():
-    """ Finds all the port in use and returns it as a list
+    """ Finds all the port in use and returns it as a list. Returns ["None"] if no port is available
+
+    Returns:
+    List of all available ports
     """
     
     #Try every possible port 
@@ -24,9 +27,10 @@ def serial_ports():
 
 
 class FiberTower():
-        """
-        
-        Instruction dictionnary
+        """Object encompassing all the functions for the fiber tower's control and graphical interface.
+        Automatically starts when an instance of this object is created
+
+        Instruction dictionnary for serial communication:
         s start capstan
         a stop capstan
         t preform up
@@ -38,18 +42,49 @@ class FiberTower():
         
         """
         def __init__(self):
+            """Creates the GUI, initializes the serial communication then starts the main loop
+            """
             self.createGui()
             self.running = True
             self.initialization(self.current_port.get())
             self.program_loop()
 
         def createGui(self):
+            """Creates the Graphical User Interface
+
+            Buttons:
+
+            Preform motor
+                -Arrow up: Raises preform
+                -Arrow down: Lowers preform
+                -Stop: Stops preform motor
+
+            Capstan motor
+                -Start: Turns the capstan wheels
+                -Stop: Stops the capstan wheels
+            
+            Spool motor
+                -Start: Turns the spool and pulls the fiber
+                -Stop: Stops the spool
+                -Reverse: Reverses the direction of the spool
+
+            Connection
+                -Drop-down menu: Select the port to connect
+                -Reconnect: Tries connecting to the selected port
+                -Check Ports: Refreshes the available ports menu
+            
+            Parameters
+                Text box: Type the desired diameter to send (WIP)
+                Send: Send the contents of the text box to the arduino
+            """
+
+            # Create a tk application
             self.root = tk.Tk()
             self.root.title("Fiber Tower")
             self.root.geometry("500x400")
             self.root.protocol("WM_DELETE_WINDOW", self.close_window)
             
-            # Create a tk application 
+             
 
             ## PREFORM STEPPER SECTION 
 
@@ -170,14 +205,14 @@ class FiberTower():
             self.connection_drop_menu.grid(row=0, column=0,columnspan=1, padx=5)
 
         def close_window(self):
-            """Close serial communication when the windows is closed"""
+            """Close serial communication when the window is closed"""
             self.running = False  # turn off while loop
             if self.status_label.cget('text') == "Connected":
                 self.ser.close()
 
 
         def send_diameter(self):
-            """ send the desired diameter"""
+            """Send the desired diameter"""
             entry = self.diameter_entry.get()
             if entry != '':
                 self.port_write(entry)
@@ -219,6 +254,8 @@ class FiberTower():
                 self.connection_drop_menu['menu'].add_command(label=port, command=tk._setit(self.current_port, port))
 
         def initialization(self, commPort):
+            """Initializes the serial communication. If no comm port is available, sends the tower in the reconnection loop 
+            """
             if commPort == "None":
                 self.status_label.config(text="No Available Port", bg = 'yellow')
                 self.reconnection_loop()
@@ -246,7 +283,7 @@ class FiberTower():
         def reconnection_loop(self): 
             """Executes a secondary loop while the program waits to be reconnected"""
             while True:
-                self.update()
+                self.root.update()
                 if not self.running: 
                     break
         
@@ -283,5 +320,6 @@ class FiberTower():
             except UnicodeDecodeError:
                 pass
 
+#Only create an instance if this program run directly
 if __name__ == "__main__":
     tower = FiberTower()
