@@ -110,7 +110,7 @@ class FiberTower():
             # Printing output speed of preform motor
 
             self.speed_preform = tk.Label(self.preform_frame, text="Speed :")
-            self.speed_preform.grid(row=3, column=0, padx=5, columnspan=1)
+            self.speed_preform.grid(row=3, column=0, padx=5, columnspan=2)
 
 
             ## CAPSTAN STEPPER SECTION 
@@ -302,11 +302,11 @@ class FiberTower():
                     # Update the value for each printed values if its a float (can be an altered value)
                     try:
                         if isinstance(float(recentPacketString[0]), float):
-                            self.speed_capstan.config(text= "Speed : " + recentPacketString[0])
+                            self.speed_capstan.config(text= "Speed : " + f"{int(recentPacketString[0]):03d}")
                         if isinstance(float(recentPacketString[1]), float):
-                            self.speed_preform.config(text= "Speed : " + recentPacketString[1])
+                            self.speed_preform.config(text= "Speed : " + f"{int(recentPacketString[1]):03d}")
                         if isinstance(float(recentPacketString[2]), float):
-                            self.speed_spool.config(text= "Speed : " + recentPacketString[2])
+                            self.speed_spool.config(text= "Speed : " + f"{int(recentPacketString[2]):03d}")
                         if isinstance(float(recentPacketString[3]), float):
                             self.diameter.config(text= "Diameter : " + recentPacketString[3])
                         
