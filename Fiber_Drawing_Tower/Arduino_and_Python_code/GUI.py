@@ -1,6 +1,8 @@
 import tkinter as tk
 import serial
 from tkinter import ttk
+import time
+import datetime as dt
 
 def serial_ports():
     """ Finds all the port in use and returns it as a list. Returns ["None"] if no port is available
@@ -158,8 +160,8 @@ class FiberTower():
             self.parameter_frame.grid(row=2, column=4, rowspan=3, columnspan=3, padx=5, pady=5)
 
             # printing diameter measured by laser sensor
-            self.diameter = tk.Label(self.parameter_frame, text="Diameter Measurement:")
-            self.diameter.grid(row=0, column=0,columnspan=4, padx=5)
+            self.diameter = tk.Label(self.parameter_frame, text="Diameter: 0.00")
+            self.diameter.grid(row=0, column=0, padx=5)
 
             # input for the diameter desired
             self.diameter_desired = tk.Label(self.parameter_frame, text='Diameter desired :')
@@ -169,6 +171,11 @@ class FiberTower():
             self.diameter_entry_button = tk.Button(self.parameter_frame, text = 'Send', command=self.send_diameter)
             self.diameter_entry_button.grid(row=1, column = 2)
 
+
+            #Record diameter button
+            self.record_button = tk.Button(self.parameter_frame, text = "Record diameter", command=self.record_diameter)
+            self.record_button.grid(row=0, column=1)
+            self.recording = False
 
             ## Debug section
             #Debug screen with time delay and received serial packets
@@ -234,6 +241,27 @@ class FiberTower():
             """Checks if the arduino is connected then sends the command trough the serial port"""
             if self.status_label.cget("text") == "Connected":
                 self.ser.write(command.encode())
+
+        def record_diameter(self):
+            if self.recording:
+                self.recording = False
+                self.record_button.config(text = "Record diameter", bg = "grey94")
+                #Save file
+                print(self.save_data)
+            else:
+                self.recording = True
+                self.data_count = 0
+                self.buffer = []
+                self.save_data = {
+                    "absolute_time" : [],
+                    "relative_time" : [],
+                    "diameter" : [],
+                    "preform_speed" : [],
+                    "capstan_speed" : [],
+                    "spool_speed" : []
+                }
+                self.start_time = time.time()
+                self.record_button.config(text = 'Stop recording', bg = 'red')
 
         def check_ports(self):
             """Updates the connection drop menu with available ports"""    
