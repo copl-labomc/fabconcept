@@ -8,12 +8,17 @@ bool preform_motor_running = false;
 bool spool_running = false;
 
 // Arduino pins for the drivers
-const int capstan_stepPin = 4;
-const int capstan_dirPin = 5;
+//const int capstan_stepPin = 4;
+//const int capstan_dirPin = 5;
+
+const int capstan_stepPin = 8; //temp
+const int capstan_dirPin = 9; //temp
+
 const int preform_stepPin = 2;
 const int preform_dirPin = 3;
-const int spool_stepPin = 8;
-const int spool_dirPin = 9;
+
+const int spool_stepPin = 4;
+const int spool_dirPin = 5;
 
 // Speed of motors
 int new_speed_capstan;
@@ -61,11 +66,11 @@ void controlCapstan(int capstan_speed) {
 
 void controlSpool(char dir, int spool_speed) {
   if (dir == 'w'){
-  spool_stepper.setSpeed(spool_speed);
+  spool_stepper.setSpeed(-spool_speed);
   spool_stepper.runSpeed();
   }
    if (dir == 'r'){
-  spool_stepper.setSpeed(-spool_speed);
+  spool_stepper.setSpeed(spool_speed);
   spool_stepper.runSpeed();
   }
   
