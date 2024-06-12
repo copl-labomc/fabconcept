@@ -7,6 +7,8 @@ bool capstan_running = false;
 bool preform_motor_running = false;
 bool spool_running = false;
 
+int reversed = 1;
+
 // Arduino pins for the drivers
 //const int capstan_stepPin = 4;
 //const int capstan_dirPin = 5;
@@ -64,15 +66,9 @@ void controlCapstan(int capstan_speed) {
   capstan_stepper.runSpeed();
 }
 
-void controlSpool(char dir, int spool_speed) {
-  if (dir == 'w'){
-  spool_stepper.setSpeed(-spool_speed);
+void controlSpool(int rev, int spool_speed) {
+  spool_stepper.setSpeed(spool_speed * rev);
   spool_stepper.runSpeed();
-  }
-   if (dir == 'r'){
-  spool_stepper.setSpeed(spool_speed);
-  spool_stepper.runSpeed();
-  }
   
 }
 
@@ -159,12 +155,11 @@ void loop() {
 
     else if (command == 'w' && !spool_running) {
       spool_running = true;
-      motor_spool_dir = command;
     } 
 
     else if (command == 'r') {
       spool_running = true;
-      motor_spool_dir = command;
+      reversed = reversed * -1;
     } 
   }
     // Depending of the byte received (a char) and if the motor is not active turn it on 
@@ -180,7 +175,7 @@ void loop() {
     if (spool_running) {
       int sensorValue = analogRead(A0);
       new_speed_spool = map(sensorValue, 0, 1023, 0, spool_max_speed);
-      controlSpool(motor_spool_dir, new_speed_spool);
+      controlSpool(reversed, new_speed_spool);
     }
 
     // if flag for the preform is true read the tension of potentiometer to adapt the speed
