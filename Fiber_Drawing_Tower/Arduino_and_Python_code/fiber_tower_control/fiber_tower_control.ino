@@ -8,12 +8,17 @@ bool preform_motor_running = false;
 bool spool_running = false;
 
 // Arduino pins for the drivers
-const int capstan_stepPin = 4;
-const int capstan_dirPin = 5;
+//const int capstan_stepPin = 4;
+//const int capstan_dirPin = 5;
+
+const int capstan_stepPin = 8; //temp
+const int capstan_dirPin = 9; //temp
+
 const int preform_stepPin = 2;
 const int preform_dirPin = 3;
-const int spool_stepPin = 8;
-const int spool_dirPin = 9;
+
+const int spool_stepPin = 4;
+const int spool_dirPin = 5;
 
 // Speed of motors
 int new_speed_capstan;
@@ -61,11 +66,11 @@ void controlCapstan(int capstan_speed) {
 
 void controlSpool(char dir, int spool_speed) {
   if (dir == 'w'){
-  spool_stepper.setSpeed(spool_speed);
+  spool_stepper.setSpeed(-spool_speed);
   spool_stepper.runSpeed();
   }
    if (dir == 'r'){
-  spool_stepper.setSpeed(-spool_speed);
+  spool_stepper.setSpeed(spool_speed);
   spool_stepper.runSpeed();
   }
   
@@ -124,12 +129,7 @@ void loop() {
       desired_diameter = received_diameter_string.toFloat();
       received_diameter_string = "";
     }
-  }
-    // Depending of the byte received (a char) and if the motor is not active turn it on 
-    // or off and change the flags status
-  if (count > 1000){
-
-    if (command == 's' && !capstan_running) {
+    else if (command == 's' && !capstan_running) {
       capstan_running = true;
     }
 
@@ -166,13 +166,15 @@ void loop() {
       spool_running = true;
       motor_spool_dir = command;
     } 
-    
+  }
+    // Depending of the byte received (a char) and if the motor is not active turn it on 
+    // or off and change the flags status
+  if (count > 1000){
     // if flag for the capstan is true read the tension of potentiometer to adapt the speed
     if (capstan_running) {
       int sensorValue = analogRead(A0);
       new_speed_capstan = map(sensorValue, 0, 1023, 0, capstan_max_speed);
       controlCapstan(new_speed_capstan);
-      
     }
 
     if (spool_running) {
@@ -187,7 +189,7 @@ void loop() {
       new_speed_preform = map(sensor2Value, 0, 1023, 0, preform_max_speed);
       controlPreformMotor(motor_preform_dir, new_speed_preform);
     }
-    // Read the sensor value of diameter and cinvert it to mm
+    // Read the sensor value of diameter and convert it to mm
     float diameter_sensor = analogRead(A2);
     diameter_tension = mapf(diameter_sensor, 0, 1023, 0.0, 5.0);
     real_diameter = diameter_tension / conversion_factor_diameter_tension + offset;
