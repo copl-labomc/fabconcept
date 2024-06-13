@@ -4,6 +4,7 @@ from tkinter import ttk
 import time
 import datetime as dt
 import numpy as np
+import pandas as pd
 
 def serial_ports():
     """ Finds all the port in use and returns it as a list. Returns ["None"] if no port is available
@@ -248,12 +249,14 @@ class FiberTower():
                 self.recording = False
                 self.record_button.config(text = "Record diameter", bg = "grey94")
                 #Save file
+
                 print(self.save_data)
+                df = pd.DataFrame(self.save_data)
+                df.to_csv(dt.datetime.today().strftime("%Y%m%d, %H:%M:%S"), index=False)
             else:
                 self.recording = True
                 self.buffer = []
                 self.save_data = {
-                    "absolute_time" : [],
                     "relative_time" : [],
                     "diameter" : [],
                     "preform_speed" : [],
