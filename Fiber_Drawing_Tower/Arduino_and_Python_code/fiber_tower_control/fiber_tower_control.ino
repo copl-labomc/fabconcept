@@ -7,7 +7,8 @@ bool capstan_running = false;
 bool preform_motor_running = false;
 bool spool_running = false;
 
-int reversed = 1;
+// Make sure the spool turns the right way when it starts
+int reversed = -1;
 
 // Arduino pins for the drivers
 //const int capstan_stepPin = 4;
