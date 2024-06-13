@@ -251,7 +251,7 @@ class FiberTower():
                 self.record_button.config(text = "Record diameter", bg = "grey94")
                 #Save file
 
-                print(self.save_data)
+
                 df = DataFrame(self.save_data)
                 df.to_csv(f'../Drawing_data/{datetime.today().strftime("%Y%m%d, %Hh%Mm%Ss")}.csv', index=False)
             else:
