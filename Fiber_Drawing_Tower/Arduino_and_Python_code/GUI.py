@@ -3,6 +3,7 @@ import serial
 from tkinter import ttk
 import time
 import datetime as dt
+import numpy as np
 
 def serial_ports():
     """ Finds all the port in use and returns it as a list. Returns ["None"] if no port is available
@@ -250,7 +251,6 @@ class FiberTower():
                 print(self.save_data)
             else:
                 self.recording = True
-                self.data_count = 0
                 self.buffer = []
                 self.save_data = {
                     "absolute_time" : [],
@@ -302,6 +302,25 @@ class FiberTower():
                     if not self.running: 
                         break
                     self.checkSerialPort()
+                    if self.recording:
+                        # Only records the data when 25 elements are saved in the buffer
+                        if len(self.buffer) >= 25:
+                            #Convert the 2d array into a numpy array
+                            treated_buffer = np.array(self.buffer)
+
+                            #Save the time relative to the start of the recording
+                            self.save_data["relative_time"].append(time.time() - self.start_time)
+                            #Save the diameter into memory. The array is seperated, then every element is converted from a string to a float
+                            #The average of the last 25 readings is saved
+                            self.save_data["diameter"].append(np.mean(treated_buffer[:,3].astype(np.float16)))
+
+                            # Same for the speed of each motor. Values are integers instead of floats
+                            self.save_data["preform_speed"].append(np.mean(treated_buffer[:,1].astype(np.int16)))
+                            self.save_data["capstan_speed"].append(np.mean(treated_buffer[:,0].astype(np.int16)))
+                            self.save_data["spool_speed"].append(np.mean(treated_buffer[:,2].astype(np.int16)))
+                            
+                            # Reset the buffer
+                            self.buffer = []
             except serial.SerialException:
                 self.ser.close()
                 self.status_label.config(text="Disconnected", bg = 'red')
@@ -338,6 +357,12 @@ class FiberTower():
                         if isinstance(float(recentPacketString[3]), float):
                             self.diameter.config(text= "Diameter : " + recentPacketString[3])
                         
+                        # Checks that all the data has been transmitted and decoded correctly 
+                        if self.recording and len(recentPacketString) == 5:
+                            # Saves the data to the buffer
+                            self.buffer.append(recentPacketString[:4])
+                        
+
                         #Outputs the delay and serial packet info on the GUI (for testing)
                         #Removes the \r\n characters at the end
                         self.serial_print.config(text = "Serial: " + "' '".join(recentPacketString))
