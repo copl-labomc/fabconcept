@@ -1,10 +1,11 @@
 import tkinter as tk
 import serial
 from tkinter import ttk
-import time
-import datetime as dt
+from time import time
+from datetime import datetime
 import numpy as np
-import pandas as pd
+from pandas import DataFrame
+
 
 def serial_ports():
     """ Finds all the port in use and returns it as a list. Returns ["None"] if no port is available
@@ -251,8 +252,8 @@ class FiberTower():
                 #Save file
 
                 print(self.save_data)
-                df = pd.DataFrame(self.save_data)
-                df.to_csv(f'../Drawing_data/{dt.datetime.today().strftime("%Y%m%d, %Hh%Mm%Ss")}.csv', index=False)
+                df = DataFrame(self.save_data)
+                df.to_csv(f'../Drawing_data/{datetime.today().strftime("%Y%m%d, %Hh%Mm%Ss")}.csv', index=False)
             else:
                 self.recording = True
                 self.buffer = []
@@ -263,7 +264,7 @@ class FiberTower():
                     "capstan_speed" : [],
                     "spool_speed" : []
                 }
-                self.start_time = time.time()
+                self.start_time = time()
                 self.record_button.config(text = 'Stop recording', bg = 'red')
 
         def check_ports(self):
@@ -312,7 +313,7 @@ class FiberTower():
                             treated_buffer = np.array(self.buffer)
 
                             #Save the time relative to the start of the recording
-                            self.save_data["relative_time"].append(time.time() - self.start_time)
+                            self.save_data["relative_time"].append(time() - self.start_time)
                             #Save the diameter into memory. The array is seperated, then every element is converted from a string to a float
                             #The average of the last 25 readings is saved
                             self.save_data["diameter"].append(np.mean(treated_buffer[:,3].astype(np.float16)))
