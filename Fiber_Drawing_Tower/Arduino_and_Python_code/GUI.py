@@ -252,7 +252,7 @@ class FiberTower():
 
                 print(self.save_data)
                 df = pd.DataFrame(self.save_data)
-                df.to_csv(dt.datetime.today().strftime("%Y%m%d, %H:%M:%S"), index=False)
+                df.to_csv(dt.datetime.today().strftime("%Y%m%d, %Hh%Mm%Ss"), index=False)
             else:
                 self.recording = True
                 self.buffer = []
