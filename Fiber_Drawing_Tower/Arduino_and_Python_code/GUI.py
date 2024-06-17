@@ -179,13 +179,13 @@ class FiberTower():
             self.record_button = tk.Button(self.parameter_frame, text = "Record diameter", command=self.record_diameter)
             self.record_button.grid(row=0, column=1)
             self.recording = False
-
+            """
             ## Debug section
             #Debug screen with time delay and received serial packets
             self.debug_frame = tk.LabelFrame(self.root, text="Debug", height=100,width=150)
             self.debug_frame.grid(row=5, column=4, rowspan=2, columnspan=3, padx=5, pady=5)
             self.serial_print = tk.Label(self.debug_frame, text="Serial")
-            self.serial_print.grid(row=1, column=3, padx=5, columnspan= 3)
+            self.serial_print.grid(row=1, column=3, padx=5, columnspan= 3)"""
 
 
             ##Connection frame section
@@ -219,7 +219,6 @@ class FiberTower():
             self.running = False  # turn off while loop
             if self.status_label.cget('text') == "Connected":
                 self.ser.close()
-
 
         def send_diameter(self):
             """Send the desired diameter"""
@@ -294,7 +293,6 @@ class FiberTower():
                 self.ser = serial.Serial(commPort, baudrate = 115200, timeout = 1)
                 self.status_label.config(text="Connected", bg = 'green')
 
-
         #Loop functions
 
         def program_loop(self):
@@ -365,7 +363,7 @@ class FiberTower():
 
                         #Outputs the delay and serial packet info on the GUI (for testing)
                         #Removes the \r\n characters at the end
-                        self.serial_print.config(text = "Serial: " + "' '".join(recentPacketString))
+                        #self.serial_print.config(text = "Serial: " + "' '".join(recentPacketString))
                     except IndexError:
                         pass
                         
