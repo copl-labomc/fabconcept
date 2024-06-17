@@ -117,7 +117,7 @@ class FiberTower():
             self.speed_preform = tk.Label(self.preform_frame, text="Speed :")
             self.speed_preform.grid(row=3, column=0, padx=5, columnspan=2)
 
-
+            """
             ## CAPSTAN STEPPER SECTION 
             self.capstan_frame = tk.LabelFrame(self.root, text="Capstan Motor", height=120,width=150)
             self.capstan_frame.grid(row=3, column=0, rowspan=4, columnspan=3)
@@ -134,11 +134,11 @@ class FiberTower():
             # Printing output speed of capstan
 
             self.speed_capstan = tk.Label(self.capstan_frame, text="Speed:")
-            self.speed_capstan.grid(row=1, column=0, padx=5, columnspan=2)
+            self.speed_capstan.grid(row=1, column=0, padx=5, columnspan=2)"""
 
             ## SPOOL STEPPER SECTION 
             self.spool_frame = tk.LabelFrame(self.root, text="Spool Motor", height=120,width=150)
-            self.spool_frame.grid(row=7, column=1, rowspan=3, columnspan=3)
+            self.spool_frame.grid(row=5, column=1, rowspan=3, columnspan=3)
 
 
             # Creation of green Start button
@@ -261,7 +261,6 @@ class FiberTower():
                     "relative_time" : [],
                     "diameter" : [],
                     "preform_speed" : [],
-                    "capstan_speed" : [],
                     "spool_speed" : []
                 }
                 self.start_time = time()
@@ -316,12 +315,11 @@ class FiberTower():
                             self.save_data["relative_time"].append(time() - self.start_time)
                             #Save the diameter into memory. The array is seperated, then every element is converted from a string to a float
                             #The average of the last 25 readings is saved
-                            self.save_data["diameter"].append(np.mean(treated_buffer[:,3].astype(np.float16)))
+                            self.save_data["diameter"].append(np.mean(treated_buffer[:,2].astype(np.float16)))
 
                             # Same for the speed of each motor. Values are integers instead of floats
-                            self.save_data["preform_speed"].append(np.mean(treated_buffer[:,1].astype(np.int16)))
-                            self.save_data["capstan_speed"].append(np.mean(treated_buffer[:,0].astype(np.int16)))
-                            self.save_data["spool_speed"].append(np.mean(treated_buffer[:,2].astype(np.int16)))
+                            self.save_data["preform_speed"].append(np.mean(treated_buffer[:,0].astype(np.int16)))
+                            self.save_data["spool_speed"].append(np.mean(treated_buffer[:,1].astype(np.int16)))
                             
                             # Reset the buffer
                             self.buffer = []
@@ -353,18 +351,16 @@ class FiberTower():
                     # Update the value for each printed values if its a float (can be an altered value)
                     try:
                         if isinstance(float(recentPacketString[0]), float):
-                            self.speed_capstan.config(text= "Speed : " + f"{int(recentPacketString[0]):03d}")
+                            self.speed_preform.config(text= "Speed : " + f"{int(recentPacketString[0]):03d}")
                         if isinstance(float(recentPacketString[1]), float):
-                            self.speed_preform.config(text= "Speed : " + f"{int(recentPacketString[1]):03d}")
+                            self.speed_spool.config(text= "Speed : " + f"{int(recentPacketString[1]):03d}")
                         if isinstance(float(recentPacketString[2]), float):
-                            self.speed_spool.config(text= "Speed : " + f"{int(recentPacketString[2]):03d}")
-                        if isinstance(float(recentPacketString[3]), float):
-                            self.diameter.config(text= "Diameter : " + recentPacketString[3])
+                            self.diameter.config(text= "Diameter : " + recentPacketString[2])
                         
                         # Checks that all the data has been transmitted and decoded correctly 
-                        if self.recording and len(recentPacketString) == 5:
+                        if self.recording and len(recentPacketString) == 4:
                             # Saves the data to the buffer
-                            self.buffer.append(recentPacketString[:4])
+                            self.buffer.append(recentPacketString[:3])
                         
 
                         #Outputs the delay and serial packet info on the GUI (for testing)

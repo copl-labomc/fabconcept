@@ -197,13 +197,13 @@ void loop() {
     real_diameter = diameter_tension / conversion_factor_diameter_tension + offset;
     // Sending output values to the python application
     // Run the runSpeed command multiple times
-    
+
     /* Not needed until the capstan is replaced
     stepTheMotors();
     Serial.print(new_speed_capstan);
-    */
     stepTheMotors();
     Serial.print(",");
+    */
     Serial.print(new_speed_preform);
     stepTheMotors();
     Serial.print(",");
