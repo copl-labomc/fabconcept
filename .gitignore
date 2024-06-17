@@ -81,10 +81,12 @@ cython_debug/
 
 ### Data ###
 */data
-
+*.csv
 
 ### package ###
 pyproject.toml
 
 ### executable packages ###
  *./output/GUI
+
+

@@ -14,9 +14,6 @@ int reversed = -1;
 //const int capstan_stepPin = 4;
 //const int capstan_dirPin = 5;
 
-const int capstan_stepPin = 8; //temp
-const int capstan_dirPin = 9; //temp
-
 const int preform_stepPin = 2;
 const int preform_dirPin = 3;
 
@@ -24,7 +21,7 @@ const int spool_stepPin = 4;
 const int spool_dirPin = 5;
 
 // Speed of motors
-int new_speed_capstan;
+// int new_speed_capstan;
 int new_speed_preform; 
 int new_speed_spool; 
 
@@ -34,7 +31,8 @@ float diameter_tension;
 float conversion_factor_diameter_tension = 0.5;
 float real_diameter = 0;
 
-const int capstan_max_speed = 999;
+//const int capstan_max_speed = 999;
+
 const int preform_max_speed = 999;
 const int spool_max_speed = 999;
 
@@ -50,7 +48,7 @@ String received_diameter_string = "";
 float desired_diameter = 0;
 
 // Creates an instance for both motors
-AccelStepper capstan_stepper(AccelStepper::DRIVER, capstan_stepPin, capstan_dirPin);
+//AccelStepper capstan_stepper(AccelStepper::DRIVER, capstan_stepPin, capstan_dirPin);
 AccelStepper preform_stepper(AccelStepper::DRIVER, preform_stepPin, preform_dirPin);
 AccelStepper spool_stepper(AccelStepper::DRIVER, spool_stepPin, spool_dirPin);
 
@@ -62,10 +60,12 @@ float mapf(float value, float fromLow, float fromHigh, float toLow, float toHigh
 } 
 
 // Function adjusting the capstan motor speed with the value measured trought the potentiometer
+/* Not needed until the capstan is replaced
 void controlCapstan(int capstan_speed) {
   capstan_stepper.setSpeed(capstan_speed);
   capstan_stepper.runSpeed();
 }
+*/
 
 void controlSpool(int rev, int spool_speed) {
   spool_stepper.setSpeed(spool_speed * rev);
@@ -86,12 +86,14 @@ void controlPreformMotor(char dir, int preform_speed) {
 }
 
 void stepTheMotors() {
-  if (preform_motor_running) {
-    preform_stepper.runSpeed();
-  }
-
+  /*
   if (capstan_running) {
     capstan_stepper.runSpeed();
+  }
+  */
+
+  if (preform_motor_running) {
+    preform_stepper.runSpeed();
   }
 
   if (spool_running) {
@@ -103,7 +105,7 @@ void setup() {
   // Initilization of serial port
   Serial.begin(115200);
   // Setting max speed of the motors to avoid damages
-  capstan_stepper.setMaxSpeed(capstan_max_speed);
+  // capstan_stepper.setMaxSpeed(capstan_max_speed);
   preform_stepper.setMaxSpeed(preform_max_speed);
   spool_stepper.setMaxSpeed(spool_max_speed);
 }
@@ -126,6 +128,7 @@ void loop() {
       desired_diameter = received_diameter_string.toFloat();
       received_diameter_string = "";
     }
+    /* Not needed until the capstan is replaced
     else if (command == 's' && !capstan_running) {
       capstan_running = true;
     }
@@ -134,6 +137,7 @@ void loop() {
       capstan_running = false;
       new_speed_capstan = 0;
     }
+    */
 
      else if (command == 't') {
       preform_motor_running = true;
@@ -167,11 +171,13 @@ void loop() {
     // or off and change the flags status
   if (count > 1000){
     // if flag for the capstan is true read the tension of potentiometer to adapt the speed
+    /* Not needed until the capstan is replaced
     if (capstan_running) {
       int sensorValue = analogRead(A0);
       new_speed_capstan = map(sensorValue, 0, 1023, 0, capstan_max_speed);
       controlCapstan(new_speed_capstan);
     }
+    */
 
     if (spool_running) {
       int sensorValue = analogRead(A0);
@@ -191,10 +197,13 @@ void loop() {
     real_diameter = diameter_tension / conversion_factor_diameter_tension + offset;
     // Sending output values to the python application
     // Run the runSpeed command multiple times
+
+    /* Not needed until the capstan is replaced
     stepTheMotors();
     Serial.print(new_speed_capstan);
     stepTheMotors();
     Serial.print(",");
+    */
     Serial.print(new_speed_preform);
     stepTheMotors();
     Serial.print(",");

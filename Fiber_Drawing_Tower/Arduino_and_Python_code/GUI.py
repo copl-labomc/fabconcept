@@ -1,6 +1,11 @@
 import tkinter as tk
 import serial
 from tkinter import ttk
+from time import time
+from datetime import datetime
+import numpy as np
+from pandas import DataFrame
+
 
 def serial_ports():
     """ Finds all the port in use and returns it as a list. Returns ["None"] if no port is available
@@ -112,7 +117,7 @@ class FiberTower():
             self.speed_preform = tk.Label(self.preform_frame, text="Speed :")
             self.speed_preform.grid(row=3, column=0, padx=5, columnspan=2)
 
-
+            """
             ## CAPSTAN STEPPER SECTION 
             self.capstan_frame = tk.LabelFrame(self.root, text="Capstan Motor", height=120,width=150)
             self.capstan_frame.grid(row=3, column=0, rowspan=4, columnspan=3)
@@ -129,11 +134,11 @@ class FiberTower():
             # Printing output speed of capstan
 
             self.speed_capstan = tk.Label(self.capstan_frame, text="Speed:")
-            self.speed_capstan.grid(row=1, column=0, padx=5, columnspan=2)
+            self.speed_capstan.grid(row=1, column=0, padx=5, columnspan=2)"""
 
             ## SPOOL STEPPER SECTION 
             self.spool_frame = tk.LabelFrame(self.root, text="Spool Motor", height=120,width=150)
-            self.spool_frame.grid(row=7, column=1, rowspan=3, columnspan=3)
+            self.spool_frame.grid(row=5, column=1, rowspan=3, columnspan=3)
 
 
             # Creation of green Start button
@@ -158,8 +163,8 @@ class FiberTower():
             self.parameter_frame.grid(row=2, column=4, rowspan=3, columnspan=3, padx=5, pady=5)
 
             # printing diameter measured by laser sensor
-            self.diameter = tk.Label(self.parameter_frame, text="Diameter Measurement:")
-            self.diameter.grid(row=0, column=0,columnspan=4, padx=5)
+            self.diameter = tk.Label(self.parameter_frame, text="Diameter: 0.00")
+            self.diameter.grid(row=0, column=0, padx=5)
 
             # input for the diameter desired
             self.diameter_desired = tk.Label(self.parameter_frame, text='Diameter desired :')
@@ -170,12 +175,17 @@ class FiberTower():
             self.diameter_entry_button.grid(row=1, column = 2)
 
 
+            #Record diameter button
+            self.record_button = tk.Button(self.parameter_frame, text = "Record diameter", command=self.record_diameter)
+            self.record_button.grid(row=0, column=1)
+            self.recording = False
+            """
             ## Debug section
             #Debug screen with time delay and received serial packets
             self.debug_frame = tk.LabelFrame(self.root, text="Debug", height=100,width=150)
             self.debug_frame.grid(row=5, column=4, rowspan=2, columnspan=3, padx=5, pady=5)
             self.serial_print = tk.Label(self.debug_frame, text="Serial")
-            self.serial_print.grid(row=1, column=3, padx=5, columnspan= 3)
+            self.serial_print.grid(row=1, column=3, padx=5, columnspan= 3)"""
 
 
             ##Connection frame section
@@ -210,7 +220,6 @@ class FiberTower():
             if self.status_label.cget('text') == "Connected":
                 self.ser.close()
 
-
         def send_diameter(self):
             """Send the desired diameter"""
             entry = self.diameter_entry.get()
@@ -234,6 +243,27 @@ class FiberTower():
             """Checks if the arduino is connected then sends the command trough the serial port"""
             if self.status_label.cget("text") == "Connected":
                 self.ser.write(command.encode())
+
+        def record_diameter(self):
+            if self.recording:
+                self.recording = False
+                self.record_button.config(text = "Record diameter", bg = "grey94")
+                #Save file
+
+
+                df = DataFrame(self.save_data)
+                df.to_csv(f'../Drawing_data/{datetime.today().strftime("%Y%m%d, %Hh%Mm%Ss")}.csv', index=False)
+            else:
+                self.recording = True
+                self.buffer = []
+                self.save_data = {
+                    "relative_time" : [],
+                    "diameter" : [],
+                    "preform_speed" : [],
+                    "spool_speed" : []
+                }
+                self.start_time = time()
+                self.record_button.config(text = 'Stop recording', bg = 'red')
 
         def check_ports(self):
             """Updates the connection drop menu with available ports"""    
@@ -263,7 +293,6 @@ class FiberTower():
                 self.ser = serial.Serial(commPort, baudrate = 115200, timeout = 1)
                 self.status_label.config(text="Connected", bg = 'green')
 
-
         #Loop functions
 
         def program_loop(self):
@@ -274,6 +303,24 @@ class FiberTower():
                     if not self.running: 
                         break
                     self.checkSerialPort()
+                    if self.recording:
+                        # Only records the data when 25 elements are saved in the buffer
+                        if len(self.buffer) >= 25:
+                            #Convert the 2d array into a numpy array
+                            treated_buffer = np.array(self.buffer)
+
+                            #Save the time relative to the start of the recording
+                            self.save_data["relative_time"].append(time() - self.start_time)
+                            #Save the diameter into memory. The array is seperated, then every element is converted from a string to a float
+                            #The average of the last 25 readings is saved
+                            self.save_data["diameter"].append(np.mean(treated_buffer[:,2].astype(np.float16)))
+
+                            # Same for the speed of each motor. Values are integers instead of floats
+                            self.save_data["preform_speed"].append(np.mean(treated_buffer[:,0].astype(np.int16)))
+                            self.save_data["spool_speed"].append(np.mean(treated_buffer[:,1].astype(np.int16)))
+                            
+                            # Reset the buffer
+                            self.buffer = []
             except serial.SerialException:
                 self.ser.close()
                 self.status_label.config(text="Disconnected", bg = 'red')
@@ -302,17 +349,21 @@ class FiberTower():
                     # Update the value for each printed values if its a float (can be an altered value)
                     try:
                         if isinstance(float(recentPacketString[0]), float):
-                            self.speed_capstan.config(text= "Speed : " + f"{int(recentPacketString[0]):03d}")
+                            self.speed_preform.config(text= "Speed : " + f"{int(recentPacketString[0]):03d}")
                         if isinstance(float(recentPacketString[1]), float):
-                            self.speed_preform.config(text= "Speed : " + f"{int(recentPacketString[1]):03d}")
+                            self.speed_spool.config(text= "Speed : " + f"{int(recentPacketString[1]):03d}")
                         if isinstance(float(recentPacketString[2]), float):
-                            self.speed_spool.config(text= "Speed : " + f"{int(recentPacketString[2]):03d}")
-                        if isinstance(float(recentPacketString[3]), float):
-                            self.diameter.config(text= "Diameter : " + recentPacketString[3])
+                            self.diameter.config(text= "Diameter : " + recentPacketString[2])
                         
+                        # Checks that all the data has been transmitted and decoded correctly 
+                        if self.recording and len(recentPacketString) == 4:
+                            # Saves the data to the buffer
+                            self.buffer.append(recentPacketString[:3])
+                        
+
                         #Outputs the delay and serial packet info on the GUI (for testing)
                         #Removes the \r\n characters at the end
-                        self.serial_print.config(text = "Serial: " + "' '".join(recentPacketString))
+                        #self.serial_print.config(text = "Serial: " + "' '".join(recentPacketString))
                     except IndexError:
                         pass
                         
