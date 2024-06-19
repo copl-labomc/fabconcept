@@ -1,3 +1,4 @@
+#include <AceSorting.h>
 #include <AccelStepper.h>
 
 // setting all variables
@@ -191,9 +192,19 @@ void loop() {
       new_speed_preform = map(sensor2Value, 0, 1023, 0, preform_max_speed);
       controlPreformMotor(motor_preform_dir, new_speed_preform);
     }
-    // Read the sensor value of diameter and convert it to mm
-    float diameter_sensor = analogRead(A2);
-    diameter_tension = mapf(diameter_sensor, 0, 1023, 0.0, 5.0);
+
+    //Read the analog input from the diameter sensor 10 times and add them
+    float diameter_data = 0;
+    for (int i = 0; i < 10; i++) {
+      diameter_data += analogRead(A2);
+    }
+
+    // Divide by the number of mesurements to get average diameter
+    float diameter_average = diameter_data / 10;
+    
+    // Convert the analog reading to mm
+    diameter_tension = mapf(diameter_average, 0, 1023, 0.0, 5.0);
+
     real_diameter = diameter_tension / conversion_factor_diameter_tension + offset;
     // Sending output values to the python application
     // Run the runSpeed command multiple times
