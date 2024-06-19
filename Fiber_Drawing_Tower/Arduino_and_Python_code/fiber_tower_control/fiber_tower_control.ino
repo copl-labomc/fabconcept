@@ -1,4 +1,3 @@
-#include <AceSorting.h>
 #include <AccelStepper.h>
 
 // setting all variables
@@ -27,7 +26,7 @@ int new_speed_preform;
 int new_speed_spool; 
 
 // Diameter variables
-float offset = 0.07;
+float offset = 0.02;
 float diameter_tension;
 float conversion_factor_diameter_tension = 0.5;
 float real_diameter = 0;
