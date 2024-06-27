@@ -3,40 +3,54 @@
 // setting all variables
 
 // flag to see if motor is already on
-bool cabestan_running = false;
+bool capstan_running = false;
 bool preform_motor_running = false;
+bool spool_running = false;
+
+// Make sure the spool turns the right way when it starts
+int reversed = -1;
 
 // Arduino pins for the drivers
-const int cabestan_stepPin = 4;
-const int cabestan_dirPin = 5;
+//const int capstan_stepPin = 4;
+//const int capstan_dirPin = 5;
+
 const int preform_stepPin = 2;
 const int preform_dirPin = 3;
 
+const int spool_stepPin = 4;
+const int spool_dirPin = 5;
+
 // Speed of motors
-int new_speed_cabestan;
+// int new_speed_capstan;
 int new_speed_preform; 
+int new_speed_spool; 
 
 // Diameter variables
-float offset = 0.07;
+float offset = 0.02;
 float diameter_tension;
 float conversion_factor_diameter_tension = 0.5;
 float real_diameter = 0;
 
-const int cabestan_max_speed = 999;
+//const int capstan_max_speed = 999;
+
 const int preform_max_speed = 999;
+const int spool_max_speed = 999;
+
 
 char command;
 int count;
 
 // input of the python app
 char motor_preform_dir;
+char motor_spool_dir;
 
 String received_diameter_string = "";
 float desired_diameter = 0;
 
 // Creates an instance for both motors
-AccelStepper cabestan_stepper(AccelStepper::DRIVER, cabestan_stepPin, cabestan_dirPin);
+//AccelStepper capstan_stepper(AccelStepper::DRIVER, capstan_stepPin, capstan_dirPin);
 AccelStepper preform_stepper(AccelStepper::DRIVER, preform_stepPin, preform_dirPin);
+AccelStepper spool_stepper(AccelStepper::DRIVER, spool_stepPin, spool_dirPin);
 
 // map function working with float 
 float mapf(float value, float fromLow, float fromHigh, float toLow, float toHigh) {
@@ -45,10 +59,18 @@ float mapf(float value, float fromLow, float fromHigh, float toLow, float toHigh
   return result;
 } 
 
-// Function adjusting the cabestan motor speed with the value measured trought the potentiometer
-void controlCabestan(int cabestan_speed) {
-  cabestan_stepper.setSpeed(cabestan_speed);
-  cabestan_stepper.runSpeed();
+// Function adjusting the capstan motor speed with the value measured trought the potentiometer
+/* Not needed until the capstan is replaced
+void controlCapstan(int capstan_speed) {
+  capstan_stepper.setSpeed(capstan_speed);
+  capstan_stepper.runSpeed();
+}
+*/
+
+void controlSpool(int rev, int spool_speed) {
+  spool_stepper.setSpeed(spool_speed * rev);
+  spool_stepper.runSpeed();
+  
 }
 
 // Function adjusting the preform motor speed and its direction depending the button pressed
@@ -64,12 +86,18 @@ void controlPreformMotor(char dir, int preform_speed) {
 }
 
 void stepTheMotors() {
+  /*
+  if (capstan_running) {
+    capstan_stepper.runSpeed();
+  }
+  */
+
   if (preform_motor_running) {
     preform_stepper.runSpeed();
   }
 
-  if (cabestan_running) {
-    cabestan_stepper.runSpeed();
+  if (spool_running) {
+    spool_stepper.runSpeed();
   }
 }
 
@@ -77,8 +105,9 @@ void setup() {
   // Initilization of serial port
   Serial.begin(115200);
   // Setting max speed of the motors to avoid damages
-  cabestan_stepper.setMaxSpeed(cabestan_max_speed);
+  // capstan_stepper.setMaxSpeed(capstan_max_speed);
   preform_stepper.setMaxSpeed(preform_max_speed);
+  spool_stepper.setMaxSpeed(spool_max_speed);
 }
 
 // Main loop
@@ -99,19 +128,16 @@ void loop() {
       desired_diameter = received_diameter_string.toFloat();
       received_diameter_string = "";
     }
-  }
-    // Depending of the byte received (a char) and if the motor is not active turn it on 
-    // or off and change the flags status
-  if (count > 1000){
-
-    if (command == 's' && !cabestan_running) {
-      cabestan_running = true;
+    /* Not needed until the capstan is replaced
+    else if (command == 's' && !capstan_running) {
+      capstan_running = true;
     }
 
      else if (command == 'a') {
-      cabestan_running = false;
-      new_speed_cabestan = 0;
+      capstan_running = false;
+      new_speed_capstan = 0;
     }
+    */
 
      else if (command == 't') {
       preform_motor_running = true;
@@ -122,36 +148,76 @@ void loop() {
       preform_motor_running = true;
       motor_preform_dir = command;
     }
-    
     else if (command == 'k') {
       preform_motor_running = false;
       new_speed_preform = 0;
-    } 
-    
-    // if flag for the cabestan is true read the tension of potentiometer to adapt the speed
-    if (cabestan_running) {
-      int sensorValue = analogRead(A0);
-      new_speed_cabestan = map(sensorValue, 0, 1023, 0, cabestan_max_speed);
-      controlCabestan(new_speed_cabestan);
-      
     }
+    
+    else if (command == 'q') {
+      spool_running = false;
+      new_speed_spool = 0;
+    } 
+
+    else if (command == 'w' && !spool_running) {
+      spool_running = true;
+    } 
+
+    else if (command == 'r') {
+      spool_running = true;
+      reversed = reversed * -1;
+    } 
+  }
+    // Depending of the byte received (a char) and if the motor is not active turn it on 
+    // or off and change the flags status
+  if (count > 1000){
+    // if flag for the capstan is true read the tension of potentiometer to adapt the speed
+    /* Not needed until the capstan is replaced
+    if (capstan_running) {
+      int sensorValue = analogRead(A0);
+      new_speed_capstan = map(sensorValue, 0, 1023, 0, capstan_max_speed);
+      controlCapstan(new_speed_capstan);
+    }
+    */
+
+    if (spool_running) {
+      int sensorValue = analogRead(A0);
+      new_speed_spool = map(sensorValue, 0, 1023, 0, spool_max_speed);
+      controlSpool(reversed, new_speed_spool);
+    }
+
     // if flag for the preform is true read the tension of potentiometer to adapt the speed
     if (preform_motor_running) {
       int sensor2Value = analogRead(A1);
       new_speed_preform = map(sensor2Value, 0, 1023, 0, preform_max_speed);
       controlPreformMotor(motor_preform_dir, new_speed_preform);
     }
-    // Read the sensor value of diameter and cinvert it to mm
-    float diameter_sensor = analogRead(A2);
-    diameter_tension = mapf(diameter_sensor, 0, 1023, 0.0, 5.0);
+
+    //Read the analog input from the diameter sensor 10 times and add them
+    float diameter_data = 0;
+    for (int i = 0; i < 10; i++) {
+      diameter_data += analogRead(A2);
+    }
+
+    // Divide by the number of mesurements to get average diameter
+    float diameter_average = diameter_data / 10;
+    
+    // Convert the analog reading to mm
+    diameter_tension = mapf(diameter_average, 0, 1023, 0.0, 5.0);
+
     real_diameter = diameter_tension / conversion_factor_diameter_tension + offset;
     // Sending output values to the python application
     // Run the runSpeed command multiple times
+
+    /* Not needed until the capstan is replaced
     stepTheMotors();
-    Serial.print(new_speed_cabestan);
+    Serial.print(new_speed_capstan);
     stepTheMotors();
     Serial.print(",");
+    */
     Serial.print(new_speed_preform);
+    stepTheMotors();
+    Serial.print(",");
+    Serial.print(new_speed_spool);
     stepTheMotors();
     Serial.print(",");
     Serial.print(real_diameter);
