@@ -117,7 +117,6 @@ class FiberTower():
             self.speed_preform = tk.Label(self.preform_frame, text="Speed :")
             self.speed_preform.grid(row=3, column=0, padx=5, columnspan=2)
 
-            """
             ## CAPSTAN STEPPER SECTION 
             self.capstan_frame = tk.LabelFrame(self.root, text="Capstan Motor", height=120,width=150)
             self.capstan_frame.grid(row=3, column=0, rowspan=4, columnspan=3)
@@ -134,11 +133,11 @@ class FiberTower():
             # Printing output speed of capstan
 
             self.speed_capstan = tk.Label(self.capstan_frame, text="Speed:")
-            self.speed_capstan.grid(row=1, column=0, padx=5, columnspan=2)"""
+            self.speed_capstan.grid(row=1, column=0, padx=5, columnspan=2)
 
             ## SPOOL STEPPER SECTION 
             self.spool_frame = tk.LabelFrame(self.root, text="Spool Motor", height=120,width=150)
-            self.spool_frame.grid(row=5, column=1, rowspan=3, columnspan=3)
+            self.spool_frame.grid(row=8, column=1, rowspan=3, columnspan=3)
 
 
             # Creation of green Start button
@@ -349,11 +348,13 @@ class FiberTower():
                     # Update the value for each printed values if its a float (can be an altered value)
                     try:
                         if isinstance(float(recentPacketString[0]), float):
-                            self.speed_preform.config(text= "Speed : " + f"{int(recentPacketString[0]):03d}")
+                            self.speed_capstan.config(text= "Speed : " + f"{int(recentPacketString[0]):03d}")
+                        if isinstance(float(recentPacketString[0]), float):
+                            self.speed_preform.config(text= "Speed : " + f"{int(recentPacketString[1]):03d}")
                         if isinstance(float(recentPacketString[1]), float):
-                            self.speed_spool.config(text= "Speed : " + f"{int(recentPacketString[1]):03d}")
+                            self.speed_spool.config(text= "Speed : " + f"{int(recentPacketString[2]):03d}")
                         if isinstance(float(recentPacketString[2]), float):
-                            self.diameter.config(text= "Diameter : " + recentPacketString[2])
+                            self.diameter.config(text= "Diameter : " + recentPacketString[3])
                         
                         # Checks that all the data has been transmitted and decoded correctly 
                         if self.recording and len(recentPacketString) == 4:

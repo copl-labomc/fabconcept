@@ -14,8 +14,8 @@ int reversed = -1;
 const int capstan_stepPin = 6;
 const int capstan_dirPin = 7;
 
-const int preform_stepPin = 2;
-const int preform_dirPin = 3;
+const int preform_stepPin = 10;
+const int preform_dirPin = 11;
 
 const int spool_stepPin = 4;
 const int spool_dirPin = 5;
@@ -198,7 +198,6 @@ void loop() {
     real_diameter = diameter_tension / conversion_factor_diameter_tension + offset;
     // Sending output values to the python application
     // Run the runSpeed command multiple times
-    
     stepTheMotors();
     Serial.print(new_speed_capstan);
     stepTheMotors();
@@ -217,5 +216,6 @@ void loop() {
 
     count = 0;
   }
+  stepTheMotors();
   count += 1;
 }
