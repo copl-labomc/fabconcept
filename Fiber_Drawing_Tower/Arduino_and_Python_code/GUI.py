@@ -5,7 +5,7 @@ from time import time
 from datetime import datetime
 import numpy as np
 from pandas import DataFrame
-
+import json
 
 def serial_ports():
     """ Finds all the port in use and returns it as a list. Returns ["None"] if no port is available
@@ -49,10 +49,25 @@ class FiberTower():
         def __init__(self):
             """Creates the GUI, initializes the serial communication then starts the main loop
             """
+            self.load_config()
             self.createGui()
             self.running = True
             self.initialization(self.current_port.get())
             self.program_loop()
+
+        def load_config(self):
+            try:
+                with open("config.json", "r") as config:
+                    self.config_data = json.load(config)
+            except FileNotFoundError:
+                self.config_data = {
+                    "capstan_wheel_diameter": 10,
+                    "spool_diameter": 30,
+                    "preform_linear_speed": 0.3
+                }
+
+                with open("config.json", "w") as config:
+                    json.dump(self.config_data, config)
 
         def createGui(self):
             """Creates the Graphical User Interface
