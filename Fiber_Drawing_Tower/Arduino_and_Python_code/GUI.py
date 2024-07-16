@@ -44,6 +44,9 @@ class FiberTower():
         w start spool
         q stop spool
         r run spool in reverse
+        e end character for diameter desired
+        f end character for capstan/preform speed ratio
+        g end character for spool/capstan speed ratio
         
         """
         def __init__(self):
@@ -61,9 +64,10 @@ class FiberTower():
                     self.config_data = json.load(config)
             except FileNotFoundError:
                 self.config_data = {
-                    "capstan_wheel_diameter": 10,
-                    "spool_diameter": 30,
-                    "preform_linear_speed": 0.3
+                    "capstan_wheel_diameter": None,
+                    "spool_diameter": None,
+                    "preform_linear_speed": None,
+                    "preform_diameter": None
                 }
 
                 with open("config.json", "w") as config:
@@ -104,7 +108,7 @@ class FiberTower():
             self.root.geometry("500x400")
             self.root.protocol("WM_DELETE_WINDOW", self.close_window)
             
-             
+            
 
             ## PREFORM STEPPER SECTION 
 
@@ -238,9 +242,24 @@ class FiberTower():
             """Send the desired diameter"""
             entry = self.diameter_entry.get()
             if entry != '':
+                "Send the desired diameter"
                 self.port_write(entry)
-                #send end character
                 self.port_write('e')
+
+                dp2vp = str(self.config_data["preform_diameter"]**2 * self.config_data["preform_linear_speed"]) #Preform diameter^2 * Preform linear speed
+                self.port_write(dp2vp)
+                self.port_write('f')
+
+                dc = str(self.config_data["capstan_wheel_diameter"]) #Capstan wheel diameter
+                self.port_write(dc)
+                self.port_write('g')
+
+                ds = str(self.config_data["spool_diameter"]) #Spool diameter
+                self.port_write(ds)
+                self.port_write('h')
+
+                print(dp2vp, dc, ds)
+
 
         def reconnect(self):
             """Tries to reconnect to the arduino when the Reconnect button is pressed"""
@@ -359,6 +378,7 @@ class FiberTower():
                     recentPacket = self.ser.readline()
                     #Decodes the packet, then removes the ending \r\n characters and finally separates the different values
                     recentPacketString = recentPacket.decode('utf').replace("\r\n", "").split(",")
+                    print(recentPacketString)
                     
                     # Update the value for each printed values if its a float (can be an altered value)
                     try:

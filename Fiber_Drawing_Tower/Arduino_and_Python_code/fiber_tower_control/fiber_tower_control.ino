@@ -43,8 +43,12 @@ int count;
 char motor_preform_dir;
 char motor_spool_dir;
 
-String received_diameter_string = "";
-float desired_diameter = 0;
+String received_string = "";
+float desired_diameter;
+float drawing_constant;
+float capstan_diameter;
+float spool_diameter;
+
 
 // Creates an instance for both motors
 AccelStepper capstan_stepper(AccelStepper::DRIVER, capstan_stepPin, capstan_dirPin);
@@ -115,13 +119,25 @@ void loop() {
     // This line checks if it is a digit or a period character and
     // adds it to a string
     if (isPunct(command) || isDigit(command)) {
-      received_diameter_string += command;
+      received_string += command;
     }
     // Once the end character 'e' is received, the string is converted to a float
     // and stored into memory
     else if (command == 'e') {
-      desired_diameter = received_diameter_string.toFloat();
-      received_diameter_string = "";
+      desired_diameter = received_string.toFloat();
+      received_string = "";
+    }
+    else if (command == 'f') {
+      drawing_constant = received_string.toFloat();
+      received_string = "";
+    }
+    else if (command == 'g') {
+      capstan_diameter = received_string.toFloat();
+      received_string = "";
+    }
+    else if (command == 'h') {
+      spool_diameter = received_string.toFloat();
+      received_string = "";
     }
     else if (command == 's' && !capstan_running) {
       capstan_running = true;
