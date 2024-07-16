@@ -223,6 +223,14 @@ class FiberTower():
 
             self.current_port = tk.StringVar()
 
+            ### Stop all button
+            self.stop_all_frame = tk.LabelFrame(self.root, text= "Stop all")
+            self.stop_all_frame.grid(row=6,column=4)
+
+            self.stop_all_button = tk.Button(self.stop_all_frame, text = "Stop", bg = "red", font=("Segoe Ui", 12), fg="white", command=lambda: self.port_write("akq"))
+            self.stop_all_button.grid(column=0, row=0)
+
+
             #If COM4 is available, it picks it as default when lauching or else it picks the first one available
             if "COM4" in serial_ports():
                 self.current_port.set("COM4") 
@@ -258,7 +266,6 @@ class FiberTower():
                 self.port_write(ds)
                 self.port_write('h')
 
-                print(dp2vp, dc, ds)
 
 
         def reconnect(self):
@@ -378,8 +385,6 @@ class FiberTower():
                     recentPacket = self.ser.readline()
                     #Decodes the packet, then removes the ending \r\n characters and finally separates the different values
                     recentPacketString = recentPacket.decode('utf').replace("\r\n", "").split(",")
-                    print(recentPacketString)
-                    
                     # Update the value for each printed values if its a float (can be an altered value)
                     try:
                         if isinstance(float(recentPacketString[0]), float):

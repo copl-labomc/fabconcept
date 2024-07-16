@@ -6,6 +6,7 @@
 bool capstan_running = false;
 bool preform_motor_running = false;
 bool spool_running = false;
+bool automatic = false;
 
 // Make sure the spool turns the right way when it starts
 int reversed = -1;
@@ -138,6 +139,7 @@ void loop() {
     else if (command == 'h') {
       spool_diameter = received_string.toFloat();
       received_string = "";
+      automatic = true;
     }
     else if (command == 's' && !capstan_running) {
       capstan_running = true;
@@ -146,6 +148,7 @@ void loop() {
      else if (command == 'a') {
       capstan_running = false;
       new_speed_capstan = 0;
+      automatic = false;
     }
 
      else if (command == 't') {
@@ -160,11 +163,13 @@ void loop() {
     else if (command == 'k') {
       preform_motor_running = false;
       new_speed_preform = 0;
+      automatic = false;
     }
     
     else if (command == 'q') {
       spool_running = false;
       new_speed_spool = 0;
+      automatic = false;
     } 
 
     else if (command == 'w' && !spool_running) {
@@ -179,26 +184,32 @@ void loop() {
     // Depending of the byte received (a char) and if the motor is not active turn it on 
     // or off and change the flags status
   if (count > 1000){
-    // if flag for the capstan is true read the tension of potentiometer to adapt the speed
-    if (capstan_running) {
-      int sensorValue = analogRead(A0);
-      new_speed_capstan = map(sensorValue, 0, 1023, 0, capstan_max_speed);
-      controlCapstan(new_speed_capstan);
-    }
+    if (!automatic) {
+      // if flag for the capstan is true read the tension of potentiometer to adapt the speed
+      if (capstan_running) {
+        int sensorValue = analogRead(A0);
+        new_speed_capstan = map(sensorValue, 0, 1023, 0, capstan_max_speed);
+        controlCapstan(new_speed_capstan);
+      }
 
-    if (spool_running) {
-      int sensorValue = analogRead(A0);
-      new_speed_spool = map(sensorValue, 0, 1023, 0, spool_max_speed);
-      controlSpool(reversed, new_speed_spool);
-    }
+      if (spool_running) {
+        int sensorValue = analogRead(A0);
+        new_speed_spool = map(sensorValue, 0, 1023, 0, spool_max_speed);
+        controlSpool(reversed, new_speed_spool);
+      }
 
-    // if flag for the preform is true read the tension of potentiometer to adapt the speed
-    if (preform_motor_running) {
-      int sensor2Value = analogRead(A1);
-      new_speed_preform = map(sensor2Value, 0, 1023, 0, preform_max_speed);
-      controlPreformMotor(motor_preform_dir, new_speed_preform);
+      // if flag for the preform is true read the tension of potentiometer to adapt the speed
+      if (preform_motor_running) {
+        int sensor2Value = analogRead(A1);
+        new_speed_preform = map(sensor2Value, 0, 1023, 0, preform_max_speed);
+        controlPreformMotor(motor_preform_dir, new_speed_preform);
+      }
+    } else if (automatic) {
+      new_speed_capstan = drawing_constant / (desired_diameter * desired_diameter * capstan_diameter * 3.14159) * 200;
+      new_speed_spool = new_speed_capstan * capstan_diameter / spool_diameter;
+      new_speed_preform = 999;
     }
-
+    
     //Read the analog input from the diameter sensor 10 times and add them
     float diameter_data = 0;
     for (int i = 0; i < 10; i++) {
@@ -227,7 +238,7 @@ void loop() {
     Serial.print(real_diameter);
     Serial.print(",");
     stepTheMotors();
-    Serial.println(desired_diameter, 2); 
+    Serial.println(desired_diameter); 
     stepTheMotors();
 
     count = 0;
