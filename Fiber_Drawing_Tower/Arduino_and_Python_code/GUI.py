@@ -65,7 +65,7 @@ class FiberTower():
             except FileNotFoundError:
                 self.config_data = {
                     "capstan_wheel_diameter": None,
-                    "spool_diameter": None,
+                    "spool_circumeference": None,
                     "preform_linear_speed": None,
                     "preform_diameter": None
                 }
@@ -108,8 +108,6 @@ class FiberTower():
             self.root.geometry("500x400")
             self.root.protocol("WM_DELETE_WINDOW", self.close_window)
             
-            
-
             ## PREFORM STEPPER SECTION 
 
             # Frame
@@ -262,7 +260,7 @@ class FiberTower():
                 self.port_write(dc)
                 self.port_write('g')
 
-                ds = str(self.config_data["spool_diameter"]) #Spool diameter
+                ds = str(self.config_data["spool_circumeference"]) #Spool diameter
                 self.port_write(ds)
                 self.port_write('h')
 
