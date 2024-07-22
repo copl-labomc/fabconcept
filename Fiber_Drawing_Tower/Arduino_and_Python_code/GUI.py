@@ -1,7 +1,7 @@
 import tkinter as tk
 import serial
 from tkinter import ttk
-from time import time
+from time import time, sleep
 from datetime import datetime
 import numpy as np
 from pandas import DataFrame
@@ -56,6 +56,8 @@ class FiberTower():
             self.createGui()
             self.running = True
             self.initialization(self.current_port.get())
+            sleep(2)
+            self.send_config()
             self.program_loop()
 
         def load_config(self):
@@ -72,6 +74,19 @@ class FiberTower():
 
                 with open("config.json", "w") as config:
                     json.dump(self.config_data, config)
+
+        def send_config(self):
+            dp2vp = str(self.config_data["preform_diameter"]**2 * self.config_data["preform_linear_speed"]) #Preform diameter^2 * Preform linear speed
+            self.port_write(dp2vp)
+            self.port_write('f')
+
+            dc = str(self.config_data["capstan_wheel_diameter"]) #Capstan wheel diameter
+            self.port_write(dc)
+            self.port_write('g')
+
+            ds = str(self.config_data["spool_circumeference"]) #Spool diameter
+            self.port_write(ds)
+            self.port_write('h')
 
         def createGui(self):
             """Creates the Graphical User Interface
@@ -221,12 +236,16 @@ class FiberTower():
 
             self.current_port = tk.StringVar()
 
-            ### Stop all button
-            self.stop_all_frame = tk.LabelFrame(self.root, text= "Stop all")
+            ### Start/Stop all buttons
+            self.stop_all_frame = tk.LabelFrame(self.root, text= "All")
             self.stop_all_frame.grid(row=6,column=4)
 
             self.stop_all_button = tk.Button(self.stop_all_frame, text = "Stop", bg = "red", font=("Segoe Ui", 12), fg="white", command=lambda: self.port_write("akq"))
-            self.stop_all_button.grid(column=0, row=0)
+            self.stop_all_button.grid(column=1, row=0)
+
+
+            self.start_all_button = tk.Button(self.stop_all_frame, text = "Start", bg = "green", font=("Segoe Ui", 12), fg="white", command=lambda: self.port_write("sbw"))
+            self.start_all_button.grid(column=0, row=0)
 
 
             #If COM4 is available, it picks it as default when lauching or else it picks the first one available
@@ -249,9 +268,6 @@ class FiberTower():
             entry = self.diameter_entry.get()
             if entry != '':
                 "Send the desired diameter"
-                self.port_write(entry)
-                self.port_write('e')
-
                 dp2vp = str(self.config_data["preform_diameter"]**2 * self.config_data["preform_linear_speed"]) #Preform diameter^2 * Preform linear speed
                 self.port_write(dp2vp)
                 self.port_write('f')
@@ -263,8 +279,12 @@ class FiberTower():
                 ds = str(self.config_data["spool_circumeference"]) #Spool diameter
                 self.port_write(ds)
                 self.port_write('h')
+                
+                self.port_write(entry)
+                self.port_write('e')
 
 
+                
 
         def reconnect(self):
             """Tries to reconnect to the arduino when the Reconnect button is pressed"""
@@ -298,7 +318,8 @@ class FiberTower():
                     "relative_time" : [],
                     "diameter" : [],
                     "preform_speed" : [],
-                    "spool_speed" : []
+                    "spool_speed" : [],
+                    "capstan_speed" : []
                 }
                 self.start_time = time()
                 self.record_button.config(text = 'Stop recording', bg = 'red')
@@ -343,7 +364,7 @@ class FiberTower():
                     self.checkSerialPort()
                     if self.recording:
                         # Only records the data when 25 elements are saved in the buffer
-                        if len(self.buffer) >= 25:
+                        if len(self.buffer) >= 5:
                             #Convert the 2d array into a numpy array
                             treated_buffer = np.array(self.buffer)
 
@@ -351,12 +372,12 @@ class FiberTower():
                             self.save_data["relative_time"].append(time() - self.start_time)
                             #Save the diameter into memory. The array is seperated, then every element is converted from a string to a float
                             #The average of the last 25 readings is saved
-                            self.save_data["diameter"].append(np.mean(treated_buffer[:,2].astype(np.float16)))
+                            self.save_data["diameter"].append(np.mean(treated_buffer[:,3].astype(np.float16)))
 
                             # Same for the speed of each motor. Values are integers instead of floats
                             self.save_data["preform_speed"].append(np.mean(treated_buffer[:,0].astype(np.int16)))
                             self.save_data["spool_speed"].append(np.mean(treated_buffer[:,1].astype(np.int16)))
-                            
+                            self.save_data["capstan_speed"].append(np.mean(treated_buffer[:,2].astype(np.int16)))
                             # Reset the buffer
                             self.buffer = []
             except serial.SerialException:
@@ -387,17 +408,16 @@ class FiberTower():
                     try:
                         if isinstance(float(recentPacketString[0]), float):
                             self.speed_capstan.config(text= "Speed : " + f"{int(recentPacketString[0]):03d}")
-                        if isinstance(float(recentPacketString[0]), float):
-                            self.speed_preform.config(text= "Speed : " + f"{int(recentPacketString[1]):03d}")
                         if isinstance(float(recentPacketString[1]), float):
-                            self.speed_spool.config(text= "Speed : " + f"{int(recentPacketString[2]):03d}")
+                            self.speed_preform.config(text= "Speed : " + f"{int(recentPacketString[1]):03d}")
                         if isinstance(float(recentPacketString[2]), float):
+                            self.speed_spool.config(text= "Speed : " + f"{int(recentPacketString[2]):03d}")
+                        if isinstance(float(recentPacketString[3]), float):
                             self.diameter.config(text= "Diameter : " + recentPacketString[3])
-                        
                         # Checks that all the data has been transmitted and decoded correctly 
                         if self.recording and len(recentPacketString) == 4:
                             # Saves the data to the buffer
-                            self.buffer.append(recentPacketString[:3])
+                            self.buffer.append(recentPacketString[:4])
                         
 
                         #Outputs the delay and serial packet info on the GUI (for testing)

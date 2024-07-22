@@ -27,7 +27,7 @@ int new_speed_preform;
 int new_speed_spool; 
 
 // Diameter variables
-float offset = 0.0;
+float offset = 0.02;
 float diameter_tension;
 float conversion_factor_diameter_tension = 0.5;
 float real_diameter = 0;
@@ -127,6 +127,7 @@ void loop() {
     else if (command == 'e') {
       desired_diameter = received_string.toFloat();
       received_string = "";
+      automatic = true;
     }
     else if (command == 'f') {
       drawing_constant = received_string.toFloat();
@@ -139,7 +140,6 @@ void loop() {
     else if (command == 'h') {
       spool_circumeference = received_string.toFloat();
       received_string = "";
-      automatic = true;
     }
     else if (command == 's' && !capstan_running) {
       capstan_running = true;
@@ -193,28 +193,51 @@ void loop() {
       }
 
       if (spool_running) {
-        int sensorValue = analogRead(A1);
-        new_speed_spool = map(sensorValue, 0, 1023, 0, spool_max_speed);
+        int sensor3Value = analogRead(A0);
+        new_speed_spool = map(sensor3Value, 0, 1023, 0, spool_max_speed) * capstan_diameter / spool_circumeference * 3.14159;
         controlSpool(reversed, new_speed_spool);
       }
 
       // if flag for the preform is true read the tension of potentiometer to adapt the speed
       if (preform_motor_running) {
         int sensor2Value = analogRead(A1);
-        //new_speed_preform = map(sensor2Value, 0, 1023, 0, preform_max_speed);
-        new_speed_preform = 999;
+        new_speed_preform = map(sensor2Value, 0, 1023, 0, preform_max_speed);
+        //new_speed_preform = 999;
         controlPreformMotor(motor_preform_dir, new_speed_preform);
       }
-    } else if (automatic) {
+    } if (automatic) {
+      /*
       new_speed_capstan = drawing_constant / (desired_diameter * desired_diameter * capstan_diameter * 3.14159) * 200; // No microstepping
       new_speed_spool = new_speed_capstan * capstan_diameter / spool_circumeference * 3.14159 * 2; // 400 steps/rev
       new_speed_preform = 999;
+      */
+      
+      new_speed_capstan = 500; // 1600 steps/rev
+      new_speed_spool = new_speed_capstan * capstan_diameter / spool_circumeference * 3.14159; // 1600 steps/rev
+      new_speed_preform = 999 * 3.14159 * desired_diameter * desired_diameter * capstan_diameter * new_speed_capstan / 1600 / drawing_constant;
+
       preform_motor_running = true;
       spool_running = true;
       capstan_running = true;
       controlCapstan(new_speed_capstan);
       controlSpool(-1, new_speed_spool);
-      controlPreformMotor(motor_preform_dir, new_speed_preform);
+      controlPreformMotor('b', new_speed_preform);
+      
+      Serial.print(new_speed_capstan);
+      stepTheMotors();
+      Serial.print(",");
+      Serial.print(new_speed_preform);
+      stepTheMotors();
+      Serial.print(",");
+      Serial.print(new_speed_spool);
+      stepTheMotors();
+      Serial.print(",");
+      Serial.print(real_diameter);
+      Serial.print(",");
+      stepTheMotors();
+      Serial.println(desired_diameter); 
+      stepTheMotors();
+      automatic = true;
     }
     
     //Read the analog input from the diameter sensor 10 times and add them
@@ -242,11 +265,11 @@ void loop() {
     Serial.print(new_speed_spool);
     stepTheMotors();
     Serial.print(",");
-    Serial.print(real_diameter);
-    Serial.print(",");
-    stepTheMotors();
-    Serial.println(desired_diameter); 
-    stepTheMotors();
+    Serial.println(real_diameter);
+    //Serial.print(",");
+    //stepTheMotors();
+    //Serial.println(desired_diameter); 
+    //stepTheMotors();
 
     count = 0;
   }
