@@ -69,7 +69,8 @@ class FiberTower():
                     "capstan_wheel_diameter": None,
                     "spool_circumeference": None,
                     "preform_linear_speed": None,
-                    "preform_diameter": None
+                    "preform_diameter": None,
+                    "microstepping": None,
                 }
 
                 with open("config.json", "w") as config:
@@ -87,6 +88,10 @@ class FiberTower():
             ds = str(self.config_data["spool_circumeference"]) #Spool diameter
             self.port_write(ds)
             self.port_write('h')
+
+            micro = str(self.config_data["microstepping"]) #Microstepping of capstan and spool
+            self.port_write(micro)
+            self.port_write('i')
 
         def createGui(self):
             """Creates the Graphical User Interface
@@ -169,7 +174,7 @@ class FiberTower():
 
             ## SPOOL STEPPER SECTION 
             self.spool_frame = tk.LabelFrame(self.root, text="Spool Motor", height=120,width=150)
-            self.spool_frame.grid(row=8, column=1, rowspan=3, columnspan=3)
+            self.spool_frame.grid(row=7, column=1, rowspan=3, columnspan=3)
 
 
             # Creation of green Start button
@@ -191,7 +196,7 @@ class FiberTower():
 
             ## Parameter frame section 
             self.parameter_frame = tk.LabelFrame(self.root, text="Parameters", height=100,width=150)
-            self.parameter_frame.grid(row=2, column=4, rowspan=3, columnspan=3, padx=5, pady=5)
+            self.parameter_frame.grid(row=2, column=4, rowspan=5, columnspan=3, padx=5, pady=5)
 
             # printing diameter measured by laser sensor
             self.diameter = tk.Label(self.parameter_frame, text="Diameter: 0.00")
@@ -210,6 +215,14 @@ class FiberTower():
             self.record_button = tk.Button(self.parameter_frame, text = "Record diameter", command=self.record_diameter)
             self.record_button.grid(row=0, column=1)
             self.recording = False
+
+            #time elapsed
+            self.time_elapsed = tk.Label(self.parameter_frame, text="Time elapsed: ")
+            self.time_elapsed.grid(row=2, column=0)
+
+            #length drawn
+            self.length_drawn = tk.Label(self.parameter_frame, text="Length drawn: ")
+            self.length_drawn.grid(row=3, column=0)
             """
             ## Debug section
             #Debug screen with time delay and received serial packets
@@ -238,7 +251,7 @@ class FiberTower():
 
             ### Start/Stop all buttons
             self.stop_all_frame = tk.LabelFrame(self.root, text= "All")
-            self.stop_all_frame.grid(row=6,column=4)
+            self.stop_all_frame.grid(row=11,column=0, columnspan=3)
 
             self.stop_all_button = tk.Button(self.stop_all_frame, text = "Stop", bg = "red", font=("Segoe Ui", 12), fg="white", command=lambda: self.port_write("akq"))
             self.stop_all_button.grid(column=1, row=0)
@@ -306,8 +319,8 @@ class FiberTower():
             if self.recording:
                 self.recording = False
                 self.record_button.config(text = "Record diameter", bg = "grey94")
-                #Save file
 
+                #Save file
 
                 df = DataFrame(self.save_data)
                 df.to_csv(f'../Drawing_data/{datetime.today().strftime("%Y%m%d, %Hh%Mm%Ss")}.csv', index=False)
@@ -363,21 +376,26 @@ class FiberTower():
                         break
                     self.checkSerialPort()
                     if self.recording:
-                        # Only records the data when 25 elements are saved in the buffer
+                        # Only records the data when 5 elements are saved in the buffer
                         if len(self.buffer) >= 5:
                             #Convert the 2d array into a numpy array
                             treated_buffer = np.array(self.buffer)
 
                             #Save the time relative to the start of the recording
-                            self.save_data["relative_time"].append(time() - self.start_time)
+
+                            elapsed = time() - self.start_time
+
+                            self.save_data["relative_time"].append(elapsed)
+                            self.time_elapsed.config(text=f"Time elapsed: {int(elapsed)} s")
+                            self.length_drawn.config(text=f"Length drawn: {round(elapsed*np.pi * self.config_data["capstan_wheel_diameter"] * self.capstan_speed_value / self.config_data["microstepping"] / 5 / 1000, 2)} m") # missing *pi *diameter * speed / microstepping
                             #Save the diameter into memory. The array is seperated, then every element is converted from a string to a float
-                            #The average of the last 25 readings is saved
+                            #The average of the last 5 readings is saved
                             self.save_data["diameter"].append(np.mean(treated_buffer[:,3].astype(np.float16)))
 
                             # Same for the speed of each motor. Values are integers instead of floats
-                            self.save_data["preform_speed"].append(np.mean(treated_buffer[:,0].astype(np.int16)))
-                            self.save_data["spool_speed"].append(np.mean(treated_buffer[:,1].astype(np.int16)))
-                            self.save_data["capstan_speed"].append(np.mean(treated_buffer[:,2].astype(np.int16)))
+                            self.save_data["preform_speed"].append(np.mean(treated_buffer[:,1].astype(np.int16)))
+                            self.save_data["spool_speed"].append(np.mean(treated_buffer[:,2].astype(np.int16)))
+                            self.save_data["capstan_speed"].append(np.mean(treated_buffer[:,0].astype(np.int16)))
                             # Reset the buffer
                             self.buffer = []
             except serial.SerialException:
@@ -408,6 +426,7 @@ class FiberTower():
                     try:
                         if isinstance(float(recentPacketString[0]), float):
                             self.speed_capstan.config(text= "Speed : " + f"{int(recentPacketString[0]):03d}")
+                            self.capstan_speed_value = int(recentPacketString[0])
                         if isinstance(float(recentPacketString[1]), float):
                             self.speed_preform.config(text= "Speed : " + f"{int(recentPacketString[1]):03d}")
                         if isinstance(float(recentPacketString[2]), float):

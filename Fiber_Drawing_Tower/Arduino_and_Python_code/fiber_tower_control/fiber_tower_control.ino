@@ -27,7 +27,7 @@ int new_speed_preform;
 int new_speed_spool; 
 
 // Diameter variables
-float offset = 0.02;
+float offset = 0.07;
 float diameter_tension;
 float conversion_factor_diameter_tension = 0.5;
 float real_diameter = 0;
@@ -49,6 +49,8 @@ float desired_diameter;
 float drawing_constant;
 float capstan_diameter;
 float spool_circumeference;
+int microstepping;
+
 
 
 // Creates an instance for both motors
@@ -141,6 +143,10 @@ void loop() {
       spool_circumeference = received_string.toFloat();
       received_string = "";
     }
+    else if (command == 'i') {
+      microstepping = received_string.toFloat();
+      received_string = "";
+    }
     else if (command == 's' && !capstan_running) {
       capstan_running = true;
     }
@@ -212,9 +218,9 @@ void loop() {
       new_speed_preform = 999;
       */
       
-      new_speed_capstan = 500; // 1600 steps/rev
-      new_speed_spool = new_speed_capstan * capstan_diameter / spool_circumeference * 3.14159; // 1600 steps/rev
-      new_speed_preform = 999 * 3.14159 * desired_diameter * desired_diameter * capstan_diameter * new_speed_capstan / 1600 / drawing_constant;
+      new_speed_capstan = 500; 
+      new_speed_spool = new_speed_capstan * capstan_diameter / spool_circumeference * 3.14159;
+      new_speed_preform = 999 * 3.14159 * desired_diameter * desired_diameter * capstan_diameter * new_speed_capstan / microstepping / drawing_constant;
 
       preform_motor_running = true;
       spool_running = true;
@@ -266,10 +272,6 @@ void loop() {
     stepTheMotors();
     Serial.print(",");
     Serial.println(real_diameter);
-    //Serial.print(",");
-    //stepTheMotors();
-    //Serial.println(desired_diameter); 
-    //stepTheMotors();
 
     count = 0;
   }
