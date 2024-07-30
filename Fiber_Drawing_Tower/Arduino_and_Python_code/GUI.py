@@ -66,12 +66,12 @@ class FiberTower():
                     self.config_data = json.load(config)
             except FileNotFoundError:
                 self.config_data = {
-                    "capstan_wheel_diameter": None,
-                    "spool_circumeference": None,
-                    "preform_linear_speed": None,
-                    "preform_diameter": None,
-                    "microstepping": None,
-                }
+                    "capstan_wheel_diameter": 76.2,
+                    "spool_circumeference": 820,
+                    "preform_linear_speed": 0.374,
+                    "preform_diameter": 19.05,
+                    "microstepping": 1600,
+                } #Default values
 
                 with open("config.json", "w") as config:
                     json.dump(self.config_data, config)
