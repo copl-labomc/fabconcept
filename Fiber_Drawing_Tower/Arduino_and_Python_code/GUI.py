@@ -7,6 +7,8 @@ import numpy as np
 from pandas import DataFrame
 import json
 
+import serial.serialutil
+
 def serial_ports():
     """ Finds all the port in use and returns it as a list. Returns ["None"] if no port is available
 
@@ -56,8 +58,6 @@ class FiberTower():
             self.createGui()
             self.running = True
             self.initialization(self.current_port.get())
-            sleep(2)
-            self.send_config()
             self.program_loop()
 
         def load_config(self):
@@ -114,7 +114,7 @@ class FiberTower():
 
             Connection
                 -Drop-down menu: Select the port to connect
-                -Reconnect: Tries connecting to the selected port
+                -Reconnect Tries connecting to the selected port
                 -Check Ports: Refreshes the available ports menu
             
             Parameters
@@ -280,24 +280,8 @@ class FiberTower():
             """Send the desired diameter"""
             entry = self.diameter_entry.get()
             if entry != '':
-                "Send the desired diameter"
-                dp2vp = str(self.config_data["preform_diameter"]**2 * self.config_data["preform_linear_speed"]) #Preform diameter^2 * Preform linear speed
-                self.port_write(dp2vp)
-                self.port_write('f')
-
-                dc = str(self.config_data["capstan_wheel_diameter"]) #Capstan wheel diameter
-                self.port_write(dc)
-                self.port_write('g')
-
-                ds = str(self.config_data["spool_circumeference"]) #Spool diameter
-                self.port_write(ds)
-                self.port_write('h')
-                
                 self.port_write(entry)
                 self.port_write('e')
-
-
-                
 
         def reconnect(self):
             """Tries to reconnect to the arduino when the Reconnect button is pressed"""
@@ -364,6 +348,8 @@ class FiberTower():
             else:
                 self.ser = serial.Serial(commPort, baudrate = 115200, timeout = 1)
                 self.status_label.config(text="Connected", bg = 'green')
+                sleep(2)
+                self.send_config()
 
         #Loop functions
 
