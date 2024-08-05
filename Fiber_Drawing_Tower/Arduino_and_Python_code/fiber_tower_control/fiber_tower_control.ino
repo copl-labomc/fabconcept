@@ -6,6 +6,8 @@
 bool capstan_running = false;
 bool preform_motor_running = false;
 bool spool_running = false;
+
+// automatic 
 bool automatic = false;
 
 // Make sure the spool turns the right way when it starts
@@ -36,24 +38,26 @@ const int capstan_max_speed = 999;
 const int preform_max_speed = 999;
 const int spool_max_speed = 999;
 
-
+// character received from serial connection from laptop
 char command;
+
+// counter that counts to 1000 so that the heavy calculations are done only once per 1000 loops
 int count;
 
 // input of the python app
 char motor_preform_dir;
-char motor_spool_dir;
 
+// For the instructions larger than one character, they are stored as a string until said instruction is complete
 String received_string = "";
+
+// Config info
 float desired_diameter;
 float drawing_constant;
 float capstan_diameter;
 float spool_circumeference;
 int microstepping;
 
-
-
-// Creates an instance for both motors
+// Creates an AccelStepper instance for the three motors
 AccelStepper capstan_stepper(AccelStepper::DRIVER, capstan_stepPin, capstan_dirPin);
 AccelStepper preform_stepper(AccelStepper::DRIVER, preform_stepPin, preform_dirPin);
 AccelStepper spool_stepper(AccelStepper::DRIVER, spool_stepPin, spool_dirPin);
@@ -65,19 +69,20 @@ float mapf(float value, float fromLow, float fromHigh, float toLow, float toHigh
   return result;
 } 
 
-// Function adjusting the capstan motor speed with the value measured trought the potentiometer
+// Function adjusting the capstan motor speed
 void controlCapstan(int capstan_speed) {
   capstan_stepper.setSpeed(capstan_speed);
   capstan_stepper.runSpeed();
 }
 
+// Function adjusting the spool motor speed and direction
 void controlSpool(int rev, int spool_speed) {
   spool_stepper.setSpeed(spool_speed * rev);
   spool_stepper.runSpeed();
   
 }
 
-// Function adjusting the preform motor speed and its direction depending the button pressed
+// Function adjusting the preform motor speed and direction
 void controlPreformMotor(char dir, int preform_speed) {
   if (dir == 't'){
   preform_stepper.setSpeed(preform_speed);
@@ -89,6 +94,7 @@ void controlPreformMotor(char dir, int preform_speed) {
   }
 }
 
+// Calls the runSpeed() function for all running motors. This function needs to be called as much as possible to ensure smooth rotation
 void stepTheMotors() {
   if (capstan_running) {
     capstan_stepper.runSpeed();
@@ -118,17 +124,20 @@ void loop() {
   if (Serial.available() > 0) {
     command = Serial.read();
 
-    // If the command is a float, each digit is sent one at a time
+    // If the command is a float or int, each digit is sent one at a time
     // This line checks if it is a digit or a period character and
     // adds it to a string
     if (isPunct(command) || isDigit(command)) {
       received_string += command;
     }
-    // Once the end character 'e' is received, the string is converted to a float
+    // Once an end character 'e', 'f', 'g', 'h' or 'i' is received, the string is converted to a float (or int)
     // and stored into memory
+
+    // See the python code documentation for the list of instructions
     else if (command == 'e') {
       desired_diameter = received_string.toFloat();
       received_string = "";
+      // When a diameter instruction is received, starts automatic mode
       automatic = true;
     }
     else if (command == 'f') {
@@ -187,11 +196,11 @@ void loop() {
       reversed = reversed * -1;
     } 
   }
-    // Depending of the byte received (a char) and if the motor is not active turn it on 
-    // or off and change the flags status
+  // Only run this part once every 1000 loops
   if (count > 1000){
     if (!automatic) {
-      // if flag for the capstan is true read the tension of potentiometer to adapt the speed
+      // In manual mode
+      // if flag for the capstan is true read the voltage of potentiometer to adapt the speed
       if (capstan_running) {
         int sensorValue = analogRead(A0);
         new_speed_capstan = map(sensorValue, 0, 1023, 0, capstan_max_speed);
@@ -212,38 +221,23 @@ void loop() {
         controlPreformMotor(motor_preform_dir, new_speed_preform);
       }
     } if (automatic) {
-      /*
-      new_speed_capstan = drawing_constant / (desired_diameter * desired_diameter * capstan_diameter * 3.14159) * 200; // No microstepping
-      new_speed_spool = new_speed_capstan * capstan_diameter / spool_circumeference * 3.14159 * 2; // 400 steps/rev
-      new_speed_preform = 999;
-      */
-      
+      // In automatic mode, the speeds are calculated using the config and sent information
+      // Capstan speed is fixed
       new_speed_capstan = 500; 
+      //Spool speed is synced with the capstan's speed
       new_speed_spool = new_speed_capstan * capstan_diameter / spool_circumeference * 3.14159;
+      // The preform speed is calculated using the equation
+      // Vp = Df^2/Dp^2 * Vc
+      // With some conversion factors
       new_speed_preform = 999 * 3.14159 * desired_diameter * desired_diameter * capstan_diameter * new_speed_capstan / microstepping / drawing_constant;
 
+      // Start all motors
       preform_motor_running = true;
       spool_running = true;
       capstan_running = true;
       controlCapstan(new_speed_capstan);
       controlSpool(-1, new_speed_spool);
       controlPreformMotor('b', new_speed_preform);
-      
-      Serial.print(new_speed_capstan);
-      stepTheMotors();
-      Serial.print(",");
-      Serial.print(new_speed_preform);
-      stepTheMotors();
-      Serial.print(",");
-      Serial.print(new_speed_spool);
-      stepTheMotors();
-      Serial.print(",");
-      Serial.print(real_diameter);
-      Serial.print(",");
-      stepTheMotors();
-      Serial.println(desired_diameter); 
-      stepTheMotors();
-      automatic = true;
     }
     
     //Read the analog input from the diameter sensor 10 times and add them
@@ -260,7 +254,7 @@ void loop() {
 
     real_diameter = diameter_tension / conversion_factor_diameter_tension + offset;
     // Sending output values to the python application
-    // Run the runSpeed command multiple times
+    // Run the runSpeed command multiple times because the Serial print operation messes with the stepper motor's timing    
     stepTheMotors();
     Serial.print(new_speed_capstan);
     stepTheMotors();
