@@ -1,3 +1,19 @@
+"""
+Fiber drawing tower Graphical User Interface
+
+The code has two parts: Directly on the Arduino and on the laptop.
+
+Here is the python code running on the laptop. The GUI itself is created with Tkinter,
+a simple, esay to use graphics library. All the buttons are linked to a python function that is executed
+every time the button is pressed.
+
+This part of the code has to communicate with the Arduino. It does so using the Pyserial library.
+We can send specific characters through the serial line and the Arduino can read them and react accordingly.
+The python code also receives information such as motor speed and diameter from the Arduino.
+
+See the comments in the code itself for a more detailled explanation
+
+"""
 import tkinter as tk
 import serial
 from tkinter import ttk
@@ -22,13 +38,13 @@ def serial_ports():
     result = []
     for port in ports:
         try:
-            s = serial.Serial(port)
-            result.append(port)
+            s = serial.Serial(port) #Tries opening the COM port
+            result.append(port) # Adds it to a list
             s.close()
         except (OSError, serial.SerialException):
-            pass
+            pass #If a serial communication cannot be established, it raises the SerialException error
     if result == []:
-        return ["None"]
+        return ["None"] #If no port are available, the "None" string is returned (this is a quick fix that made it work). A regular None type should be better and replaced in the future
     return result
 
 
@@ -54,30 +70,34 @@ class FiberTower():
         def __init__(self):
             """Creates the GUI, initializes the serial communication then starts the main loop
             """
-            self.load_config()
-            self.createGui()
-            self.running = True
-            self.initialization(self.current_port.get())
-            self.program_loop()
+            self.load_config() # Load the configuration from the .json file
+            self.createGui() # Creates the tkinter GUI
+            self.running = True 
+            self.initialization(self.current_port.get()) #Initializes the serial communication and sends the config info to the Arduino
+            self.program_loop() #Starts the main loop
 
         def load_config(self):
+            """Loads the contents of the config.json file into a dictionnary. If no such file is found, it creates one
+            """
             try:
                 with open("config.json", "r") as config:
-                    self.config_data = json.load(config)
+                    self.config_data = json.load(config) #reads the content of the .json file
             except FileNotFoundError:
+                #If there is no config file, create it with default values
                 self.config_data = {
                     "capstan_wheel_diameter": 76.2,
                     "spool_circumeference": 820,
                     "preform_linear_speed": 0.374,
                     "preform_diameter": 19.05,
                     "microstepping": 1600,
-                } #Default values
-
+                } 
                 with open("config.json", "w") as config:
                     json.dump(self.config_data, config)
 
         def send_config(self):
-            dp2vp = str(self.config_data["preform_diameter"]**2 * self.config_data["preform_linear_speed"]) #Preform diameter^2 * Preform linear speed
+            """Sends the config data through the serial port. Each element has it's own end character.
+            """
+            dp2vp = str(self.config_data["preform_diameter"]**2 * self.config_data["preform_linear_speed"]) #Preform diameter^2 * Preform linear speed. Send one number instead of two.
             self.port_write(dp2vp)
             self.port_write('f')
 
@@ -118,15 +138,15 @@ class FiberTower():
                 -Check Ports: Refreshes the available ports menu
             
             Parameters
-                Text box: Type the desired diameter to send (WIP)
-                Send: Send the contents of the text box to the arduino
+                -Text box: Type the desired diameter to send (WIP)
+                -Send: Send the contents of the text box to the arduino
             """
 
             # Create a tk application
             self.root = tk.Tk()
             self.root.title("Fiber Tower")
             self.root.geometry("500x400")
-            self.root.protocol("WM_DELETE_WINDOW", self.close_window)
+            self.root.protocol("WM_DELETE_WINDOW", self.close_window) #Tells tkinter to execute the close_window function when the app is closed
             
             ## PREFORM STEPPER SECTION 
 
@@ -223,8 +243,11 @@ class FiberTower():
             #length drawn
             self.length_drawn = tk.Label(self.parameter_frame, text="Length drawn: ")
             self.length_drawn.grid(row=3, column=0)
+            
             """
+            
             ## Debug section
+            # This debug section can be added back in for development. It just prints the contents of the recived serial info directly on the GUI.
             #Debug screen with time delay and received serial packets
             self.debug_frame = tk.LabelFrame(self.root, text="Debug", height=100,width=150)
             self.debug_frame.grid(row=5, column=4, rowspan=2, columnspan=3, padx=5, pady=5)
@@ -262,6 +285,7 @@ class FiberTower():
 
 
             #If COM4 is available, it picks it as default when lauching or else it picks the first one available
+            #COM4 is usually the port used by the lab's laptop. For some reason, a COM3 port also exists. I have no idea where it comes form but it just spits back what you send it. This breaks the code
             if "COM4" in serial_ports():
                 self.current_port.set("COM4") 
             else:
@@ -274,6 +298,7 @@ class FiberTower():
             """Close serial communication when the window is closed"""
             self.running = False  # turn off while loop
             if self.status_label.cget('text') == "Connected":
+                # Only close the serial port if it is open in the first place
                 self.ser.close()
 
         def send_diameter(self):
@@ -295,18 +320,21 @@ class FiberTower():
                 pass
         
         def port_write(self, command):
-            """Checks if the arduino is connected then sends the command trough the serial port"""
+            """Checks if the arduino is connected then sends the command trough the serial port.
+            The ser.write function sends the string one character at a time so and ending character needs to be sent to let the arduino know that the message is done"""
             if self.status_label.cget("text") == "Connected":
                 self.ser.write(command.encode())
 
         def record_diameter(self):
+            """If not already recording, start the recording. If recording, save it as a .csv file.
+            """
             if self.recording:
                 self.recording = False
                 self.record_button.config(text = "Record diameter", bg = "grey94")
 
                 #Save file
 
-                df = DataFrame(self.save_data)
+                df = DataFrame(self.save_data) #The pandas library is used to save the diameter data
                 df.to_csv(f'../Drawing_data/{datetime.today().strftime("%Y%m%d, %Hh%Mm%Ss")}.csv', index=False)
             else:
                 self.recording = True
@@ -324,7 +352,7 @@ class FiberTower():
         def check_ports(self):
             """Updates the connection drop menu with available ports"""    
 
-            self.connection_drop_menu['menu'].delete(0, 'end')
+            self.connection_drop_menu['menu'].delete(0, 'end') #I found no way to modify the menu options so the menu is deleted and a new one is created
 
             ports = serial_ports()
             if self.status_label.cget('text') == "Connected":
@@ -348,7 +376,7 @@ class FiberTower():
             else:
                 self.ser = serial.Serial(commPort, baudrate = 115200, timeout = 1)
                 self.status_label.config(text="Connected", bg = 'green')
-                sleep(2)
+                sleep(2) #Waits that the serial connection is well established before sending the config
                 self.send_config()
 
         #Loop functions
@@ -385,13 +413,14 @@ class FiberTower():
                             # Reset the buffer
                             self.buffer = []
             except serial.SerialException:
-                self.ser.close()
+                #If something goes wrong with the serial connection, 
+                self.ser.close() #close the port
                 self.status_label.config(text="Disconnected", bg = 'red')
-                self.check_ports()
-                self.reconnection_loop()
+                self.check_ports() #Check the available ports
+                self.reconnection_loop() #Go to the idle state
 
         def reconnection_loop(self): 
-            """Executes a secondary loop while the program waits to be reconnected"""
+            """Executes a secondary loop while the program waits to be reconnected. Only updates the GUI and doesn't check the serial port"""
             while True:
                 self.root.update()
                 if not self.running: 
@@ -423,11 +452,6 @@ class FiberTower():
                         if self.recording and len(recentPacketString) == 4:
                             # Saves the data to the buffer
                             self.buffer.append(recentPacketString[:4])
-                        
-
-                        #Outputs the delay and serial packet info on the GUI (for testing)
-                        #Removes the \r\n characters at the end
-                        #self.serial_print.config(text = "Serial: " + "' '".join(recentPacketString))
                     except IndexError:
                         pass
                         
