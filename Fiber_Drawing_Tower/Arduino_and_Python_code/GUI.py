@@ -18,7 +18,7 @@ import tkinter as tk
 import serial
 from tkinter import ttk
 from time import time, sleep
-from datetime import datetime
+from datetime import datetime, timedelta
 import numpy as np
 from pandas import DataFrame
 import json
@@ -95,8 +95,7 @@ class FiberTower():
                 with open("config.json", "w") as config:
                     json.dump(self.config_data, config)
                 
-            self.drawn_volume = 0
-            self.preform_volume = self.config_data["preform_diameter"]**2 * np.pi * self.config_data["preform_length"]
+            
 
         def send_config(self):
             """Sends the config data through the serial port. Each element has it's own end character.
@@ -220,7 +219,7 @@ class FiberTower():
 
             ## Parameter frame section 
             self.parameter_frame = tk.LabelFrame(self.root, text="Parameters", height=100,width=150)
-            self.parameter_frame.grid(row=2, column=4, rowspan=6, columnspan=3, padx=5, pady=5)
+            self.parameter_frame.grid(row=2, column=4, rowspan=7, columnspan=3, padx=5, pady=5)
 
             # printing diameter measured by laser sensor
             self.diameter = tk.Label(self.parameter_frame, text="Diameter: 0.00")
@@ -250,6 +249,9 @@ class FiberTower():
 
             self.progress = tk.Label(self.parameter_frame, text="Progress: ")
             self.progress.grid(row=4, column=0)
+
+            self.time_remaining = tk.Label(self.parameter_frame, text="Time remaining: ")
+            self.time_remaining.grid(row=5, column=0)
             
             """
             
@@ -356,6 +358,8 @@ class FiberTower():
                 self.start_time = time()
                 self.record_button.config(text = 'Stop recording', bg = 'red')
                 self.length_drawn_value = 0
+                self.drawn_volume = 0
+                self.preform_volume = self.config_data["preform_diameter"]**2 * np.pi * self.config_data["preform_length"]
 
         def check_ports(self):
             """Updates the connection drop menu with available ports"""    
@@ -427,9 +431,13 @@ class FiberTower():
                                 self.drawn_volume += volume_delta
                                 
                                 remaining_volume = self.preform_volume - self.drawn_volume
+                                
+                                progress = 1- remaining_volume / self.preform_volume
+                                self.progress.config(text = f"Progress: {round(progress * 100, 2)}%")
 
-                                self.progress.config(text = f"Progres: {round((1- remaining_volume / self.preform_volume) * 100, 2)}%")
-                                print((1- remaining_volume / self.preform_volume) * 100)
+                                time_remaining = elapsed / (progress + 0.000000001) - elapsed
+                                if time_remaining < 86400:
+                                    self.time_remaining.config(text = f"Time remaining: {str(timedelta(seconds=round(time_remaining)))}")
                             else:
                                 length_delta = 0
 
