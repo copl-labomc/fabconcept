@@ -23,7 +23,8 @@ const int preform_dirPin = 11;
 const int spool_stepPin = 4;
 const int spool_dirPin = 5;
 
-const int relay_pin = 2;
+const int motor_relay_pin = 2;
+const int oven_relay_pin = 3;
 
 
 // Speed of motors
@@ -127,8 +128,10 @@ void setup() {
   capstan_stepper.setMaxSpeed(capstan_max_speed);
   preform_stepper.setMaxSpeed(preform_max_speed);
   spool_stepper.setMaxSpeed(spool_max_speed);
-  pinMode(relay_pin, OUTPUT);
-  digitalWrite(relay_pin, HIGH);
+  pinMode(motor_relay_pin, OUTPUT);
+  pinMode(oven_relay_pin, OUTPUT);
+  digitalWrite(motor_relay_pin, HIGH);
+  digitalWrite(motor_relay_pin, LOW); // The oven is on when this pin is low so that the oven can heat up without the arduino being on
 }
 
 // Main loop
@@ -220,9 +223,15 @@ void loop() {
     }
 
     if (shutdown_timer >= shutdown_limit) {
-      digitalWrite(relay_pin, LOW);
+      digitalWrite(motor_relay_pin, LOW);
     } else {
-      digitalWrite(relay_pin, HIGH);
+      digitalWrite(motor_relay_pin, HIGH);
+    }
+    // The oven's shutdown time is 60 times the motor's shutdown time: about 1 hour
+    if (shutdown_timer >= shutdown_limit * 0.5) {
+      digitalWrite(oven_relay_pin, HIGH);
+    } else {
+      digitalWrite(oven_relay_pin, LOW);
     }
 
 
