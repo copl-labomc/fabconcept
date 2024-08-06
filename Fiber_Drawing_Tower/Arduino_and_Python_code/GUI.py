@@ -419,32 +419,36 @@ class FiberTower():
                             #Save the time relative to the start of the recording
                             elapsed = time() - self.start_time
 
-                            
-
+                            #Doesn't do anything on first loop
                             if len(self.save_data["relative_time"]) >= 1:
+                                #calculates time difference
                                 time_delta = elapsed - self.save_data["relative_time"][-1]
-
+                                #calculates length difference
                                 length_delta = time_delta*np.pi * self.config_data["capstan_wheel_diameter"] * self.capstan_speed_value / self.config_data["microstepping"] / 5 # 5 is the motor gear ratio
-                                
+                                #calculates fiber volume difference
                                 volume_delta = float(self.save_data['diameter'][-1])**2 * length_delta
-
+                                #adds the volume difference to the total
                                 self.drawn_volume += volume_delta
-                                
+                                #calculates volume of fiber yet to be drawn
                                 remaining_volume = self.preform_volume - self.drawn_volume
-                                
+                                #calculate progress %
                                 progress = 1- remaining_volume / self.preform_volume
                                 self.progress.config(text = f"Progress: {round(progress * 100, 2)}%")
-
+                                #estimates remaining time. the small number is to avoid division by 0
                                 time_remaining = elapsed / (progress + 0.000000001) - elapsed
+
+                                #checks that the estimation is reasonable i.e. within a day 
                                 if time_remaining < 86400:
                                     self.time_remaining.config(text = f"Time remaining: {str(timedelta(seconds=round(time_remaining)))}")
                             else:
+                                #makes the length difference 0 on the first loop 
                                 length_delta = 0
 
 
                             self.save_data["relative_time"].append(elapsed)
                             self.time_elapsed.config(text=f"Time elapsed: {int(elapsed)} s")
 
+                            #modifies the total drawn length incrementally
                             self.length_drawn_value += length_delta
                             self.length_drawn.config(text=f"Length drawn: {round(self.length_drawn_value / 1000, 2)} m") 
                             
