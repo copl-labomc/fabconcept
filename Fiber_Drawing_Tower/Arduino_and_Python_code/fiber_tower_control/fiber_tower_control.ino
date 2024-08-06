@@ -23,6 +23,9 @@ const int preform_dirPin = 11;
 const int spool_stepPin = 4;
 const int spool_dirPin = 5;
 
+const int relay_pin = 2;
+
+
 // Speed of motors
 int new_speed_capstan;
 int new_speed_preform; 
@@ -43,6 +46,14 @@ char command;
 
 // counter that counts to 1000 so that the heavy calculations are done only once per 1000 loops
 int count;
+
+// Timer that stop motors and oven after a certain time
+int shutdown_timer;
+
+
+// Number of iterations before stopping motors when nothing happens
+// 10000 = About 1 minute
+int shutdown_limit = 10000;
 
 // input of the python app
 char motor_preform_dir;
@@ -116,6 +127,8 @@ void setup() {
   capstan_stepper.setMaxSpeed(capstan_max_speed);
   preform_stepper.setMaxSpeed(preform_max_speed);
   spool_stepper.setMaxSpeed(spool_max_speed);
+  pinMode(relay_pin, OUTPUT);
+  digitalWrite(relay_pin, HIGH);
 }
 
 // Main loop
@@ -198,14 +211,31 @@ void loop() {
   }
   // Only run this part once every 1000 loops
   if (count > 1000){
+
+    // If every motor is off
+    if (!(capstan_running || spool_running || preform_motor_running)) {
+      shutdown_timer += 1;
+    } else {
+      shutdown_timer = 0;
+    }
+
+    if (shutdown_timer >= shutdown_limit) {
+      digitalWrite(relay_pin, LOW);
+    } else {
+      digitalWrite(relay_pin, HIGH);
+    }
+
+
     if (!automatic) {
+      
       // In manual mode
       // if flag for the capstan is true read the voltage of potentiometer to adapt the speed
       if (capstan_running) {
+        
         int sensorValue = analogRead(A0);
         new_speed_capstan = map(sensorValue, 0, 1023, 0, capstan_max_speed);
         controlCapstan(new_speed_capstan);
-      }
+      } 
 
       if (spool_running) {
         int sensor3Value = analogRead(A0);

@@ -90,9 +90,13 @@ class FiberTower():
                     "preform_linear_speed": 0.374,
                     "preform_diameter": 19.05,
                     "microstepping": 1600,
+                    "preform_length": 50
                 } 
                 with open("config.json", "w") as config:
                     json.dump(self.config_data, config)
+                
+            self.drawn_volume = 0
+            self.preform_volume = self.config_data["preform_diameter"]**2 * np.pi * self.config_data["preform_length"]
 
         def send_config(self):
             """Sends the config data through the serial port. Each element has it's own end character.
@@ -348,6 +352,7 @@ class FiberTower():
                 }
                 self.start_time = time()
                 self.record_button.config(text = 'Stop recording', bg = 'red')
+                self.length_drawn_value = 0
 
         def check_ports(self):
             """Updates the connection drop menu with available ports"""    
@@ -395,13 +400,6 @@ class FiberTower():
                             #Convert the 2d array into a numpy array
                             treated_buffer = np.array(self.buffer)
 
-                            #Save the time relative to the start of the recording
-
-                            elapsed = time() - self.start_time
-
-                            self.save_data["relative_time"].append(elapsed)
-                            self.time_elapsed.config(text=f"Time elapsed: {int(elapsed)} s")
-                            self.length_drawn.config(text=f"Length drawn: {round(elapsed*np.pi * self.config_data["capstan_wheel_diameter"] * self.capstan_speed_value / self.config_data["microstepping"] / 5 / 1000, 2)} m") # missing *pi *diameter * speed / microstepping
                             #Save the diameter into memory. The array is seperated, then every element is converted from a string to a float
                             #The average of the last 5 readings is saved
                             self.save_data["diameter"].append(np.mean(treated_buffer[:,3].astype(np.float16)))
@@ -410,6 +408,35 @@ class FiberTower():
                             self.save_data["preform_speed"].append(np.mean(treated_buffer[:,1].astype(np.int16)))
                             self.save_data["spool_speed"].append(np.mean(treated_buffer[:,2].astype(np.int16)))
                             self.save_data["capstan_speed"].append(np.mean(treated_buffer[:,0].astype(np.int16)))
+
+                            #Save the time relative to the start of the recording
+                            elapsed = time() - self.start_time
+
+                            
+
+                            if len(self.save_data["relative_time"]) >= 1:
+                                time_delta = elapsed - self.save_data["relative_time"][-1]
+
+                                length_delta = time_delta*np.pi * self.config_data["capstan_wheel_diameter"] * self.capstan_speed_value / self.config_data["microstepping"] / 5 / 1000
+                                
+                                volume_delta = float(self.save_data['diameter'][-1])**2 * length_delta
+
+                                self.drawn_volume += volume_delta
+                                
+                                remaining_volume = self.preform_volume - self.drawn_volume
+
+                                print((1- remaining_volume / self.preform_volume) * 100)
+                            else:
+                                length_delta = 0
+
+
+                            self.save_data["relative_time"].append(elapsed)
+                            self.time_elapsed.config(text=f"Time elapsed: {int(elapsed)} s")
+
+                            self.length_drawn_value += length_delta
+                            self.length_drawn.config(text=f"Length drawn: {round(self.length_drawn_value, 2)} m") 
+
+                            
                             # Reset the buffer
                             self.buffer = []
             except serial.SerialException:
@@ -453,8 +480,7 @@ class FiberTower():
                             # Saves the data to the buffer
                             self.buffer.append(recentPacketString[:4])
                     except IndexError:
-                        pass
-                        
+                        pass   
             # Try to avoid bad bytes
             except UnicodeDecodeError:
                 pass
