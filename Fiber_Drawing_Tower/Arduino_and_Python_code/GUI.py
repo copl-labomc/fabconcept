@@ -220,7 +220,7 @@ class FiberTower():
 
             ## Parameter frame section 
             self.parameter_frame = tk.LabelFrame(self.root, text="Parameters", height=100,width=150)
-            self.parameter_frame.grid(row=2, column=4, rowspan=5, columnspan=3, padx=5, pady=5)
+            self.parameter_frame.grid(row=2, column=4, rowspan=6, columnspan=3, padx=5, pady=5)
 
             # printing diameter measured by laser sensor
             self.diameter = tk.Label(self.parameter_frame, text="Diameter: 0.00")
@@ -247,6 +247,9 @@ class FiberTower():
             #length drawn
             self.length_drawn = tk.Label(self.parameter_frame, text="Length drawn: ")
             self.length_drawn.grid(row=3, column=0)
+
+            self.progress = tk.Label(self.parameter_frame, text="Progress: ")
+            self.progress.grid(row=4, column=0)
             
             """
             
@@ -417,7 +420,7 @@ class FiberTower():
                             if len(self.save_data["relative_time"]) >= 1:
                                 time_delta = elapsed - self.save_data["relative_time"][-1]
 
-                                length_delta = time_delta*np.pi * self.config_data["capstan_wheel_diameter"] * self.capstan_speed_value / self.config_data["microstepping"] / 5 / 1000
+                                length_delta = time_delta*np.pi * self.config_data["capstan_wheel_diameter"] * self.capstan_speed_value / self.config_data["microstepping"] / 5 # 5 is the motor gear ratio
                                 
                                 volume_delta = float(self.save_data['diameter'][-1])**2 * length_delta
 
@@ -425,6 +428,7 @@ class FiberTower():
                                 
                                 remaining_volume = self.preform_volume - self.drawn_volume
 
+                                self.progress.config(text = f"Progres: {round((1- remaining_volume / self.preform_volume) * 100, 2)}%")
                                 print((1- remaining_volume / self.preform_volume) * 100)
                             else:
                                 length_delta = 0
@@ -434,11 +438,11 @@ class FiberTower():
                             self.time_elapsed.config(text=f"Time elapsed: {int(elapsed)} s")
 
                             self.length_drawn_value += length_delta
-                            self.length_drawn.config(text=f"Length drawn: {round(self.length_drawn_value, 2)} m") 
-
+                            self.length_drawn.config(text=f"Length drawn: {round(self.length_drawn_value / 1000, 2)} m") 
                             
                             # Reset the buffer
                             self.buffer = []
+
             except serial.SerialException:
                 #If something goes wrong with the serial connection, 
                 self.ser.close() #close the port
