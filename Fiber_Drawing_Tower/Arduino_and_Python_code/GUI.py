@@ -446,7 +446,7 @@ class FiberTower():
 
 
                             self.save_data["relative_time"].append(elapsed)
-                            self.time_elapsed.config(text=f"Time elapsed: {int(elapsed)} s")
+                            self.time_elapsed.config(text=f"Time elapsed: {str(timedelta(seconds=int(elapsed)))}")
 
                             #modifies the total drawn length incrementally
                             self.length_drawn_value += length_delta
