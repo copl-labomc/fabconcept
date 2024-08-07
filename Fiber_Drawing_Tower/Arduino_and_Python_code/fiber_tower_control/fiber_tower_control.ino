@@ -228,7 +228,7 @@ void loop() {
       digitalWrite(motor_relay_pin, HIGH);
     }
     // The oven's shutdown time is 60 times the motor's shutdown time: about 1 hour
-    if (shutdown_timer >= shutdown_limit * 0.5) {
+    if (shutdown_timer >= shutdown_limit * 60) {
       digitalWrite(oven_relay_pin, HIGH);
     } else {
       digitalWrite(oven_relay_pin, LOW);
