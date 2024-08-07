@@ -19,6 +19,10 @@ import serial
 from tkinter import ttk
 from time import time, sleep
 from datetime import datetime, timedelta
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import numpy as np
 from pandas import DataFrame
 import json
@@ -148,7 +152,7 @@ class FiberTower():
             # Create a tk application
             self.root = tk.Tk()
             self.root.title("Fiber Tower")
-            self.root.geometry("500x400")
+            self.root.geometry("844x390")
             self.root.protocol("WM_DELETE_WINDOW", self.close_window) #Tells tkinter to execute the close_window function when the app is closed
             
             ## PREFORM STEPPER SECTION 
@@ -179,7 +183,7 @@ class FiberTower():
 
             ## CAPSTAN STEPPER SECTION 
             self.capstan_frame = tk.LabelFrame(self.root, text="Capstan Motor", height=120,width=150)
-            self.capstan_frame.grid(row=3, column=0, rowspan=4, columnspan=3)
+            self.capstan_frame.grid(row=3, column=0, rowspan=2, columnspan=3)
 
 
             # Creation of green Start button
@@ -197,7 +201,7 @@ class FiberTower():
 
             ## SPOOL STEPPER SECTION 
             self.spool_frame = tk.LabelFrame(self.root, text="Spool Motor", height=120,width=150)
-            self.spool_frame.grid(row=7, column=1, rowspan=3, columnspan=3)
+            self.spool_frame.grid(row=5, column=1, rowspan=2, columnspan=3, padx=5)
 
 
             # Creation of green Start button
@@ -219,7 +223,7 @@ class FiberTower():
 
             ## Parameter frame section 
             self.parameter_frame = tk.LabelFrame(self.root, text="Parameters", height=100,width=150)
-            self.parameter_frame.grid(row=2, column=4, rowspan=7, columnspan=3, padx=5, pady=5)
+            self.parameter_frame.grid(row=2, column=4, rowspan=4, columnspan=3, padx=5)
 
             # printing diameter measured by laser sensor
             self.diameter = tk.Label(self.parameter_frame, text="Diameter: 0.00")
@@ -283,7 +287,7 @@ class FiberTower():
 
             ### Start/Stop all buttons
             self.stop_all_frame = tk.LabelFrame(self.root, text= "All")
-            self.stop_all_frame.grid(row=11,column=0, columnspan=3)
+            self.stop_all_frame.grid(row=7,column=1, rowspan=2)
 
             self.stop_all_button = tk.Button(self.stop_all_frame, text = "Stop", bg = "red", font=("Segoe Ui", 12), fg="white", command=lambda: self.port_write("akq"))
             self.stop_all_button.grid(column=1, row=0)
@@ -302,6 +306,33 @@ class FiberTower():
 
             self.connection_drop_menu = tk.OptionMenu(self.connection_frame, self.current_port, *serial_ports())
             self.connection_drop_menu.grid(row=0, column=0,columnspan=1, padx=5)
+
+            #Live diameter visualisation
+
+            self.visualiser_frame = tk.LabelFrame(self.root, text = "Live diameter graph", height = 300, width = 300)
+            self.visualiser_frame.grid(row=1, column=10, rowspan=5)
+            self.visualiser_canvas = tk.Canvas(self.visualiser_frame)
+            
+            fig = plt.Figure(figsize= (3,3))
+            self.ax = fig.add_subplot(111)
+            self.graph = self.ax.plot([0], [0])
+            
+            
+
+            self.canvas = FigureCanvasTkAgg(fig, master=self.visualiser_frame)
+            self.canvas.get_tk_widget().grid(column=0,row=1)
+
+
+        def update_graph(self):
+            x = self.save_data["relative_time"]
+            y = self.save_data["diameter"]
+            if len(x) > 0 and len(y) > 0:
+                self.graph[0].set_xdata(x)
+                self.graph[0].set_ydata(y)
+                self.ax.set_ylim(min(y),max(y))
+                self.ax.set_xlim(0,x[-1])
+                self.canvas.draw()
+
 
         def close_window(self):
             """Close serial communication when the window is closed"""
@@ -454,6 +485,7 @@ class FiberTower():
                             
                             # Reset the buffer
                             self.buffer = []
+                            self.update_graph()
 
             except serial.SerialException:
                 #If something goes wrong with the serial connection, 
