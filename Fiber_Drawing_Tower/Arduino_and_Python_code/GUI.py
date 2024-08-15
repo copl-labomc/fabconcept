@@ -614,11 +614,11 @@ class FiberTower():
                     self.serial_print.config(
                         text=f"Serial: {"".join(recentPacketString)}")
                     self.time_debug.config(text=f"Time difference: {
-                                            time()-self.previous_time} s")
+                        time()-self.previous_time} s")
         # Try to avoid bad bytes
         except UnicodeDecodeError:
             pass
-        #Avoid missing elements
+        # Avoid missing elements
         except IndexError:
             pass
 
