@@ -591,34 +591,35 @@ class FiberTower():
                 recentPacketString = recentPacket.decode(
                     'utf').replace("\r\n", "").split(",")
                 # Update the value for each printed values if its a float (can be an altered value)
-                try:
-                    if isinstance(float(recentPacketString[0]), float):
-                        self.speed_capstan.config(
-                            text="Speed : " + f"{int(recentPacketString[0]):03d}")
-                        self.capstan_speed_value = int(recentPacketString[0])
-                    if isinstance(float(recentPacketString[1]), float):
-                        self.speed_preform.config(
-                            text="Speed : " + f"{int(recentPacketString[1]):03d}")
-                    if isinstance(float(recentPacketString[2]), float):
-                        self.speed_spool.config(
-                            text="Speed : " + f"{int(recentPacketString[2]):03d}")
-                    if isinstance(float(recentPacketString[3]), float):
-                        self.diameter.config(
-                            text="Diameter : " + recentPacketString[3])
-                    # Checks that all the data has been transmitted and decoded correctly
-                    if self.recording and len(recentPacketString) == 4:
-                        # Saves the data to the buffer
-                        self.buffer.append(recentPacketString[:4])
 
-                    if debug:
-                        self.serial_print.config(
-                            text=f"Serial: {"".join(recentPacketString)}")
-                        self.time_debug.config(text=f"Time difference: {
-                                               time()-self.previous_time} s")
-                except IndexError:
-                    pass
+                if isinstance(float(recentPacketString[0]), float):
+                    self.speed_capstan.config(
+                        text="Speed : " + f"{int(recentPacketString[0]):03d}")
+                    self.capstan_speed_value = int(recentPacketString[0])
+                if isinstance(float(recentPacketString[1]), float):
+                    self.speed_preform.config(
+                        text="Speed : " + f"{int(recentPacketString[1]):03d}")
+                if isinstance(float(recentPacketString[2]), float):
+                    self.speed_spool.config(
+                        text="Speed : " + f"{int(recentPacketString[2]):03d}")
+                if isinstance(float(recentPacketString[3]), float):
+                    self.diameter.config(
+                        text="Diameter : " + recentPacketString[3])
+                # Checks that all the data has been transmitted and decoded correctly
+                if self.recording and len(recentPacketString) == 4:
+                    # Saves the data to the buffer
+                    self.buffer.append(recentPacketString[:4])
+
+                if debug:
+                    self.serial_print.config(
+                        text=f"Serial: {"".join(recentPacketString)}")
+                    self.time_debug.config(text=f"Time difference: {
+                                            time()-self.previous_time} s")
         # Try to avoid bad bytes
         except UnicodeDecodeError:
+            pass
+        #Avoid missing elements
+        except IndexError:
             pass
 
 
