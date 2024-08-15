@@ -26,8 +26,8 @@ import numpy as np
 from pandas import DataFrame
 import json
 
-#Change this variable to True to enable debug mode and print 
-#the incoming Serial messages and the time delay between iterations
+# Change this variable to True to enable debug mode and print
+# the incoming Serial messages and the time delay between iterations
 debug = True
 
 
@@ -286,16 +286,18 @@ class FiberTower():
             self.parameter_frame, text="Time remaining: ")
         self.time_remaining.grid(row=5, column=0)
 
-            
-        ## Debug section
+        # Debug section
 
-        if debug: 
-            self.debug_frame = tk.LabelFrame(self.root, text="Debug", height=100,width=150)
-            self.debug_frame.grid(row=6, column=4, rowspan=2, columnspan=3, padx=5, pady=5)
+        if debug:
+            self.debug_frame = tk.LabelFrame(
+                self.root, text="Debug", height=100, width=150)
+            self.debug_frame.grid(row=6, column=4, rowspan=2,
+                                  columnspan=3, padx=5, pady=5)
             self.serial_print = tk.Label(self.debug_frame, text="Serial")
-            self.serial_print.grid(row=1, column=1, padx=5, columnspan= 3)
-            self.time_debug = tk.Label(self.debug_frame, text="Time difference")
-            self.time_debug.grid(row=2, column=1, padx=5, columnspan= 3)
+            self.serial_print.grid(row=1, column=1, padx=5, columnspan=3)
+            self.time_debug = tk.Label(
+                self.debug_frame, text="Time difference")
+            self.time_debug.grid(row=2, column=1, padx=5, columnspan=3)
             self.previous_time = time()
 
         # Connection frame section
@@ -461,6 +463,80 @@ class FiberTower():
             sleep(2)
             self.send_config()
 
+    def record(self):
+        #Checks that the recording button was pressed
+        if not self.recording:
+            return
+        # Only records the data when 5 elements are saved in the buffer
+        if len(self.buffer) >= 5:
+            return
+        # Convert the 2d array into a numpy array
+        treated_buffer = np.array(self.buffer)
+
+        # Save the diameter into memory. The array is seperated, then every element is converted from a string to a float
+        # The average of the last 5 readings is saved
+        self.save_data["diameter"].append(
+            np.mean(treated_buffer[:, 3].astype(np.float16)))
+
+        # Same for the speed of each motor. Values are integers instead of floats
+        self.save_data["preform_speed"].append(
+            np.mean(treated_buffer[:, 1].astype(np.int16)))
+        self.save_data["spool_speed"].append(
+            np.mean(treated_buffer[:, 2].astype(np.int16)))
+        self.save_data["capstan_speed"].append(
+            np.mean(treated_buffer[:, 0].astype(np.int16)))
+
+        # Save the time relative to the start of the recording
+        elapsed = time() - self.start_time
+
+        # Doesn't do anything on first loop to avoid error.
+        # The first loop has no elements in the relative time array
+        if len(self.save_data["relative_time"]) >= 1:
+            # calculates time difference
+            time_delta = elapsed - \
+                self.save_data["relative_time"][-1]
+            # calculates length difference
+            length_delta = time_delta*np.pi * \
+                self.config_data["capstan_wheel_diameter"] * self.capstan_speed_value / \
+                self.config_data["microstepping"] / \
+                5  # 5 is the motor gear ratio
+            # calculates fiber volume difference (in mm^3)
+            volume_delta = float(
+                self.save_data['diameter'][-1])**2 * length_delta * np.pi / 4
+            # adds the volume difference to the total
+            self.drawn_volume += volume_delta
+            # calculates volume of fiber yet to be drawn
+            remaining_volume = self.preform_volume - self.drawn_volume
+            # calculate progress %
+            progress = 1 - remaining_volume / self.preform_volume
+            self.progress.config(
+                text=f"Progress: {round(progress * 100, 2)}%")
+            # estimates remaining time. the small number is to avoid division by 0
+            time_remaining = elapsed / \
+                (progress + 0.000000001) - elapsed
+
+            # checks that the estimation is reasonable i.e. within a day
+            if time_remaining < 86400:
+                self.time_remaining.config(text=f"Time remaining: {
+                                            str(timedelta(seconds=round(time_remaining)))}")
+        else:
+            # makes the length difference 0 on the first loop
+            length_delta = 0
+
+        self.save_data["relative_time"].append(elapsed)
+        self.time_elapsed.config(text=f"Time elapsed: {
+                                    str(timedelta(seconds=int(elapsed)))}")
+
+        # modifies the total drawn length incrementally
+        self.length_drawn_value += length_delta
+        self.length_drawn.config(text=f"Length drawn: {
+                                    round(self.length_drawn_value / 1000, 2)} m")
+
+        # Reset the buffer
+        self.buffer = []
+
+        self.update_graph()
+
     # Loop functions
 
     def program_loop(self):
@@ -471,75 +547,7 @@ class FiberTower():
                 if not self.running:
                     break
                 self.checkSerialPort()
-                if self.recording:
-                    # Only records the data when 5 elements are saved in the buffer
-                    if len(self.buffer) >= 5:
-                        # Convert the 2d array into a numpy array
-                        treated_buffer = np.array(self.buffer)
-
-                        # Save the diameter into memory. The array is seperated, then every element is converted from a string to a float
-                        # The average of the last 5 readings is saved
-                        self.save_data["diameter"].append(
-                            np.mean(treated_buffer[:, 3].astype(np.float16)))
-
-                        # Same for the speed of each motor. Values are integers instead of floats
-                        self.save_data["preform_speed"].append(
-                            np.mean(treated_buffer[:, 1].astype(np.int16)))
-                        self.save_data["spool_speed"].append(
-                            np.mean(treated_buffer[:, 2].astype(np.int16)))
-                        self.save_data["capstan_speed"].append(
-                            np.mean(treated_buffer[:, 0].astype(np.int16)))
-
-                        # Save the time relative to the start of the recording
-                        elapsed = time() - self.start_time
-
-                        # Doesn't do anything on first loop to avoid error.
-                        # The first loop has no elements in the relative time array
-                        if len(self.save_data["relative_time"]) >= 1:
-                            # calculates time difference
-                            time_delta = elapsed - \
-                                self.save_data["relative_time"][-1]
-                            # calculates length difference
-                            length_delta = time_delta*np.pi * \
-                                self.config_data["capstan_wheel_diameter"] * self.capstan_speed_value / \
-                                self.config_data["microstepping"] / \
-                                5  # 5 is the motor gear ratio
-                            # calculates fiber volume difference (in mm^3)
-                            volume_delta = float(
-                                self.save_data['diameter'][-1])**2 * length_delta * np.pi / 4
-                            # adds the volume difference to the total
-                            self.drawn_volume += volume_delta
-                            # calculates volume of fiber yet to be drawn
-                            remaining_volume = self.preform_volume - self.drawn_volume
-                            # calculate progress %
-                            progress = 1 - remaining_volume / self.preform_volume
-                            self.progress.config(
-                                text=f"Progress: {round(progress * 100, 2)}%")
-                            # estimates remaining time. the small number is to avoid division by 0
-                            time_remaining = elapsed / \
-                                (progress + 0.000000001) - elapsed
-
-                            # checks that the estimation is reasonable i.e. within a day
-                            if time_remaining < 86400:
-                                self.time_remaining.config(text=f"Time remaining: {
-                                                           str(timedelta(seconds=round(time_remaining)))}")
-                        else:
-                            # makes the length difference 0 on the first loop
-                            length_delta = 0
-
-                        self.save_data["relative_time"].append(elapsed)
-                        self.time_elapsed.config(text=f"Time elapsed: {
-                                                 str(timedelta(seconds=int(elapsed)))}")
-
-                        # modifies the total drawn length incrementally
-                        self.length_drawn_value += length_delta
-                        self.length_drawn.config(text=f"Length drawn: {
-                                                 round(self.length_drawn_value / 1000, 2)} m")
-
-                        # Reset the buffer
-                        self.buffer = []
-
-                        self.update_graph()
+                self.record()
 
         except serial.SerialException:
             # If something goes wrong with the serial connection,
@@ -586,10 +594,12 @@ class FiberTower():
                     if self.recording and len(recentPacketString) == 4:
                         # Saves the data to the buffer
                         self.buffer.append(recentPacketString[:4])
-                    
+
                     if debug:
-                        self.serial_print.config(text=f"Serial: {"".join(recentPacketString)}")
-                        self.time_debug.config(text=f"Time difference: {time()-self.previous_time} s")
+                        self.serial_print.config(
+                            text=f"Serial: {"".join(recentPacketString)}")
+                        self.time_debug.config(text=f"Time difference: {
+                                               time()-self.previous_time} s")
                 except IndexError:
                     pass
         # Try to avoid bad bytes
