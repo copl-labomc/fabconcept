@@ -464,7 +464,7 @@ class FiberTower():
             self.send_config()
 
     def record(self):
-        #Checks that the recording button was pressed
+        # Checks that the recording button was pressed
         if not self.recording:
             return
         # Only records the data when 5 elements are saved in the buffer
@@ -492,6 +492,18 @@ class FiberTower():
         # Doesn't do anything on first loop to avoid error.
         # The first loop has no elements in the relative time array
         if len(self.save_data["relative_time"]) >= 1:
+
+            """This part estimates the progress of the fiber drawing. 
+            This estimation assumes that:
+            1. The fiber doesn't slip on the capstan
+            2. The density of the plastic is constant
+
+            The length of fiber drawn is calculated simply
+            with the rotation of the capstan. This, paired with the diameter measurement
+            tells us the volume of fiber drawn. This new volume can be subtrated from the
+            preform's volume calculated previously using config info. 
+            """
+
             # calculates time difference
             time_delta = elapsed - \
                 self.save_data["relative_time"][-1]
@@ -511,26 +523,29 @@ class FiberTower():
             progress = 1 - remaining_volume / self.preform_volume
             self.progress.config(
                 text=f"Progress: {round(progress * 100, 2)}%")
-            # estimates remaining time. the small number is to avoid division by 0
-            time_remaining = elapsed / \
-                (progress + 0.000000001) - elapsed
+            # estimates remaining time.
+            try:
+                time_remaining = elapsed / progress - elapsed
+            except ZeroDivisionError:
+                # If there is a division by zero, the time remaining is a whole day, which will be skipped by the next part
+                time_remaining = 86400
 
             # checks that the estimation is reasonable i.e. within a day
             if time_remaining < 86400:
                 self.time_remaining.config(text=f"Time remaining: {
-                                            str(timedelta(seconds=round(time_remaining)))}")
+                    str(timedelta(seconds=round(time_remaining)))}")
         else:
             # makes the length difference 0 on the first loop
             length_delta = 0
 
         self.save_data["relative_time"].append(elapsed)
         self.time_elapsed.config(text=f"Time elapsed: {
-                                    str(timedelta(seconds=int(elapsed)))}")
+            str(timedelta(seconds=int(elapsed)))}")
 
         # modifies the total drawn length incrementally
         self.length_drawn_value += length_delta
         self.length_drawn.config(text=f"Length drawn: {
-                                    round(self.length_drawn_value / 1000, 2)} m")
+            round(self.length_drawn_value / 1000, 2)} m")
 
         # Reset the buffer
         self.buffer = []
