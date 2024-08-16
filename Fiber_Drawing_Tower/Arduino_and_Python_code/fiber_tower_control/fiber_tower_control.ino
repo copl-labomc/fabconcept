@@ -248,7 +248,7 @@ void loop() {
 
       if (spool_running) {
         int sensor3Value = analogRead(A0);
-        new_speed_spool = map(sensor3Value, 0, 1023, 0, spool_max_speed) * capstan_diameter / spool_circumeference * 3.14159;
+        new_speed_spool = map(sensor3Value, 0, 1023, 0, spool_max_speed) * capstan_diameter / spool_circumeference * M_PI;
         controlSpool(reversed, new_speed_spool);
       }
 
@@ -264,11 +264,11 @@ void loop() {
       // Capstan speed is fixed
       new_speed_capstan = 500; 
       //Spool speed is synced with the capstan's speed
-      new_speed_spool = new_speed_capstan * capstan_diameter / spool_circumeference * 3.14159;
+      new_speed_spool = new_speed_capstan * capstan_diameter / spool_circumeference * M_PI;
       // The preform speed is calculated using the equation
       // Vp = Df^2/Dp^2 * Vc
       // With some conversion factors
-      new_speed_preform = 999 * 3.14159 * desired_diameter * desired_diameter * capstan_diameter * new_speed_capstan / microstepping / drawing_constant;
+      new_speed_preform = 999 * M_PI * desired_diameter * desired_diameter * capstan_diameter * new_speed_capstan / microstepping / drawing_constant;
 
       // Start all motors
       preform_motor_running = true;
