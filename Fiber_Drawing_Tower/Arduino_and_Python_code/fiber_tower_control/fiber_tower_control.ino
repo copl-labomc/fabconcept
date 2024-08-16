@@ -256,9 +256,9 @@ void loop() {
       if (preform_motor_running) {
         int sensor2Value = analogRead(A1);
         new_speed_preform = map(sensor2Value, 0, 1023, 0, preform_max_speed);
-        //new_speed_preform = 999;
         controlPreformMotor(motor_preform_dir, new_speed_preform);
       }
+      
     } if (automatic) {
       // In automatic mode, the speeds are calculated using the config and sent information
       // Capstan speed is fixed
