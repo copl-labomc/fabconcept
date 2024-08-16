@@ -78,18 +78,18 @@ class FiberTower():
         """Creates the GUI, initializes the serial communication then starts the main loop
         """
         # Load the configuration from the .json file
-        self.load_config()  
+        self.load_config()
 
-        #Default desired diameter will be 1 mm
+        # Default desired diameter will be 1 mm
         self.diameter_command = 1
         # Creates the tkinter GUI
-        self.createGui()  
+        self.createGui()
         # Initializes the serial communication and sends the config info to the Arduino
         self.running = True
         self.initialization(self.current_port.get())
         # Starts the main loop
-        
-        self.program_loop() 
+
+        self.program_loop()
 
     def load_config(self):
         """Loads the contents of the config.json file into a dictionnary. If no such file is found, it creates one
@@ -276,14 +276,16 @@ class FiberTower():
         self.record_button.grid(row=0, column=1)
         self.recording = False
 
-        #Graph preview button
+        # Graph preview button
         self.preview_button = tk.Button(
-            self.parameter_frame, text="Preview off", command=self.record_diameter)
+            self.parameter_frame, text="Preview: Off", command=self.preview)
         self.preview_button.grid(row=2, column=1)
-        
-        #Diameter command indicator
-        self.command_label = tk.Label(self.parameter_frame, text = f"Setpoint: {self.diameter_command} mm")
-        self.command_label.grid(row=3,column=1)
+        self.previewing = False
+
+        # Diameter command indicator
+        self.command_label = tk.Label(self.parameter_frame, text=f"Setpoint: {
+                                      self.diameter_command} mm")
+        self.command_label.grid(row=3, column=1)
         # time elapsed
         self.time_elapsed = tk.Label(
             self.parameter_frame, text="Time elapsed: ")
@@ -395,11 +397,12 @@ class FiberTower():
         """Send the desired diameter"""
         entry = self.diameter_entry.get()
         try:
-            #Checks that the string can be converted to a float. If not, triggers a ValueError, which is caught and handled
+            # Checks that the string can be converted to a float. If not, triggers a ValueError, which is caught and handled
             float(entry)
             self.diameter_command = entry
-            self.command_label.config(text= f"Setpoint: {self.diameter_command} mm")
-            
+            self.command_label.config(
+                text=f"Setpoint: {self.diameter_command} mm")
+
             self.port_write(entry)
             self.port_write('e')
         except ValueError:
@@ -421,6 +424,14 @@ class FiberTower():
         The ser.write function sends the string one character at a time so and ending character needs to be sent to let the arduino know that the message is done"""
         if self.status_label.cget("text") == "Connected":
             self.ser.write(command.encode())
+
+    def preview(self):
+        if self.previewing:
+            self.preview_button.config(text="Preview: Off", bg="grey94")
+            self.previewing = False
+        else:
+            self.preview_button.config(text="Preview: On", bg="green")
+            self.previewing = True
 
     def record_diameter(self):
         """If not already recording, start the recording. If recording, save it as a .csv file.
@@ -633,7 +644,7 @@ class FiberTower():
                     self.buffer.append(recentPacketString[:4])
 
                 if debug:
-                    
+
                     self.serial_print.config(
                         text=f"Serial: {recentPacket}")
                     self.time_debug.config(text=f"Time difference: {
