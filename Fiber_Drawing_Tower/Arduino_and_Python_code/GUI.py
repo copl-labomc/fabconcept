@@ -28,7 +28,7 @@ import json
 
 # Change this variable to True to enable debug mode and print
 # the incoming Serial messages and the time delay between iterations
-debug = True
+debug = False
 
 
 def serial_ports():
@@ -276,11 +276,13 @@ class FiberTower():
         self.record_button.grid(row=0, column=1)
         self.recording = False
 
+
+        """
         # Graph preview button
         self.preview_button = tk.Button(
             self.parameter_frame, text="Preview: Off", command=self.preview)
         self.preview_button.grid(row=2, column=1)
-        self.previewing = False
+        self.previewing = False """
 
         # Diameter command indicator
         self.command_label = tk.Label(self.parameter_frame, text=f"Setpoint: {
