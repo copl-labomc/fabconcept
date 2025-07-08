@@ -89,4 +89,8 @@ pyproject.toml
 ### executable packages ###
  *./output/GUI
 
+### Tower config files ###
+*.json
+
+
 
